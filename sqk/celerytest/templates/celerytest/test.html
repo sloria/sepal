@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+{% if ready %}
+    <h2 class="center">The answer is {{ sum }}</h2>
+{% else %}
+    <h2>Results aren't ready yet. Please stand by.</h2>       
+{% endif %}
+
+{% endblock content %}
