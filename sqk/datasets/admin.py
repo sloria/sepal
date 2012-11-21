@@ -20,7 +20,7 @@ class FeatureInline(admin.TabularInline):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name']}),
+        (None, {'fields': ['name', 'dataset']}),
     ]
     list_display = ('name','dataset', 'pk')
     inlines = [FeatureInline]

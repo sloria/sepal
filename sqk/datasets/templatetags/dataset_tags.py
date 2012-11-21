@@ -7,7 +7,8 @@ register = template.Library()
 def show_dataset(dataset):
     instances = dataset.instance_set.all()
     features = instances[0].feature_set.all()
-    return {'instances': instances, 'features': features}
+    data = []
+    return {'instances': instances, 'features': features, }
 
 
           

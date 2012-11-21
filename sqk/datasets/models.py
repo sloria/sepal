@@ -21,7 +21,7 @@ class Instance(models.Model):
     def features(self):
         return self.feature_set.all()
     def values(self):
-        return [f.value for feature in self.feature_set.all()]
+        return [feature.value for feature in self.feature_set.all()]
 
 class Feature(models.Model):
     instance = models.ForeignKey(Instance)
@@ -29,4 +29,3 @@ class Feature(models.Model):
     value = models.FloatField()
     def __unicode__(self):
         return self.name + ': ' + unicode(self.value)
-

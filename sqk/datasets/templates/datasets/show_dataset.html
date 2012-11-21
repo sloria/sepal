@@ -11,8 +11,8 @@
     {% for instance in instances %}
     <tr>
       <td>{{ instance.name }}</td>
-      {% for feature in features %}
-        <td>{{ instance.feature_set.get }}        
+      {% for value in instance.values %}
+        <td>{{ value }}</td>
       {% endfor %}
     </tr>
     {% endfor %}
