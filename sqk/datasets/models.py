@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-import datetime
 
 class Dataset(models.Model):
     name = models.CharField(max_length=100)
@@ -13,19 +12,26 @@ class Dataset(models.Model):
         return self.instance_set.all()
 
 class Instance(models.Model):
-    dataset = models.ForeignKey(Dataset)
+    dataset = models.ForeignKey(Dataset, related_name='instances')
     name = models.CharField(max_length=100, 
         default='unnamed')
     def __unicode__(self):
         return self.name
     def features(self):
         return self.feature_set.all()
-    def values(self):
-        return [feature.value for feature in self.feature_set.all()]
 
 class Feature(models.Model):
-    instance = models.ForeignKey(Instance)
-    name = models.CharField(max_length=100)
+    instances = models.ManyToManyField(
+        Instance, 
+        null=True, 
+        related_name='features')
+    name = models.CharField(max_length=100, unique=True)
+    def __unicode__(self):
+        return self.name
+
+class Value(models.Model):
+    feature = models.ForeignKey(Feature, related_name='values')
+    instance = models.ForeignKey(Instance, related_name='values')
     value = models.FloatField()
     def __unicode__(self):
-        return self.name + ': ' + unicode(self.value)
+        return unicode(self.value)

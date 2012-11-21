@@ -1,8 +1,16 @@
-from sqk.datasets.models import Dataset, Instance, Feature
+from sqk.datasets.models import Dataset, Instance, Feature, Value
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
     model = Instance
+    extra = 1
+
+class ValueInline(admin.TabularInline):
+    model = Value
+    extra = 1
+
+class FeatureInline(admin.TabularInline):
+    model = Feature.instances.through
     extra = 1
 
 class DatasetAdmin(admin.ModelAdmin):
@@ -14,17 +22,20 @@ class DatasetAdmin(admin.ModelAdmin):
     inlines = [InstanceInline]
     search_fields = ['name']
 
-class FeatureInline(admin.TabularInline):
-    model = Feature
-    extra = 1
-
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'dataset']}),
     ]
     list_display = ('name','dataset', 'pk')
-    inlines = [FeatureInline]
+    inlines = [FeatureInline, ValueInline]
     search_fields = ['name']
+
+class FeatureAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['name',]})
+    ]
+    list_display = ('name', 'pk')
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
+admin.site.register(Feature, FeatureAdmin)

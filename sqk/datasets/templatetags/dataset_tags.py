@@ -5,9 +5,8 @@ register = template.Library()
 
 @register.inclusion_tag('datasets/show_dataset.html')
 def show_dataset(dataset):
-    instances = dataset.instance_set.all()
-    features = instances[0].feature_set.all()
-    data = []
+    instances = dataset.instances.all()
+    features = instances[0].features.all()
     return {'instances': instances, 'features': features, }
 
 

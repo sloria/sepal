@@ -11,7 +11,7 @@
     {% for instance in instances %}
     <tr>
       <td>{{ instance.name }}</td>
-      {% for value in instance.values %}
+      {% for value in instance.values.all %}
         <td>{{ value }}</td>
       {% endfor %}
     </tr>
