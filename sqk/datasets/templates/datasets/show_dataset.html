@@ -1,12 +1,20 @@
 <table class="table">
-    <thead>
-    {% for feature in features %}
-       <tr>
-            <th>{{ feature.name }}</th>
-       </tr> 
+  <thead>
+    <tr>
+      <th>Name</th>
+      {% for feature in features %}
+      <th>{{ feature.name }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for instance in instances %}
+    <tr>
+      <td>{{ instance.name }}</td>
+      {% for feature in features %}
+        <td>{{ instance.feature_set.get }}        
+      {% endfor %}
+    </tr>
     {% endfor %}
-    </thead>
-    <tbody>
-        {# TODO #}
-    </tbody>
+  </tbody>
 </table>

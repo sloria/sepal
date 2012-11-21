@@ -10,7 +10,7 @@ class DatasetAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'description']}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
-    list_display = ('name', 'created_at', 'description')
+    list_display = ('name', 'created_at', 'description', 'pk')
     inlines = [InstanceInline]
     search_fields = ['name']
 

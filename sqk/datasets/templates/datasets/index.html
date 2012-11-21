@@ -4,7 +4,7 @@
 <h1 class="center">Datasets</h1>
 <ul>
 {% for dataset in all_datasets %}
-    <li>{{ dataset.name }}</li>
+    <li><a href="{{ dataset.pk }}">{{ dataset.name }}</a></li>
 {% endfor %}
 </ul>
 {% else %}

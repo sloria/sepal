@@ -14,9 +14,11 @@ urlpatterns = patterns('',
             ), 
         name='index'),
 
-    # ex: /datasets/3
+    # ex: /datasets/3/
     url(r'^(?P<pk>\d+)/$', DetailView.as_view(
             model=Dataset,
             context_object_name='dataset',
-            template_name='datasets/detail.html'))
-    )
+            template_name='datasets/detail.html'
+            ),
+        name='detail'),
+)

@@ -9,6 +9,8 @@ class Dataset(models.Model):
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
+    def instances(self):
+        return self.instance_set.all()
 
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset)
@@ -16,6 +18,10 @@ class Instance(models.Model):
         default='unnamed')
     def __unicode__(self):
         return self.name
+    def features(self):
+        return self.feature_set.all()
+    def values(self):
+        return [f.value for feature in self.feature_set.all()]
 
 class Feature(models.Model):
     instance = models.ForeignKey(Instance)
