@@ -12,7 +12,7 @@ def bad(request):
 urlpatterns = patterns('',
     (r'', include('sqk.base.urls')),
     (r'^celerytest/', include('sqk.celerytest.urls', namespace='celery')),
-    (r'^datasets/$', include('sqk.datasets.urls', namespace='datasets'))
+    (r'^datasets/$', include('sqk.datasets.urls', namespace='datasets')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     #url(r'^', include('debug_toolbar_user_panel.urls')),

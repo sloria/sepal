@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% if all_datasets %}
+<h1 class="center">Datasets</h1>
+<ul>
+{% for dataset in all_datasets %}
+    <li>{{ dataset.name }}</li>
+{% endfor %}
+</ul>
+{% else %}
+    <p>No polls available</p>
+{% endif %}
+{% endblock content %}
