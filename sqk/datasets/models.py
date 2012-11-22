@@ -8,11 +8,9 @@ class Dataset(models.Model):
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
-    def instances(self):
-        return self.instance_set.all()
 
 class Label(models.Model):
-    label = models.CharField(max_length=100, default='nolabel')
+    label = models.CharField(max_length=100, default='unlabeled')
     def __unicode__(self):
         return self.label
 

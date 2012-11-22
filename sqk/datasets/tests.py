@@ -13,3 +13,5 @@ class ReadDataSourceTest(TestCase):
 
     def test_dataset_created(self):
         self.assertEqual(Dataset.objects.count(), 1)
+        data = Dataset.objects.get(name='iris-data')
+
