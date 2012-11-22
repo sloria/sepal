@@ -17,3 +17,6 @@ django-nose
 coverage
 pep8
 pylint
+
+# Shell
+ipython

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from tasks import read_datasource
-from models import Dataset
+from models import *
 
 class SimpleTest(TestCase):
     def test_simple(self):
@@ -8,7 +8,12 @@ class SimpleTest(TestCase):
 
 class ReadDataSourceTest(TestCase):
     def setUp(self):
-        read_datasource('media/data_sources/iris.csv', label_col=4)
+        self.d = Dataset.objects.create(name='iris-data')
+        self.d.save()
+        read_datasource(self.d, 
+            'media/data_sources/iris.csv',
+            label_col=4,
+            feature_row=0)
 
     def test_dataset_created(self):
-        self.d = Dataset.objects.get(pk=1)
+        self.assertEqual(Dataset.objects.count(), 1)

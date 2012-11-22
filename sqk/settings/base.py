@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'djcelery',
     'django_nose',
     'debug_toolbar',
+    'django_extensions',
     #'debug_toolbar_user_panel',
     #'memcache_toolbar',
 

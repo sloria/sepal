@@ -1,4 +1,4 @@
-from sqk.datasets.models import Dataset, Instance, Feature, Value
+from sqk.datasets.models import Dataset, Instance, Feature, Value, Label
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
@@ -24,9 +24,9 @@ class DatasetAdmin(admin.ModelAdmin):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'dataset']}),
+        (None, {'fields': ['name', 'dataset', 'label']}),
     ]
-    list_display = ('name','dataset', 'pk')
+    list_display = ('name','dataset', 'label', 'pk')
     inlines = [FeatureInstanceInline, ValueInline]
     search_fields = ['name']
 
@@ -37,6 +37,14 @@ class FeatureAdmin(admin.ModelAdmin):
     list_display = ('name', 'pk')
     inlines = [FeatureInstanceInline]
 
+class LabelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['label',]})
+    ]
+    list_display = ('label', 'pk')
+    inlines = [InstanceInline]
+
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
+admin.site.register(Label, LabelAdmin)
