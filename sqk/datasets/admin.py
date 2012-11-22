@@ -9,7 +9,7 @@ class ValueInline(admin.TabularInline):
     model = Value
     extra = 1
 
-class FeatureInline(admin.TabularInline):
+class FeatureInstanceInline(admin.TabularInline):
     model = Feature.instances.through
     extra = 1
 
@@ -27,7 +27,7 @@ class InstanceAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'dataset']}),
     ]
     list_display = ('name','dataset', 'pk')
-    inlines = [FeatureInline, ValueInline]
+    inlines = [FeatureInstanceInline, ValueInline]
     search_fields = ['name']
 
 class FeatureAdmin(admin.ModelAdmin):
@@ -35,6 +35,7 @@ class FeatureAdmin(admin.ModelAdmin):
         (None, {'fields': ['name',]})
     ]
     list_display = ('name', 'pk')
+    inlines = [FeatureInstanceInline]
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
