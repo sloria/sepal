@@ -2,8 +2,8 @@ from django.db import models
 from django.utils import timezone
 
 class Dataset(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
+    name = models.CharField(max_length=100, default='')
+    description = models.CharField(max_length=500, null=True)
     source = models.FileField(upload_to='data_sources')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
@@ -11,10 +11,17 @@ class Dataset(models.Model):
     def instances(self):
         return self.instance_set.all()
 
+class Label(models.Model):
+    label = models.CharField(max_length=100, null=True)
+    def __unicode__(self):
+        return self.label
+
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     name = models.CharField(max_length=100, 
         default='unnamed')
+    label = models.ForeignKey(Label, null=True,
+        related_name='labels')
     def __unicode__(self):
         return self.name
     def features(self):

@@ -15,10 +15,10 @@ class FeatureInline(admin.TabularInline):
 
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description']}),
+        (None, {'fields': ['name', 'description', 'source']}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
-    list_display = ('name', 'created_at', 'description', 'pk')
+    list_display = ('name', 'created_at', 'description', 'source', 'pk')
     inlines = [InstanceInline]
     search_fields = ['name']
 
