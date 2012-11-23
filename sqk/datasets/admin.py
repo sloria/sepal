@@ -13,13 +13,17 @@ class FeatureInstanceInline(admin.TabularInline):
     model = Feature.instances.through
     extra = 1
 
+class FeatureDatasetInline(admin.TabularInline):
+    model = Feature.datasets.through
+    extra = 1
+
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'description', 'source']}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
     list_display = ('name', 'created_at', 'description', 'source', 'pk')
-    inlines = [InstanceInline]
+    inlines = [InstanceInline, FeatureDatasetInline]
     search_fields = ['name']
 
 class InstanceAdmin(admin.ModelAdmin):
@@ -35,7 +39,7 @@ class FeatureAdmin(admin.ModelAdmin):
         (None, {'fields': ['name',]})
     ]
     list_display = ('name', 'pk')
-    inlines = [FeatureInstanceInline]
+    inlines = [FeatureInstanceInline, FeatureDatasetInline]
 
 class LabelAdmin(admin.ModelAdmin):
     fieldsets = [

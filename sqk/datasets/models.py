@@ -23,6 +23,8 @@ class Instance(models.Model):
         return self.name
 
 class Feature(models.Model):
+    datasets = models.ManyToManyField(Dataset,
+        related_name='features')
     instances = models.ManyToManyField(
         Instance, 
         null=True, 
