@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_extensions',
     #'debug_toolbar_user_panel',
     #'memcache_toolbar',
+    'crispy_forms',
 
     # Database migrations
     'south',

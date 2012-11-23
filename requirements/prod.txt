@@ -25,6 +25,9 @@ django-debug-toolbar
 #-e git://github.com/playfire/django-debug-toolbar-user-panel#egg=django_debug_toolbar_user_panel-dev
 #-e git://github.com/ross/memcache-debug-panel#egg=memcache_toolbar-dev
 
+# Forms
+django-crispy-forms
+
 # Migrations
 South
 

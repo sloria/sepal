@@ -3,7 +3,6 @@ import csv
 
 from models import Feature, Instance, Label, Value
 
-# TODO
 @task()
 def read_datasource(dataset, source_file, label_col=None, feature_row=0):
     '''Parse a datasource (csv) and saves data to the database.

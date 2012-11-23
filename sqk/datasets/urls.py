@@ -1,9 +1,11 @@
 '''urlconf for sqk.datasets'''
 
 from django.conf.urls.defaults import url, patterns
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
+from sqk.datasets.forms import DatasetForm
 from sqk.datasets import views
 from sqk.datasets.models import Dataset
+from sqk.datasets.views import DatasetCreate
 
 urlpatterns = patterns('',
     # ex: /datasets/
@@ -21,4 +23,7 @@ urlpatterns = patterns('',
             template_name='datasets/detail.html'
             ),
         name='detail'),
+
+    # ex: /datasets/new/
+    url(r'^create/$', DatasetCreate.as_view(), name='create'),
 )
