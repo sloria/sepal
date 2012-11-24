@@ -6,7 +6,7 @@ from sqk.datasets.models import Dataset, Label
 class DatasetForm(forms.ModelForm):
     source = forms.FileField(required=True, label='Data file',
         help_text='Must be a .csv file.')
-    feature_row = forms.IntegerField(required=False,
+    feature_row = forms.IntegerField(required=False, initial=1,
         help_text='Specify the header row. Defaults to first row.')
     label_col = forms.IntegerField(required=False,
         help_text='Optionally specify which column contains class labels.',
@@ -26,17 +26,20 @@ class DatasetForm(forms.ModelForm):
         super(DatasetForm, self).__init__(*args, **kwargs)
 
     def clean_label_col(self):
-        # TODO: label_col shouldn't be > # of columns
         col = self.cleaned_data['label_col']
         if col <= 0:
             return -1
         else:
-            return col-1
+            return col-1 # 0-indexed column value
 
     def clean_feature_row(self):
-        # TODO: row shouldn't be > # of rows or < 0
         row = self.cleaned_data['feature_row']
+        if self.cleaned_data.has_key('source'):
+            source = self.cleaned_data['source']
+            n_rows = len(source.readlines())
+            if row > n_rows:
+                raise forms.ValidationError('Cannot be greater than number of rows in dataset')
         if row <= 0:
-            return 0
+            raise forms.ValidationError('Must be 1 or greater')
         else:
-            return row-1
+            return row-1 # 0-indexed row value
