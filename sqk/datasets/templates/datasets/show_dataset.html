@@ -1,13 +1,8 @@
 <table class="table">
   <thead>
     <tr>
-<<<<<<< HEAD
       <th>id</th>
       {% for feature in dataset.sorted_features %}
-=======
-      <th>Name</th>
-      {% for feature in features %}
->>>>>>> parent of 8b85e91... Correct value ordering in show_dataset.html
         {% if feature.is_label_name %}
           <th>{{ feature.name }}<em> (Label)</em></th>
         {% else %}
@@ -17,11 +12,7 @@
     </tr>
   </thead>
   <tbody>
-<<<<<<< HEAD
     {% for instance in dataset.sorted_instances %}
-=======
-    {% for instance in instances %}
->>>>>>> parent of 8b85e91... Correct value ordering in show_dataset.html
     <tr>
       <td>{{ instance.name }}</td>
       {% for value in instance.values.all %}

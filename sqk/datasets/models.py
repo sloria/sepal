@@ -1,18 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-
-class LabelName(models.Model):
-    name = models.CharField(max_length=100, default='')
-    def __unicode__(self):
-        return self.name
-
-class LabelValue(models.Model):
-    label_name = models.ForeignKey(LabelName, related_name='values')
-    value = models.CharField(max_length=100, default='unlabeled')
-    def __unicode__(self):
-        return self.value
-
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, default='')
