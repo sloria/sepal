@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, FormView, UpdateView
+from django.views.generic import ListView, DetailView, FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.files import File
 from sqk.datasets.forms import DatasetForm, DatasetEditForm
@@ -19,7 +19,7 @@ class DatasetDetail(DetailView):
 class DatasetCreate(FormView):
     form_class = DatasetForm
     template_name='datasets/create.html'
-    success_url= reverse_lazy('datasets:index') #TODO: remove this and dfine get_absolute_url()
+    success_url= reverse_lazy('datasets:index')
 
     def form_valid(self, form):
         d = form.save()
@@ -30,3 +30,9 @@ class DatasetEdit(UpdateView):
     model = Dataset
     form_class = DatasetEditForm
     template_name='datasets/edit.html'
+
+class DatasetDelete(DeleteView):
+    model = Dataset
+    template_name='datasets/delete.html'
+    context_object_name = 'dataset'
+    success_url = reverse_lazy('datasets:indes')

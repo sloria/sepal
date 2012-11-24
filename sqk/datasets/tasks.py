@@ -8,6 +8,7 @@ def read_datasource(dataset, source_path):
     '''Parse a datasource (csv) and saves data to the database.
     '''
     with open(source_path, 'r') as s:
+        # TODO: file type handling
         data = csv.reader(s)
         instance_idx = 1
         features = []

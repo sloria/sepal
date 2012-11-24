@@ -24,6 +24,8 @@ class DatasetForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetForm, self).__init__(*args, **kwargs)
 
+    # TODO: validate file type?
+
     def clean_label_col(self):
         col = self.cleaned_data['label_col']
         if col <= 0:
