@@ -4,7 +4,7 @@ from sqk.datasets.models import Dataset
 
 class DatasetList(ListView):
     model = Dataset
-    queryset = Dataset.objects.all()
+    queryset = Dataset.objects.order_by('-created_at')
     context_object_name = 'all_datasets'
     template_name='datasets/index.html'
 

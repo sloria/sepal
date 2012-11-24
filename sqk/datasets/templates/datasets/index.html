@@ -2,11 +2,20 @@
 {% block content %}
 {% if all_datasets %}
 <h1 class="center">Datasets</h1>
-<ul>
-{% for dataset in all_datasets %}
-    <li><a href="{{ dataset.pk }}">{{ dataset.name }}</a></li>
-{% endfor %}
-</ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Dataset</th><th>Description</th><th>Date Created</th>
+        </tr>
+    </thead>
+    {% for dataset in all_datasets %}
+        <tr>
+            <td><a href="{{ dataset.pk }}">{{ dataset.name }}</a></td>
+            <td>{{ dataset.description }}</td>
+            <td>{{ dataset.created_at }}</td>
+        </tr>
+    {% endfor %}
+</table>
 {% else %}
     <p>No polls available</p>
 {% endif %}
