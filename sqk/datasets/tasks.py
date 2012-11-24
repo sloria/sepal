@@ -1,5 +1,7 @@
 from celery import task
+from mimetypes import guess_type
 import csv
+
 
 from models import Feature, Instance, Label, Value
 
@@ -8,7 +10,11 @@ def read_datasource(dataset, source_path, label_col=None, feature_row=0):
     '''Parse a datasource (csv) and saves data to the database.
     '''
     with open(source_path, 'r') as s:
-        data = csv.reader(s)
+        if guess_type(source_path)[0] == 'text/csv':
+            data = csv.reader(s)
+        else:
+            # TODO: accept other file formats
+            raise TypeError, 'input file must be a csv'
         instance_idx = 1
         features = []
         for i, row in enumerate(data):

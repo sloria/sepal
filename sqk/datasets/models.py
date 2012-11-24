@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
@@ -8,6 +9,8 @@ class Dataset(models.Model):
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
+    def get_absolute_url(self):
+        return reverse('datasets:detail', kwargs={'pk': self.pk})
 
 class Label(models.Model):
     label = models.CharField(max_length=100, default='unlabeled')
@@ -21,6 +24,8 @@ class Instance(models.Model):
         default='unnamed')
     def __unicode__(self):
         return self.name
+    def sorted_values(self):
+        return self.values.order_by('feature')
 
 class Feature(models.Model):
     datasets = models.ManyToManyField(Dataset,

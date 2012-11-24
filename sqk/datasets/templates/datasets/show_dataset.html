@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th>Name</th>
-      {% for feature in features %}
+      {% for feature in dataset.features.all %}
         {% if feature.is_label_name %}
           <th>{{ feature.name }}<em> (Label)</em></th>
         {% else %}
@@ -12,11 +12,11 @@
     </tr>
   </thead>
   <tbody>
-    {% for instance in instances %}
+    {% for instance in dataset.instances.all %}
     <tr>
       <td>{{ instance.name }}</td>
-      {% for value in instance.values.all %}
-        <td>{{ value }}</td>
+      {% for value in instance.sorted_values %}
+        <td>{{ value|floatformat:2 }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>
     </tr>
