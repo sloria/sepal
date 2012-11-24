@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load dataset_tags %}
+{% load url from future %}
 {% block content %}
 <h1 class="center">{{ dataset.name }}</h1>
+<a href="{% url 'datasets:edit' dataset.pk %}">Edit</a>
 <p><em>{{ dataset.description }}</em></p>
 {% show_dataset dataset %}
 {% endblock content %}

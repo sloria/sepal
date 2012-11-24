@@ -10,13 +10,17 @@
   <table class="table">
       <thead>
           <tr>
-              <th>Dataset</th><th>Description</th><th>Date Created</th>
+              <th>Dataset</th>
+              <th>Description</th>
+              <th>Actions</th>
+              <th>Date Created</th>
           </tr>
       </thead>
       {% for dataset in all_datasets %}
           <tr>
               <td><a href="{{ dataset.pk }}">{{ dataset.name }}</a></td>
               <td>{{ dataset.description }}</td>
+              <td><a href="{% url 'datasets:edit' dataset.pk %}">Edit</a></td>
               <td>{{ dataset.created_at }}</td>
           </tr>
       {% endfor %}

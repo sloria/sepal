@@ -1,7 +1,7 @@
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, FormView, UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.core.files import File
-from sqk.datasets.forms import DatasetForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm
 from sqk.datasets.models import Dataset
 from sqk.datasets.tasks import read_datasource
 
@@ -26,3 +26,7 @@ class DatasetCreate(FormView):
         read_datasource.delay(d, d.source.path)
         return super(DatasetCreate, self).form_valid(form)
 
+class DatasetEdit(UpdateView):
+    model = Dataset
+    form_class = DatasetEditForm
+    template_name='datasets/edit.html'

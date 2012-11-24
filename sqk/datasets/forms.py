@@ -21,7 +21,7 @@ class DatasetForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-datasetForm'
         self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Create'))
+        self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetForm, self).__init__(*args, **kwargs)
 
     def clean_label_col(self):
@@ -42,3 +42,18 @@ class DatasetForm(forms.ModelForm):
             raise forms.ValidationError('Must be 1 or greater')
         else:
             return row-1 # 0-indexed row value
+
+class DatasetEditForm(forms.ModelForm):
+    description = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 5}))
+    class Meta:
+        model = Dataset
+        fields = ('name', 'description')
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-datasetForm'
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Submit'))
+        super(DatasetEditForm, self).__init__(*args, **kwargs)
+
