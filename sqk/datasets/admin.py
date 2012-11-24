@@ -1,4 +1,4 @@
-from sqk.datasets.models import Dataset, Instance, Feature, Value, Label
+from sqk.datasets.models import Dataset, Instance, Feature, Value, LabelName, LabelValue
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
@@ -19,7 +19,7 @@ class FeatureDatasetInline(admin.TabularInline):
 
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description', 'source']}),
+        (None, {'fields': ['name', 'description', 'source', 'feature_row', 'label_col']}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
     list_display = ('name', 'created_at', 'description', 'source', 'pk')
@@ -36,19 +36,26 @@ class InstanceAdmin(admin.ModelAdmin):
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'is_label_name']})
+        (None, {'fields': ['name',]})
     ]
-    list_display = ('name', 'is_label_name', 'pk')
+    list_display = ('name', 'pk')
     inlines = [FeatureInstanceInline, FeatureDatasetInline]
 
-class LabelAdmin(admin.ModelAdmin):
+class LabelNameAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['label',]})
+        (None, {'fields': ['name',]})
     ]
-    list_display = ('label', 'pk')
+    list_display = ('name', 'pk')
+
+class LabelValueAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['value',]})
+    ]
+    list_display = ('value', 'pk')
     inlines = [InstanceInline]
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
-admin.site.register(Label, LabelAdmin)
+admin.site.register(LabelName, LabelNameAdmin)
+admin.site.register(LabelValue, LabelValueAdmin)
