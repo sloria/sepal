@@ -1,4 +1,4 @@
-from sqk.datasets.models import Dataset, Instance, Feature, Value, LabelName, LabelValue
+from sqk.datasets.models import Dataset, Instance, Feature, Value, Label
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
@@ -36,26 +36,20 @@ class InstanceAdmin(admin.ModelAdmin):
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name',]})
+        (None, {'fields': ['name', 'is_label_name']})
     ]
-    list_display = ('name', 'pk')
+    list_display = ('name', 'is_label_name', 'pk')
     inlines = [FeatureInstanceInline, FeatureDatasetInline]
 
-class LabelNameAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields': ['name',]})
-    ]
-    list_display = ('name', 'pk')
 
-class LabelValueAdmin(admin.ModelAdmin):
+class LabelAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['value',]})
+        (None, {'fields': ['label',]})
     ]
-    list_display = ('value', 'pk')
+    list_display = ('label', 'pk')
     inlines = [InstanceInline]
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
-admin.site.register(LabelName, LabelNameAdmin)
-admin.site.register(LabelValue, LabelValueAdmin)
+admin.site.register(Label, LabelAdmin)

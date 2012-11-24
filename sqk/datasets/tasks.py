@@ -18,14 +18,16 @@ def read_datasource(dataset, source_path):
                     # Create feature if it doesn't exist
                     features.append(feature_name.lower())
                     if j == dataset.label_col:
-                        label_name, created =  LabelName.objects.get_or_create(
-                            name=feature_name.lower())
+                        f, created =  Feature.objects.get_or_create(
+                            name=feature_name.lower(),
+                            is_label_name=True)
                     else:
                         f, created = Feature.objects.get_or_create(
-                            name=feature_name.lower())
+                            name=feature_name.lower(),
+                            is_label_name=False)
                         f.datasets.add(dataset)
                         f.save()
-                        dataset.features.add(f)
+                    dataset.features.add(f)
                 dataset.save()
             # Parse data
             else:
@@ -33,24 +35,23 @@ def read_datasource(dataset, source_path):
                 # TODO: Improve. format should be inst0001
                 instance_name = '%s%s' % (dataset.name[:4].lower(),
                                             instance_idx)
-                unlabel, created = LabelValue.objects.get_or_create(
-                    value='unlabeled',
-                    label_name=LabelName.objects.get(pk=1))
+                unlabel, created = Label.objects.get_or_create(
+                    label='unlabeled',
+                    )
                 inst = Instance.objects.create(
                     dataset=dataset, 
                     name=instance_name,
-                    value=unlabel)
+                    label=unlabel)
                 for feature in dataset.features.all():
                     inst.features.add(
                         Feature.objects.get(name=feature.name.lower()))
                 inst.save()
                 instance_idx +=1
                 for v, value_str in enumerate(row):
-                    label = None
                     # Process label
                     if v == dataset.label_col:
-                        l, created = LabelValue.objects.get_or_create(
-                            value=value_str.lower(), label_name=LabelName.objects.get(pk=1))
+                        l, created = Label.objects.get_or_create(
+                            label=value_str.lower())
                         l.instances.add(inst)
                         inst.label = l
                         inst.save()

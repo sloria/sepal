@@ -24,7 +24,7 @@ class Label(models.Model):
 
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
-    label = models.ForeignKey(LabelValue, default=0, related_name='instances')
+    label = models.ForeignKey(Label, default=0, related_name='instances')
     name = models.CharField(max_length=100, 
         default='unnamed')
     def __unicode__(self):
@@ -38,6 +38,7 @@ class Feature(models.Model):
         null=True, 
         related_name='features')
     name = models.CharField(max_length=100)
+    is_label_name = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 

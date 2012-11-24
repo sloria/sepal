@@ -1,7 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from sqk.datasets.models import Dataset, LabelName
+from sqk.datasets.models import Dataset, Label
 
 class DatasetForm(forms.ModelForm):
     source = forms.FileField(required=True, label='Data file',
