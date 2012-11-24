@@ -29,6 +29,8 @@ class Instance(models.Model):
         default='unnamed')
     def __unicode__(self):
         return self.name
+    def sorted_values(self):
+        return self.values.order_by('feature')
 
 class Feature(models.Model):
     datasets = models.ManyToManyField(Dataset,

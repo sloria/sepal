@@ -15,7 +15,7 @@
     {% for instance in dataset.sorted_instances %}
     <tr>
       <td>{{ instance.name }}</td>
-      {% for value in instance.values.all %}
+      {% for value in instance.sorted_values %}
         <td>{{ value }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>

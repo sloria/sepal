@@ -34,7 +34,7 @@ class DatasetForm(forms.ModelForm):
             return col-1
 
     def clean_feature_row(self):
-        # TODO: row shouldn't be > # of rows
+        # TODO: row shouldn't be > # of rows or < 0
         row = self.cleaned_data['feature_row']
         if row <= 0:
             return 0
