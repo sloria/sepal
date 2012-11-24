@@ -3,7 +3,11 @@
     <tr>
       <th>Name</th>
       {% for feature in features %}
-      <th>{{ feature.name }}</th>
+        {% if feature.is_label_name %}
+          <th>{{ feature.name }}<em> (Label)</em></th>
+        {% else %}
+          <th>{{ feature.name }}</th>
+        {% endif %}
       {% endfor %}
     </tr>
   </thead>
@@ -14,6 +18,7 @@
       {% for value in instance.values.all %}
         <td>{{ value }}</td>
       {% endfor %}
+      <td>{{ instance.label.label }}</td>
     </tr>
     {% endfor %}
   </tbody>
