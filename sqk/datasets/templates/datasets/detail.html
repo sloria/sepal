@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load dataset_tags %}
 {% block content %}
-    {% show_dataset dataset %}
+<h1 class="center">{{ dataset.name }}</h1>
+<p><em>{{ dataset.description }}</em></p>
+{% show_dataset dataset %}
 {% endblock content %}

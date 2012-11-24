@@ -11,12 +11,11 @@ class DatasetForm(forms.ModelForm):
     label_col = forms.IntegerField(required=False,
         help_text='Optionally specify which column contains class labels.',
         label='Label column')
+    description = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 5}))
     class Meta:
         model = Dataset
         fields = ('source', 'name', 'description', 'feature_row', 'label_col')
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 5}),
-        }
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

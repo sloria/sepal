@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% block content %}
+<h1>Datasets</h1>
+<center>
+  <a href="{% url 'datasets:create' %}" class="btn btn-medium">Create Dataset
+  </a>
+</center>
 {% if all_datasets %}
-  <h1 class="center">Datasets</h1>
   <table class="table">
       <thead>
           <tr>
@@ -20,8 +24,4 @@
 {% else %}
   <h3 class="center"><em>No datasets available.</em></h3>
 {% endif %}
-<center>
-  <a href="{% url 'datasets:create' %}" class="btn btn-large">Create Dataset
-  </a>
-</center>
 {% endblock content %}
