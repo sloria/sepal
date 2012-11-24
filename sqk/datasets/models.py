@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.core.urlresolvers import reverse
 
 
 class LabelName(models.Model):
@@ -30,6 +29,11 @@ class Dataset(models.Model):
     def sorted_instances(self):
         return self.instances.order_by('pk')
 
+class Label(models.Model):
+    label = models.CharField(max_length=100, default='unlabeled')
+    def __unicode__(self):
+        return self.label
+
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     label = models.ForeignKey(LabelValue, default=0, related_name='instances')
@@ -37,8 +41,6 @@ class Instance(models.Model):
         default='unnamed')
     def __unicode__(self):
         return self.name
-    def sorted_values(self):
-        return self.values.order_by('feature')
 
 class Feature(models.Model):
     datasets = models.ManyToManyField(Dataset,

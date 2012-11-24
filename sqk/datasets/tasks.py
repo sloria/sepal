@@ -1,21 +1,14 @@
 from celery import task
-from mimetypes import guess_type
-from django.http import HttpResponse
 import csv
 
-
-from models import Feature, Instance, LabelName, LabelValue, Value
+from models import Feature, Instance, Label, Value
 
 @task()
 def read_datasource(dataset, source_path):
     '''Parse a datasource (csv) and saves data to the database.
     '''
     with open(source_path, 'r') as s:
-        if guess_type(source_path)[0] == 'text/csv':
-            data = csv.reader(s)
-        else:
-            # TODO: accept other file formats
-            raise TypeError, 'input file must be a csv'
+        data = csv.reader(s)
         instance_idx = 1
         features = []
         for i, row in enumerate(data):
