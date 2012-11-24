@@ -1,22 +1,27 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% block content %}
 {% if all_datasets %}
-<h1 class="center">Datasets</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Dataset</th><th>Description</th><th>Date Created</th>
-        </tr>
-    </thead>
-    {% for dataset in all_datasets %}
-        <tr>
-            <td><a href="{{ dataset.pk }}">{{ dataset.name }}</a></td>
-            <td>{{ dataset.description }}</td>
-            <td>{{ dataset.created_at }}</td>
-        </tr>
-    {% endfor %}
-</table>
+  <h1 class="center">Datasets</h1>
+  <table class="table">
+      <thead>
+          <tr>
+              <th>Dataset</th><th>Description</th><th>Date Created</th>
+          </tr>
+      </thead>
+      {% for dataset in all_datasets %}
+          <tr>
+              <td><a href="{{ dataset.pk }}">{{ dataset.name }}</a></td>
+              <td>{{ dataset.description }}</td>
+              <td>{{ dataset.created_at }}</td>
+          </tr>
+      {% endfor %}
+  </table>
 {% else %}
-    <p>No polls available</p>
+  <h3 class="center"><em>No datasets available.</em></h3>
 {% endif %}
+<center>
+  <a href="{% url 'datasets:create' %}" class="btn btn-large">Create Dataset
+  </a>
+</center>
 {% endblock content %}

@@ -35,8 +35,6 @@ def read_datasource(dataset, source_file, label_col=None, feature_row=0):
                                             instance_idx)
                 label, created = Label.objects.get_or_create(
                     label='unlabeled')
-                if created:
-                    label.save()
                 inst = Instance.objects.create(
                     dataset=dataset, 
                     name=instance_name,
@@ -62,7 +60,6 @@ def read_datasource(dataset, source_file, label_col=None, feature_row=0):
                             v = Value.objects.create(value=val, 
                                 feature=feature,
                                 instance=inst)
-                            v.save()
                         except ValueError:
                             # Ignore non-numerical data
                             continue

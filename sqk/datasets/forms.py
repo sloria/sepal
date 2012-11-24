@@ -12,5 +12,5 @@ class DatasetForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-datasetForm'
         self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', 'Create'))
         super(DatasetForm, self).__init__(*args, **kwargs)
