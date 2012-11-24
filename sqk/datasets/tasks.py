@@ -4,10 +4,10 @@ import csv
 from models import Feature, Instance, Label, Value
 
 @task()
-def read_datasource(dataset, source_file, label_col=None, feature_row=0):
+def read_datasource(dataset, source_path, label_col=None, feature_row=0):
     '''Parse a datasource (csv) and saves data to the database.
     '''
-    with open(source_file, 'r') as s:
+    with open(source_path, 'r') as s:
         data = csv.reader(s)
         instance_idx = 1
         features = []

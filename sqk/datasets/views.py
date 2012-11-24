@@ -1,6 +1,9 @@
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, FormView
+from django.core.urlresolvers import reverse_lazy
+from django.core.files import File
 from sqk.datasets.forms import DatasetForm
 from sqk.datasets.models import Dataset
+from sqk.datasets.tasks import read_datasource
 
 class DatasetList(ListView):
     model = Dataset
@@ -13,14 +16,13 @@ class DatasetDetail(DetailView):
     context_object_name = 'dataset'
     template_name='datasets/detail.html'
 
-class DatasetCreate(CreateView):
-    model = Dataset
+class DatasetCreate(FormView):
     form_class = DatasetForm
     template_name='datasets/create.html'
-    success_url='/datasets/' #TODO: remove this and dfine get_absolute_url()
+    success_url= reverse_lazy('datasets:index') #TODO: remove this and dfine get_absolute_url()
 
-    # TODO: 
-    # def form_valid(self, form):
-        
-
+    def form_valid(self, form):
+        d = form.save()
+        read_datasource.delay(d, d.source.path)
+        return super(DatasetCreate, self).form_valid(form)
 
