@@ -35,4 +35,4 @@ class DatasetDelete(DeleteView):
     model = Dataset
     template_name='datasets/delete.html'
     context_object_name = 'dataset'
-    success_url = reverse_lazy('datasets:indes')
+    success_url = reverse_lazy('datasets:index')

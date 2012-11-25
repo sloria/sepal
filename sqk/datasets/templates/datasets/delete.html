@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load url from future %}
 {% block content %}
 <h1 class="center">Delete {{ dataset.name }}?</h1>
+<p>Are you sure that you would like to delete this dataset?</p>
+<ul>
+<form method="POST" action=".">
+{% csrf_token %}
+<input type="submit" class="btn" value="Yes" />
+</form>
+<a href="{% url 'datasets:index' %}" class="btn">No</a>
+</ul>
 {% endblock content %}
