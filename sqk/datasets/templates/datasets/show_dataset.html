@@ -1,3 +1,4 @@
+{% load url from future %}
 <div class="block">
   <div class="block-heading">Data</div>
 <table id="dataset-table" class="table table-striped">
@@ -25,7 +26,7 @@
         <td>{{ value }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>
-      <td><a href="#"><i class="icon-bar-chart"></i></a>
+      <td><a href="{% url 'datasets:instance_detail' instance.pk %}"><i class="icon-bar-chart"></i></a>
     </tr>
     {% endfor %}
   </tbody>

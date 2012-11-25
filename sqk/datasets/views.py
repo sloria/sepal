@@ -1,8 +1,9 @@
 from django.views.generic import ListView, DetailView, FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.files import File
+from django.shortcuts import get_object_or_404, render
 from sqk.datasets.forms import DatasetForm, DatasetEditForm
-from sqk.datasets.models import Dataset
+from sqk.datasets.models import Dataset, Instance
 from sqk.datasets.tasks import read_datasource
 
 class DatasetList(ListView):
@@ -36,3 +37,10 @@ class DatasetDelete(DeleteView):
     template_name='datasets/delete.html'
     context_object_name = 'dataset'
     success_url = reverse_lazy('datasets:index')
+
+class InstanceDetail(DetailView):
+    model = Instance
+    context_object_name = 'instance'
+    template_name = 'instances/detail.html'
+
+
