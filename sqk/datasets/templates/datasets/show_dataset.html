@@ -1,9 +1,10 @@
 <div class="block">
   <div class="block-heading">Data</div>
 <table class="table">
+  {# Header #}
   <thead>
     <tr>
-      <th>id</th>
+      <th>#</th>
       {% for feature in dataset.sorted_features %}
         {% if feature.is_label_name %}
           <th>{{ feature.name }}<em> (Label)</em></th>
@@ -13,10 +14,12 @@
       {% endfor %}
     </tr>
   </thead>
+  
+  {# Data #}
   <tbody>
     {% for instance in dataset.sorted_instances %}
     <tr>
-      <td>{{ instance.name }}</td>
+      <td>{{ forloop.counter }}</td>
       {% for value in instance.sorted_values %}
         <td>{{ value }}</td>
       {% endfor %}

@@ -46,15 +46,11 @@ def read_datasource(dataset, source_path):
             # Parse data
             else:
                 # Create instance and add it to dataset
-                # TODO: Improve. format should be inst0001
-                instance_name = '%s%s' % (dataset.name[:4].lower(),
-                                            instance_idx)
                 unlabel, created = Label.objects.get_or_create(
                     label='unlabeled',
                     )
                 inst = Instance.objects.create(
-                    dataset=dataset, 
-                    name=instance_name,
+                    dataset=dataset,
                     label=unlabel)
                 for feature in dataset.features.all():
                     inst.features.add(feature)

@@ -43,7 +43,9 @@
   {% include "header.html" %}
   
   <div role="main">
-    {% block content %}{% endblock %}
+    <div class="container-fluid">
+      {% block content %}{% endblock %}
+    </div>
   </div>
 
   {% include "footer.html" %}

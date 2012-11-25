@@ -26,14 +26,13 @@ class Label(models.Model):
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     label = models.ForeignKey(Label, default=0, related_name='instances')
-    name = models.CharField(max_length=100, 
-        default='unnamed')
     def __unicode__(self):
         return self.name
     def sorted_values(self):
         return self.values.order_by('feature')
 
 class Feature(models.Model):
+    #TODO: support for meta values
     datasets = models.ManyToManyField(Dataset,
         related_name='features')
     instances = models.ManyToManyField(
@@ -44,7 +43,7 @@ class Feature(models.Model):
     is_label_name = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
-
+        
 class Value(models.Model):
     feature = models.ForeignKey(Feature, related_name='values')
     instance = models.ForeignKey(Instance, related_name='values')

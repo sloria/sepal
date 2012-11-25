@@ -28,9 +28,9 @@ class DatasetAdmin(admin.ModelAdmin):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'dataset', 'label']}),
+        (None, {'fields': ['dataset', 'label']}),
     ]
-    list_display = ('name','dataset', 'label', 'pk')
+    list_display = ('dataset', 'label', 'pk')
     inlines = [FeatureInstanceInline, ValueInline]
     search_fields = ['name']
 
