@@ -1,6 +1,6 @@
 <div class="block">
   <div class="block-heading">Data</div>
-<table class="table">
+<table id="dataset-table" class="table table-striped">
   {# Header #}
   <thead>
     <tr>
@@ -16,6 +16,7 @@
   </thead>
   
   {# Data #}
+  {# TODO: add ability to select instances #}
   <tbody>
     {% for instance in dataset.sorted_instances %}
     <tr>
@@ -24,6 +25,7 @@
         <td>{{ value }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>
+      <td><a href="#"><i class="icon-bar-chart"></i></a>
     </tr>
     {% endfor %}
   </tbody>

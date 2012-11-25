@@ -32,7 +32,6 @@ class InstanceAdmin(admin.ModelAdmin):
     ]
     list_display = ('dataset', 'label', 'pk')
     inlines = [FeatureInstanceInline, ValueInline]
-    search_fields = ['name']
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [

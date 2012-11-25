@@ -2,7 +2,7 @@
 {% load dataset_tags %}
 {% load url from future %}
 {% block content %}
-<h1>{{ dataset.name }}</h1>
+<h1 class="page-title center">{{ dataset.name }}</h1>
 <div class="btn-toolbar">
     <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
         <i class="icon-pencil"></i>
@@ -13,11 +13,22 @@
         Delete
     </a>
 </div>
-<div class="block">
-    <div class="block-heading">Description</div>
-    <div class="block-content">
-    <p>{{ dataset.description }}</p>
-    </div>
+<div class="block toc">
+    <div class="block-heading">Information</div>
+        <table>
+            <tbody>
+            <tr>
+                <th>Name</th>
+                <td>  {{ dataset.name }}</td>
+            </tr>
+            {% if dataset.description  %}
+                <tr>
+                    <th>Description</th>
+                    <td>  {{ dataset.description }}</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
 </div>
 {% show_dataset dataset %}
 {% endblock content %}
