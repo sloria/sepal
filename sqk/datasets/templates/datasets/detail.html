@@ -4,10 +4,14 @@
 {% block content %}
 <h1>{{ dataset.name }}</h1>
 <div class="btn-toolbar">
-<a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
-      <i class="icon-pencil"></i>
-      Edit
-</a>
+    <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
+        <i class="icon-pencil"></i>
+        Edit
+    </a>
+    <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
+        <i class="icon-remove"></i>
+        Delete
+    </a>
 </div>
 <div class="block">
     <div class="block-heading">Description</div>

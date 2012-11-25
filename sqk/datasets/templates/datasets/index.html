@@ -30,7 +30,7 @@
               <td>{{ dataset.created_at }}</td>
               <td>
                 <a href="{% url 'datasets:edit' dataset.pk %}"><i class="icon-pencil"></i></a>
-                <a href="{% url 'datasets:delete' dataset.pk %}" role="button" data-toggle="modal"><i class="icon-remove"></i></a>
+                <a href="{% url 'datasets:delete' dataset.pk %}" role="button"><i class="icon-remove"></i></a>
           </td>
           </tr>
       {% endfor %}
