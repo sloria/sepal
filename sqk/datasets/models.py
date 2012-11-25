@@ -17,6 +17,9 @@ class Dataset(models.Model):
         return self.features.order_by('pk')
     def sorted_instances(self):
         return self.instances.order_by('pk')
+    def values_as_list(self):
+        return [self.sorted_instances()[i].values_as_list() for i in range(
+            len(self.sorted_instances()))]
 
 class Label(models.Model):
     label = models.CharField(max_length=100, default='unlabeled')
@@ -30,6 +33,10 @@ class Instance(models.Model):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def sorted_values(self):
         return self.values.order_by('feature')
+    def values_as_list(self):
+        return [value.value for value in self.sorted_values()]
+    def sorted_features(self):
+        return self.features.order_by('pk')
 
 class Feature(models.Model):
     #TODO: support for meta values

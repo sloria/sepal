@@ -1,42 +1,44 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% block content %}
-<h1 class="page-title center">Datasets</h1>
-<div class="btn-toolbar">
+<div class="container">
+  <h1 class="page-title">Datasets</h1>
+  <div class="btn-toolbar">
     <a href="{% url 'datasets:create' %}" data-toggle="modal" class="btn btn-primary">
       <i class="icon-plus"></i>
       Create Dataset
     </a>
-  <div class="btn-group">
+    <div class="btn-group">
+    </div>
   </div>
-</div>
-<div class="well">
-{% if all_datasets %}
-  <table class="table">
+  <div class="well">
+    {% if all_datasets %}
+    <table class="table">
       <thead>
-          <tr>
-              <th>Dataset</th>
-              <th>Description</th>
-              <th>Date Created</th>
-          </tr>
+        <tr>
+          <th>Dataset</th>
+          <th>Description</th>
+          <th>Date Created</th>
+        </tr>
       </thead>
       {% for dataset in all_datasets %}
-          <tr>
-              <td><a href="{{ dataset.pk }}">
-                <i class="icon-table"></i>
-                {{ dataset.name }}</a>
-              </td>
-              <td>{{ dataset.description }}</td>
-              <td>{{ dataset.created_at }}</td>
-              <td>
-                <a href="{% url 'datasets:edit' dataset.pk %}"><i class="icon-pencil"></i></a>
-                <a href="{% url 'datasets:delete' dataset.pk %}" role="button"><i class="icon-remove"></i></a>
-          </td>
-          </tr>
+      <tr>
+        <td><a href="{{ dataset.pk }}">
+          <i class="icon-table"></i>
+          {{ dataset.name }}</a>
+        </td>
+        <td>{{ dataset.description }}</td>
+        <td>{{ dataset.created_at }}</td>
+        <td>
+          <a href="{% url 'datasets:edit' dataset.pk %}"><i class="icon-pencil"></i></a>
+          <a href="{% url 'datasets:delete' dataset.pk %}" role="button"><i class="icon-remove"></i></a>
+        </td>
+      </tr>
       {% endfor %}
-  </table>
-{% else %}
-  <h3 class="center"><em>No datasets available.</em></h3>
-{% endif %}
-</div>{# end div.well #}
+    </table>
+    {% else %}
+    <h3 class="center"><em>No datasets available.</em></h3>
+    {% endif %}
+  </div>{# end div.well #}
+</div>
 {% endblock content %}

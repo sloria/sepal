@@ -6,7 +6,6 @@ Django>=1.4
 
 # Security
 bleach
-#cef
 
 # Celery: Message queue
 celery-with-redis
@@ -30,6 +29,13 @@ django-crispy-forms
 
 # Migrations
 South
+
+# Numerical processing
+numpy
+matplotlib
+
+# Images
+PIL
 
 # Various tidbits
 commonware

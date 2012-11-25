@@ -2,33 +2,35 @@
 {% load dataset_tags %}
 {% load url from future %}
 {% block content %}
-<h1 class="page-title center">{{ dataset.name }}</h1>
-<div class="btn-toolbar">
-    <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
-        <i class="icon-pencil"></i>
-        Edit
-    </a>
-    <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
-        <i class="icon-remove"></i>
-        Delete
-    </a>
-</div>
-<div class="block toc">
-    <div class="block-heading">Information</div>
+<div class="container">
+    <h1 class="page-title center">{{ dataset.name }}</h1>
+    <div class="btn-toolbar">
+        <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
+            <i class="icon-pencil"></i>
+            Edit
+        </a>
+        <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
+            <i class="icon-remove"></i>
+            Delete
+        </a>
+    </div>
+    <div class="block toc">
+        <div class="block-heading">Information</div>
         <table>
             <tbody>
-            <tr>
-                <th>Name</th>
-                <td>  {{ dataset.name }}</td>
-            </tr>
-            {% if dataset.description  %}
+                <tr>
+                    <th>Name</th>
+                    <td>  {{ dataset.name }}</td>
+                </tr>
+                {% if dataset.description  %}
                 <tr>
                     <th>Description</th>
                     <td>  {{ dataset.description }}</td>
                 </tr>
-            {% endif %}
+                {% endif %}
             </tbody>
         </table>
-</div>
+    </div>
 {% show_dataset dataset %}
+</div>
 {% endblock content %}

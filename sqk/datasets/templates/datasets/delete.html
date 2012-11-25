@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% load url from future %}
 {% block content %}
+<div class="container">
 <h1 class="center">Delete Dataset</h1>
 <div class="block">
     <div class="block-heading">Are you sure that you would like to delete this dataset?</div>
@@ -12,5 +13,6 @@
         </form>
         <a href="{% url 'datasets:detail' dataset.pk %}" class="btn">No</a>
     </div>
+</div>
 </div>
 {% endblock content %}

@@ -13,8 +13,9 @@ html {
   overflow-y: scroll;
 }
 
-body {
-  padding-top: 60px;
+#main {
+padding-bottom: 70px;
+padding-top: 20px;
 }
 
 section {
@@ -31,6 +32,10 @@ textarea {
 
 .center h1 {
     margin-bottom: 10px;
+}
+
+.page-title {
+  text-align: center;
 }
 
 /* footer */
@@ -61,6 +66,11 @@ footer ul li {
 }
 
 /*Navbar*/
+
+.navbar {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
 .navbar .brand {
   text-shadow: none;
 }
@@ -104,4 +114,31 @@ footer ul li {
 .navbar .nav li.dropdown.open > .dropdown-toggle {
   background-color: #444;
   color: #fff;
+}
+
+/* Header */
+.header { 
+  background: #307a95; 
+  text-align: center;
+  color: #fffffc; 
+  margin-top:0; 
+  padding:50px; 
+  border-bottom: 1px solid #28657; 
+}
+
+.header h1 {
+font-size: 54px;
+line-height: 81px;
+}
+
+.header .row {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.header p {
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 300;
+  color: #F8F8F8;
 }
