@@ -1,32 +1,42 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% block content %}
-<h1>Datasets</h1>
-<center>
-  <a href="{% url 'datasets:create' %}" class="btn btn-medium">Create Dataset
-  </a>
-</center>
+<h1 class="page-title center">Datasets</h1>
+<div class="btn-toolbar">
+    <a href="{% url 'datasets:create' %}" data-toggle="modal" class="btn btn-primary">
+      <i class="icon-plus"></i>
+      Create Dataset
+    </a>
+  <div class="btn-group">
+  </div>
+</div>
+<div class="well">
 {% if all_datasets %}
   <table class="table">
       <thead>
           <tr>
               <th>Dataset</th>
               <th>Description</th>
-              <th>Actions</th><th></th>
               <th>Date Created</th>
           </tr>
       </thead>
       {% for dataset in all_datasets %}
           <tr>
-              <td><a href="{{ dataset.pk }}">{{ dataset.name }}</a></td>
+              <td><a href="{{ dataset.pk }}">
+                <i class="icon-table"></i>
+                {{ dataset.name }}</a>
+              </td>
               <td>{{ dataset.description }}</td>
-              <td><a href="{% url 'datasets:edit' dataset.pk %}">Edit</a></td>
-              <td><a href="{% url 'datasets:delete' dataset.pk %}">Delete</a></td>
               <td>{{ dataset.created_at }}</td>
+              <td>
+                <a href="{% url 'datasets:edit' dataset.pk %}"><i class="icon-pencil"></i></a>
+                <a href="{% url 'datasets:delete' dataset.pk %}" role="button" data-toggle="modal"><i class="icon-remove"></i></a>
+          </td>
           </tr>
       {% endfor %}
   </table>
 {% else %}
   <h3 class="center"><em>No datasets available.</em></h3>
 {% endif %}
+</div>{# end div.well #}
 {% endblock content %}

@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1 class="center">Create Dataset From File</h1>
+{# <h1 class="page-title center">Create Dataset From File</h1> #}
+<div class="block">
+<div class="block-heading">Create Dataset From File</div>
+{# TODO: form styling #}
 {% crispy form %}
+</div>
 {% endblock content %}

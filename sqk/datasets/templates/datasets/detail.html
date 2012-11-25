@@ -2,8 +2,18 @@
 {% load dataset_tags %}
 {% load url from future %}
 {% block content %}
-<h1 class="center">{{ dataset.name }}</h1>
-<a href="{% url 'datasets:edit' dataset.pk %}">Edit</a>
-<p><em>{{ dataset.description }}</em></p>
+<h1>{{ dataset.name }}</h1>
+<div class="btn-toolbar">
+<a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
+      <i class="icon-pencil"></i>
+      Edit
+</a>
+</div>
+<div class="block">
+    <div class="block-heading">Description</div>
+    <div class="block-content">
+    <p>{{ dataset.description }}</p>
+    </div>
+</div>
 {% show_dataset dataset %}
 {% endblock content %}
