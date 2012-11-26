@@ -36,7 +36,7 @@ class Instance(models.Model):
     def sorted_features(self):
         return self.features.order_by('pk')
     def values_as_list(self):
-        return [v.values for v in self.sorted_values()]
+        return [v.value for v in self.sorted_values()]
 
 class Feature(models.Model):
     #TODO: support for meta values

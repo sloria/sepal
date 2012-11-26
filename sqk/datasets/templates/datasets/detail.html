@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load dataset_tags %}
 {% load url from future %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
     <h1 class="page-title center">{{ dataset.name }}</h1>
@@ -38,5 +39,6 @@
         </table>
     </div>
 {% show_dataset dataset %}
+{% crispy form %}
 </div>
 {% endblock content %}
