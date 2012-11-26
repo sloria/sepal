@@ -8,47 +8,43 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Feature.is_label_name'
-        db.add_column('datasets_feature', 'is_label_name',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
+        # Deleting field 'Dataset.feature_row'
+        db.delete_column('datasets_dataset', 'feature_row')
 
 
     def backwards(self, orm):
-        # Deleting field 'Feature.is_label_name'
-        db.delete_column('datasets_feature', 'is_label_name')
+        # Adding field 'Dataset.feature_row'
+        db.add_column('datasets_dataset', 'feature_row',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
 
 
     models = {
         'datasets.dataset': {
             'Meta': {'object_name': 'Dataset'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 24, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 26, 0, 0)'}),
             'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
-            'feature_row': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label_col': ('django.db.models.fields.IntegerField', [], {'default': '-1'}),
             'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
-            'source': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
+            'species': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'related_name': "'species'", 'to': "orm['datasets.Species']"})
         },
         'datasets.feature': {
             'Meta': {'object_name': 'Feature'},
             'datasets': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'features'", 'symmetrical': 'False', 'to': "orm['datasets.Dataset']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instances': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'features'", 'null': 'True', 'to': "orm['datasets.Instance']"}),
-            'is_label_name': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'datasets.instance': {
             'Meta': {'object_name': 'Instance'},
             'dataset': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'to': "orm['datasets.Dataset']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'related_name': "'instances'", 'to': "orm['datasets.Label']"}),
-            'name': ('django.db.models.fields.CharField', [], {'default': "'unnamed'", 'max_length': '100'})
+            'species': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'to': "orm['datasets.Species']"})
         },
-        'datasets.label': {
-            'Meta': {'object_name': 'Label'},
+        'datasets.species': {
+            'Meta': {'object_name': 'Species'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.CharField', [], {'default': "'unlabeled'", 'max_length': '100'})
+            'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'})
         },
         'datasets.value': {
             'Meta': {'object_name': 'Value'},

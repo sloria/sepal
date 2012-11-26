@@ -1,10 +1,12 @@
+import os
 from django.views.generic import ListView, DetailView, FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.files import File
+from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 from sqk.datasets.forms import DatasetForm, DatasetEditForm
 from sqk.datasets.models import Dataset, Instance
-from sqk.datasets.tasks import read_datasource
+from sqk.datasets.tasks import read_datasource, handle_uploaded_file
 
 class DatasetList(ListView):
     model = Dataset
@@ -24,7 +26,13 @@ class DatasetCreate(FormView):
 
     def form_valid(self, form):
         d = form.save()
-        read_datasource.delay(d, d.source.path)
+        if form.cleaned_data['source'] != None:
+            f = form.cleaned_data['source']
+            # Save file
+            handle_uploaded_file(f)
+            # Parse data and save to database
+            read_datasource.delay(d, 
+                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         return super(DatasetCreate, self).form_valid(form)
 
 class DatasetEdit(UpdateView):

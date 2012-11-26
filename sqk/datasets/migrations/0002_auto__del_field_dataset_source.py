@@ -8,26 +8,24 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Deleting field 'Dataset.source'
+        db.delete_column('datasets_dataset', 'source')
 
-        # Changing field 'Dataset.label_name'
-        db.alter_column('datasets_dataset', 'label_name_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['datasets.LabelName'], null=True))
 
     def backwards(self, orm):
 
-        # Changing field 'Dataset.label_name'
-        db.alter_column('datasets_dataset', 'label_name_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['datasets.LabelName']))
+        # User chose to not deal with backwards NULL issues for 'Dataset.source'
+        raise RuntimeError("Cannot reverse this migration. 'Dataset.source' and its values cannot be restored.")
 
     models = {
         'datasets.dataset': {
             'Meta': {'object_name': 'Dataset'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 24, 0, 0)'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 26, 0, 0)'}),
             'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
             'feature_row': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label_col': ('django.db.models.fields.IntegerField', [], {'default': '-1'}),
-            'label_name': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': "orm['datasets.LabelName']", 'null': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
-            'source': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
+            'species': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'related_name': "'species'", 'to': "orm['datasets.Species']"})
         },
         'datasets.feature': {
             'Meta': {'object_name': 'Feature'},
@@ -40,19 +38,12 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Instance'},
             'dataset': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'to': "orm['datasets.Dataset']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'related_name': "'instances'", 'to': "orm['datasets.LabelValue']"}),
-            'name': ('django.db.models.fields.CharField', [], {'default': "'unnamed'", 'max_length': '100'})
+            'species': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'to': "orm['datasets.Species']"})
         },
-        'datasets.labelname': {
-            'Meta': {'object_name': 'LabelName'},
+        'datasets.species': {
+            'Meta': {'object_name': 'Species'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'})
-        },
-        'datasets.labelvalue': {
-            'Meta': {'object_name': 'LabelValue'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label_name': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'values'", 'to': "orm['datasets.LabelName']"}),
-            'value': ('django.db.models.fields.CharField', [], {'default': "'unlabeled'", 'max_length': '100'})
         },
         'datasets.value': {
             'Meta': {'object_name': 'Value'},

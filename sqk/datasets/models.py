@@ -2,12 +2,15 @@ from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
+class Species(models.Model):
+    name = models.CharField(max_length=100, default='')
+    def __unicode__(self):
+        return self.name
+
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, default='')
-    source = models.FileField(upload_to='data_sources')
-    label_col = models.IntegerField(default=-1)
-    feature_row = models.IntegerField(default=0)
+    species = models.ForeignKey(Species, default=0, related_name='species')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
@@ -21,14 +24,9 @@ class Dataset(models.Model):
         return [self.sorted_instances()[i].values_as_list() for i in range(
             len(self.sorted_instances()))]
 
-class Label(models.Model):
-    label = models.CharField(max_length=100, default='unlabeled')
-    def __unicode__(self):
-        return self.label
-
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
-    label = models.ForeignKey(Label, default=0, related_name='instances')
+    species = models.ForeignKey(Species, related_name='instances')
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def sorted_values(self):
@@ -37,6 +35,8 @@ class Instance(models.Model):
         return [value.value for value in self.sorted_values()]
     def sorted_features(self):
         return self.features.order_by('pk')
+    def values_as_list(self):
+        return [v.values for v in self.sorted_values()]
 
 class Feature(models.Model):
     #TODO: support for meta values
@@ -47,7 +47,6 @@ class Feature(models.Model):
         null=True, 
         related_name='features')
     name = models.CharField(max_length=100)
-    is_label_name = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 

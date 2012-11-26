@@ -1,4 +1,4 @@
-from sqk.datasets.models import Dataset, Instance, Feature, Value, Label
+from sqk.datasets.models import Dataset, Instance, Feature, Value, Species
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
@@ -17,38 +17,41 @@ class FeatureDatasetInline(admin.TabularInline):
     model = Feature.datasets.through
     extra = 1
 
+class DatasetInline(admin.TabularInline):
+    model = Dataset
+
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description', 'source', 'feature_row', 'label_col']}),
+        (None, {'fields': ['name', 'description', 'species',]}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
-    list_display = ('name', 'created_at', 'description', 'source', 'pk')
+    list_display = ('name', 'created_at', 'description', 'pk')
     inlines = [InstanceInline, FeatureDatasetInline]
     search_fields = ['name']
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset', 'label']}),
+        (None, {'fields': ['dataset',]}),
     ]
-    list_display = ('dataset', 'label', 'pk')
+    list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, ValueInline]
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'is_label_name']})
+        (None, {'fields': ['name']})
     ]
-    list_display = ('name', 'is_label_name', 'pk')
+    list_display = ('name','pk')
     inlines = [FeatureInstanceInline, FeatureDatasetInline]
 
-
-class LabelAdmin(admin.ModelAdmin):
+class SpeciesAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['label',]})
+        (None, {'fields': ['name']})
     ]
-    list_display = ('label', 'pk')
-    inlines = [InstanceInline]
+    list_display = ('name','pk')
+    inlines = [DatasetInline]
+
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
-admin.site.register(Label, LabelAdmin)
+admin.site.register(Species, SpeciesAdmin)

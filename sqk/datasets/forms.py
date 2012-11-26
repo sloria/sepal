@@ -1,21 +1,19 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from sqk.datasets.models import Dataset, Label
+from sqk.datasets.models import Dataset, Species
+
 
 class DatasetForm(forms.ModelForm):
-    source = forms.FileField(required=True, label='Data file',
+    source = forms.FileField(required=False, label='Data file',
         help_text='Must be a .csv file.')
-    feature_row = forms.IntegerField(required=False, initial=1,
-        help_text='Specify the header row. Defaults to first row.')
-    label_col = forms.IntegerField(required=False,
-        help_text='Optionally specify which column contains class labels.',
-        label='Label column')
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
+    species = forms.CharField(required=False,)
+
     class Meta:
         model = Dataset
-        fields = ('source', 'name', 'description', 'feature_row', 'label_col')
+        fields = ('source', 'name', 'species', 'description')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -24,26 +22,9 @@ class DatasetForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetForm, self).__init__(*args, **kwargs)
 
-    # TODO: validate file type?
-
-    def clean_label_col(self):
-        col = self.cleaned_data['label_col']
-        if col <= 0:
-            return -1
-        else:
-            return col-1 # 0-indexed column value
-
-    def clean_feature_row(self):
-        row = self.cleaned_data['feature_row']
-        if self.cleaned_data.has_key('source'):
-            source = self.cleaned_data['source']
-            n_rows = len(source.readlines())
-            if row > n_rows:
-                raise forms.ValidationError('Cannot be greater than number of rows in dataset')
-        if row <= 0:
-            raise forms.ValidationError('Must be 1 or greater')
-        else:
-            return row-1 # 0-indexed row value
+    def clean_species(self):
+        species, created = Species.objects.get_or_create(name=self.cleaned_data['species'])
+        return species
 
 class DatasetEditForm(forms.ModelForm):
     description = forms.CharField(required=False,

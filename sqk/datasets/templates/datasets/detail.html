@@ -28,6 +28,12 @@
                     <td>  {{ dataset.description }}</td>
                 </tr>
                 {% endif %}
+                {% if dataset.species %}
+                <tr>
+                    <th>Species</th>
+                    <td> {{ dataset.species }}</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
