@@ -14,6 +14,8 @@ class Dataset(models.Model):
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
+    def get_cname(self):
+        return 'dataset'
     def get_absolute_url(self):
         return reverse('datasets:detail', kwargs={'pk': self.pk})
     def sorted_features(self):
@@ -29,6 +31,8 @@ class Instance(models.Model):
     species = models.ForeignKey(Species, related_name='instances')
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
+    def get_cname(self):
+        return 'instance'
     def sorted_values(self):
         return self.values.order_by('feature')
     def values_as_list(self):

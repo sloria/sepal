@@ -89,12 +89,18 @@ class DatasetEdit(UpdateView):
 class DatasetDelete(DeleteView):
     model = Dataset
     template_name='datasets/delete.html'
-    context_object_name = 'dataset'
+    context_object_name = 'object'
     success_url = reverse_lazy('datasets:index')
 
 class InstanceDetail(DetailView):
     model = Instance
     context_object_name = 'instance'
     template_name = 'instances/detail.html'
+
+class InstanceDelete(DeleteView):
+    model = Instance
+    template_name='instances/delete.html'
+    context_object_name = 'object'
+    success_url = reverse_lazy('datasets:index') # TODO: redirect to dataset
 
 
