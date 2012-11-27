@@ -15,6 +15,7 @@ Describe your project here.
 ## Installation ##
 
 - Install prerequisites
+- cd to sqk directory
 - $ pip install -r requirements/dev.txt
 - $ cp projectname/settings/local-dist.py projectname/settings/local.py (local.py shouldn't be added
   to your source control)
