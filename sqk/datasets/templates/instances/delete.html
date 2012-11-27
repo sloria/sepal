@@ -11,7 +11,7 @@
         {% csrf_token %}
         <input type="submit" class="btn" value="Yes" />
         </form>
-        <a href="{% url 'datasets:instance_detail' object.pk %}" class="btn">No</a>
+        <a href="{% url 'datasets:instance_detail' object.dataset.pk object.pk %}" class="btn">No</a>
     </div>
 </div>
 </div>

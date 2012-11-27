@@ -97,10 +97,26 @@ class InstanceDetail(DetailView):
     context_object_name = 'instance'
     template_name = 'instances/detail.html'
 
+    def get_query_set(self):
+        dataset = get_object_or_404(Dataset,
+            pk=self.kwargs['dataset_id'])
+        return Instance.objects.filter(dataset=dataset)
+
+    def get_context_data(self, **kwargs):
+        context = super(InstanceDetail, self).get_context_data(**kwargs)
+        # context['instance'] =  get_object_or_404(Instance,
+        #     pk=self.kwargs['pk'])
+        context['dataset'] = self.get_object().dataset
+        return context
+
+
+
 class InstanceDelete(DeleteView):
     model = Instance
     template_name='instances/delete.html'
     context_object_name = 'object'
-    success_url = reverse_lazy('datasets:index') # TODO: redirect to dataset
+
+    def get_success_url(self):
+        return reverse_lazy('datasets:detail', kwargs={'pk': self.kwargs['dataset_id']})
 
 

@@ -24,11 +24,12 @@ urlpatterns = patterns('',
 
     # TODO: /datasets/3/instances/4  <-- should capture dataset pk
     # ex: /datasets/instances/452/ 
-    url(r'^instances/(?P<pk>\d+)/$', 
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/$', 
         InstanceDetail.as_view(),
         name='instance_detail'),
 
     # ex: /datasets/instances/452/delete/
-    url(r'^instances/(?P<pk>\d+)/delete/$', InstanceDelete.as_view(),
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/delete/$', 
+        InstanceDelete.as_view(),
         name='instance_delete'),
 )

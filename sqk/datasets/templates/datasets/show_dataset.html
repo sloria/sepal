@@ -26,8 +26,8 @@
         <td>{{ value|floatformat:3 }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>
-      <td><a href="{% url 'datasets:instance_detail' instance.pk %}"><i class="icon-bar-chart"></i></a>
-      <td><a href="{% url 'datasets:instance_delete' instance.pk %}"><i class="icon-remove"></i></a>
+      <td><a href="{% url 'datasets:instance_detail' dataset.pk instance.pk %}"><i class="icon-bar-chart"></i></a>
+      <td><a href="{% url 'datasets:instance_delete' dataset.pk instance.pk %}"><i class="icon-remove"></i></a>
     </tr>
     {% endfor %}
   </tbody>
