@@ -1,10 +1,19 @@
 {% extends "base.html" %}
 {% load dataset_tags %}
 {% load url from future %}
+{% load staticfiles %}
 {% load crispy_forms_tags %}
+{% block static %}
+<script src="http://d3js.org/d3.v2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/example_figure.js"></script>
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
+{% endblock static %}
+
 {% block content %}
 <div class="container">
     <h1 class="page-title center">{{ dataset.name }}</h1>
+    
+    {# Dataset control buttons #}
     <div class="btn-toolbar">
         <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
             <i class="icon-pencil"></i>
@@ -15,7 +24,16 @@
             Delete
         </a>
     </div>
-    <div class="block toc">
+    
+    <div class="block">
+        <div class="block-heading">Visualization</div>
+    <div id="chart"></div>
+    <script>
+        d3.json("{{ STATIC_URL }}figures/example_figure.json", draw);
+    </script>
+    </div>
+
+    <div class="block">
         <div class="block-heading">Information</div>
         <table>
             <tbody>

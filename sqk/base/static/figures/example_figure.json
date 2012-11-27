@@ -1,0 +1,26 @@
+[
+    {
+        "apple_type": "a", 
+        "count": 1.0
+    }, 
+    {
+        "apple_type": "b", 
+        "count": 4.0
+    }, 
+    {
+        "apple_type": "c", 
+        "count": 7.0
+    }, 
+    {
+        "apple_type": "d", 
+        "count": 3.0
+    }, 
+    {
+        "apple_type": "e", 
+        "count": 2.0
+    }, 
+    {
+        "apple_type": "f", 
+        "count": 9.0
+    }
+]

@@ -1,0 +1,29 @@
+#chart {
+	width: 320;
+	font-family: 'Asap'; sans-serif;
+	height: 65;
+}
+
+
+.geom_bar {
+	stroke-opacity: 1;
+	fill-opacity: 0.7;
+	stroke: black;
+	stroke-width: 1px;
+	fill: blue;
+}
+
+.xaxis line {
+	stroke: #000;
+	fill: none;
+}
+
+.xaxis path {
+	stroke: #000;
+	fill: none;
+}
+
+#bar_apple_type_count {
+	fill: MediumAquamarine;
+}
+
