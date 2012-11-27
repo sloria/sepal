@@ -55,8 +55,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
             extract_features(self.object,
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ),
-                sample_rate=form.cleaned_data['sample_rate'])
+                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
 
 
         return super(DatasetAddDatasource, self).form_valid(form)

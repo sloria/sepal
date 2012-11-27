@@ -60,12 +60,20 @@ def read_datasource(dataset, source_path, feature_row=0):
 
 
 @task()
-def extract_features(dataset, audiofile, sample_rate=44100):
+def extract_features(dataset, audiofile_path):
     import yaafelib as yf
+    import wave
+    import contextlib
+ 
+    n_frames, sample_rate, duration = 0, 0, 0
+    with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:
+        n_frames = audiofile.getnframes()
+        sample_rate = audiofile.getframerate()
+        duration = n_frames / float(sample_rate)
 
-    feature_names = ['energy', 'zcr']
+    feature_names = ['energy_mean', 'zcr_mean', 'duration', 'sample_rate']
     # Add features to extract
-    featplan = yf.FeaturePlan(sample_rate=sample_rate, resample=True)
+    featplan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
     featplan.addFeature('energy: Energy')
     featplan.addFeature('zcr: ZCR')
     
@@ -75,7 +83,7 @@ def extract_features(dataset, audiofile, sample_rate=44100):
     
     # Extract features
     afp = yf.AudioFileProcessor()
-    afp.processFile(engine, audiofile)
+    afp.processFile(engine, audiofile_path)
     # 2D numpy arrays
     energy = engine.readOutput('energy')
     zcr = engine.readOutput('zcr')
@@ -99,15 +107,24 @@ def extract_features(dataset, audiofile, sample_rate=44100):
         for i in range(energy[0].size):
             energy_mean = energy[:, i].mean()
             v = Value.objects.create(value=energy_mean,
-                feature=Feature.objects.get_or_create(name='energy')[0],
+                feature=Feature.objects.get(name='energy_mean'),
                 instance=inst)
 
         # Save energy data
         for i in range(zcr[0].size):
             zcr_mean = zcr[:, i].mean()
             v = Value.objects.create(value=zcr_mean,
-                feature=Feature.objects.get_or_create(name='zcr')[0],
+                feature=Feature.objects.get(name='zcr_mean'),
                 instance=inst)
+
+    # Save sample_rate and duration data
+    Value.objects.create(value=sample_rate,
+        feature=Feature.objects.get(name='sample_rate'),
+        instance=inst)
+
+    Value.objects.create(value=duration,
+        feature=Feature.objects.get(name='duration'),
+        instance=inst)
 
 
 

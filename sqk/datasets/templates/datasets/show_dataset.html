@@ -23,7 +23,7 @@
     <tr>
       <td>{{ forloop.counter }}</td>
       {% for value in instance.sorted_values %}
-        <td>{{ value|floatformat:4 }}</td>
+        <td>{{ value|floatformat:3 }}</td>
       {% endfor %}
       <td>{{ instance.label.label }}</td>
       <td><a href="{% url 'datasets:instance_detail' instance.pk %}"><i class="icon-bar-chart"></i></a>
