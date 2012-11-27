@@ -1,6 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import *
+from crispy_forms.bootstrap import FormActions
 from sqk.datasets.models import Dataset, Species
 
 
@@ -40,15 +41,38 @@ class DatasetEditForm(forms.ModelForm):
         super(DatasetEditForm, self).__init__(*args, **kwargs)
 
 class DatasourceForm(forms.Form):
-    csv = forms.FileField(label='Add data from CSV', required=False,)
-    audio = forms.FileField(label='Extract data from audio file', required=False,)
+    csv = forms.FileField(label='CSV', required=False,)
+    audio = forms.FileField(label='Audio file (.wav)', required=False,)
+    sample_rate = forms.IntegerField(label='Sample rate (Hz)',
+        required=False,
+        initial=44100,
+        help_text='NOTE: Files will be resampled if necessary.')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_id = 'addSourceForm'
+        self.helper.form_class = 'form-inline'
         self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Upload'))
+        self.helper.layout = Layout(
+            Fieldset(
+                'Add data',
+                Div(
+                    'audio',
+                    'sample_rate',
+                    css_class='inline'
+                    ),
+                'csv',
+            ),
+            FormActions(
+                Submit('submit', 'Add')
+            )
+        )
         super(DatasourceForm, self).__init__(*args, **kwargs)
+    
+    def clean_sample_rate(self):
+        if self.cleaned_data['sample_rate'] and not self.cleaned_data['audio']:
+            raise forms.ValidationError('No audio file selected.')
+        return self.cleaned_data['sample_rate']
 
 
 

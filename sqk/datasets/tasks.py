@@ -60,12 +60,12 @@ def read_datasource(dataset, source_path, feature_row=0):
 
 
 @task()
-def extract_features(dataset, audiofile, sample_rate=11025):
+def extract_features(dataset, audiofile, sample_rate=44100):
     import yaafelib as yf
 
     feature_names = ['energy', 'zcr']
     # Add features to extract
-    featplan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
+    featplan = yf.FeaturePlan(sample_rate=sample_rate, resample=True)
     featplan.addFeature('energy: Energy')
     featplan.addFeature('zcr: ZCR')
     

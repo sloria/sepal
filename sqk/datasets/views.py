@@ -33,7 +33,8 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 
     def get_context_data(self, **kwargs):
         context = {
-            'object': self.get_object(),
+            'dataset': self.get_object(),
+            'upload_form': self.get_form(DatasourceForm),
         }
         return super(DatasetAddDatasource, self).get_context_data(**context)
 
@@ -54,7 +55,8 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
             extract_features(self.object,
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
+                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ),
+                sample_rate=form.cleaned_data['sample_rate'])
 
 
         return super(DatasetAddDatasource, self).form_valid(form)
