@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
 from sqk.datasets.models import Dataset, Instance
-from sqk.datasets.tasks import read_datasource, handle_uploaded_file
+from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
 class DatasetList(ListView):
     model = Dataset
@@ -21,7 +21,7 @@ class DatasetDisplay(DetailView):
     template_name = 'datasets/detail.html'
     def get_context_data(self, **kwargs):
         context = {
-            'form': DatasourceForm(),
+            'upload_form': DatasourceForm(),
         }
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
@@ -42,11 +42,21 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 
     def form_valid(self, form):
         self.object = self.get_object()
-        if form.cleaned_data['source'] != None:
-            f = form.cleaned_data['source']
+        if form.cleaned_data['csv'] != None:
+            f = form.cleaned_data['csv']
+            # Save file
+            # TODO: might not need to do this
             handle_uploaded_file(f)
+            # Parse data and save to database
             read_datasource(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
+        if form.cleaned_data['audio'] != None:
+            f = form.cleaned_data['audio']
+            handle_uploaded_file(f)
+            extract_features(self.object,
+                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
+
+
         return super(DatasetAddDatasource, self).form_valid(form)
 
 
@@ -67,14 +77,6 @@ class DatasetCreate(FormView):
 
     def form_valid(self, form):
         d = form.save()
-        if form.cleaned_data['source'] != None:
-            f = form.cleaned_data['source']
-            # TODO: Might not need to save uploaded file
-            # Save file
-            handle_uploaded_file(f)
-            # Parse data and save to database
-            read_datasource.delay(d, 
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         return super(DatasetCreate, self).form_valid(form)
 
 class DatasetEdit(UpdateView):

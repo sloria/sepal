@@ -57,3 +57,67 @@ def read_datasource(dataset, source_path, feature_row=0):
                     v = Value.objects.create(value=val, 
                             feature=feature,
                             instance=inst)
+
+
+@task()
+def extract_features(dataset, audiofile, sample_rate=11025):
+    import yaafelib as yf
+
+    feature_names = ['energy', 'zcr']
+    # Add features to extract
+    featplan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
+    featplan.addFeature('energy: Energy')
+    featplan.addFeature('zcr: ZCR')
+    
+    # Configure an Engine
+    engine = yf.Engine()
+    engine.load(featplan.getDataFlow())
+    
+    # Extract features
+    afp = yf.AudioFileProcessor()
+    afp.processFile(engine, audiofile)
+    # 2D numpy arrays
+    energy = engine.readOutput('energy')
+    zcr = engine.readOutput('zcr')
+
+    # Create features and add to dataset
+    for feature in feature_names:
+        f, created = Feature.objects.get_or_create(name=feature)
+        if dataset.features.filter(name=feature).count() == 0:
+            dataset.features.add(f)
+
+    # Create instance
+    inst = Instance.objects.create(
+        dataset=dataset,
+        species=dataset.species)
+    for feature in dataset.features.all():
+        inst.features.add(feature)
+    inst.save()
+
+    if energy.size > 0 and zcr.size > 0:
+        # Save energy data
+        for i in range(energy[0].size):
+            energy_mean = energy[:, i].mean()
+            v = Value.objects.create(value=energy_mean,
+                feature=Feature.objects.get_or_create(name='energy')[0],
+                instance=inst)
+
+        # Save energy data
+        for i in range(zcr[0].size):
+            zcr_mean = zcr[:, i].mean()
+            v = Value.objects.create(value=zcr_mean,
+                feature=Feature.objects.get_or_create(name='zcr')[0],
+                instance=inst)
+
+
+
+
+
+
+
+
+
+
+
+
+

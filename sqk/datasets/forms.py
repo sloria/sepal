@@ -5,15 +5,13 @@ from sqk.datasets.models import Dataset, Species
 
 
 class DatasetForm(forms.ModelForm):
-    source = forms.FileField(required=False, label='Data file',
-        help_text='Must be a .csv file.')
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
     species = forms.CharField(required=False,)
 
     class Meta:
         model = Dataset
-        fields = ('source', 'name', 'species', 'description')
+        fields = ('name', 'species', 'description')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -42,7 +40,8 @@ class DatasetEditForm(forms.ModelForm):
         super(DatasetEditForm, self).__init__(*args, **kwargs)
 
 class DatasourceForm(forms.Form):
-    source = forms.FileField(label='Add data from CSV', required=False,)
+    csv = forms.FileField(label='Add data from CSV', required=False,)
+    audio = forms.FileField(label='Extract data from audio file', required=False,)
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
