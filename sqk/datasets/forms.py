@@ -27,8 +27,7 @@ class DatasetForm(forms.ModelForm):
         return species
 
 class DatasetEditForm(forms.ModelForm):
-    # TODO: make this a dropdown with a 'new species' choice
-    species = forms.CharField(required=False,)
+    # TODO: allow creation of new species object
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
     class Meta:

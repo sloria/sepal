@@ -3,7 +3,6 @@
 
 ## About ##
 
-Describe your project here.
 
 ## Prerequisites ##
 
@@ -17,7 +16,7 @@ Describe your project here.
 - Install prerequisites
 - cd to sqk directory
 - $ pip install -r requirements/dev.txt
-- $ cp projectname/settings/local-dist.py projectname/settings/local.py (local.py shouldn't be added
+- $ cp sqk/settings/local-dist.py sqk/settings/local.py (local.py shouldn't be added
   to your source control)
 - $ ./manage.py syncdb
 - $ ./manage.py runserver
