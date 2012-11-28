@@ -1,9 +1,6 @@
 
 # Sqk web #
 
-## About ##
-
-
 ## Prerequisites ##
 
 - Python >= 2.5
@@ -15,9 +12,11 @@
 
 - Install prerequisites
 - cd to sqk directory
+- Edit compiled.txt to choose your database adapter.
 - $ pip install -r requirements/dev.txt
 - $ cp sqk/settings/local-dist.py sqk/settings/local.py (local.py shouldn't be added
   to your source control)
+- Edit local.py with your local database settings.
 - $ ./manage.py syncdb
 - $ ./manage.py runserver
 
