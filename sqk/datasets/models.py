@@ -33,8 +33,12 @@ class Instance(models.Model):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def get_cname(self):
         return 'instance'
-    def sorted_values(self):
-        return self.values.order_by('feature')
+    def sorted_values(self, exclude_dur_and_rate=True):
+        if exclude_dur_and_rate:
+            filtered_vals = self.values.exclude(
+                                feature__name='duration').exclude(
+                                feature__name='sample_rate')
+        return filtered_vals.order_by('feature')
     def values_as_list(self):
         return [value.value for value in self.sorted_values()]
     def sorted_features(self):
