@@ -7,5 +7,9 @@ register = template.Library()
 def show_dataset(dataset):
     return {'dataset': dataset}
 
+@register.inclusion_tag('instances/instance_row.html')
+def instance_row(instance):
+    return {'instance': instance}
+
 
           

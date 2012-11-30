@@ -1,0 +1,20 @@
+{% load url from future %}
+<tr data-instance-id="{{ instance.id }}">
+  <td>{{ forloop.counter }} {{ instance.id }}</td>
+      {% for value in instance.sorted_values %}
+        <td>{{ value|floatformat:3 }}</td>
+      {% endfor %}
+      <td>{{ instance.label.label }}</td>
+      <td><a href="{% url 'datasets:instance_detail' instance.dataset.pk instance.pk %}"><i class="icon-bar-chart"></i></a></td>
+      <td><a href="{% url 'datasets:instance_delete' instance.dataset.pk instance.pk %}"><i class="icon-remove"></i></a></td>
+      <td><a href="#" onclick="Datasets.refresh_instance_row({{ instance.id }}); return false;">Refresh</a>
+    </tr>
+
+
+    <script type="text/javascript">
+//If is isn't ready yet
+$.ready(function() {
+     Datasets.check_ready({{ instance.id }});
+     alert('Checking if ready')
+ });
+     </script>

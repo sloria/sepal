@@ -1,9 +1,11 @@
 import os
-from django.views.generic import View, ListView, DetailView, FormView, UpdateView, DeleteView
+from django.views.generic import View, TemplateView, ListView, DetailView, FormView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
+from django.utils import simplejson as json
+from django import http
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
 from sqk.datasets.models import Dataset, Instance
@@ -43,6 +45,9 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 
     def form_valid(self, form):
         self.object = self.get_object()
+        instance = Instance.objects.create(
+                dataset=self.object,
+                species=self.object.species)
         if form.cleaned_data['csv'] != None:
             f = form.cleaned_data['csv']
             # Save file
@@ -54,7 +59,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
-            extract_features(self.object,
+            extract_features.delay(instance,
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
 
 
@@ -92,10 +97,19 @@ class DatasetDelete(DeleteView):
     context_object_name = 'object'
     success_url = reverse_lazy('datasets:index')
 
+
 class InstanceDetail(DetailView):
     model = Instance
     context_object_name = 'instance'
     template_name = 'instances/detail.html'
+
+    def render_to_response(self, context):
+        if self.kwargs['format'] == 'json':
+            return http.HttpResponse(json.dumps({'ready': False}), # TODO
+                                     content_type='application/json',
+                                     **httpresponse_kwargs)
+        else:
+            return super(InstanceDetail, self).render_to_response(context)
 
     def get_query_set(self):
         dataset = get_object_or_404(Dataset,
@@ -108,6 +122,15 @@ class InstanceDetail(DetailView):
         #     pk=self.kwargs['pk'])
         context['dataset'] = self.get_object().dataset
         return context
+
+class InstanceRow(DetailView):
+    model = Instance
+    template_name = 'instances/instance_row.html'
+
+    def get_query_set(self):
+        dataset = get_object_or_404(Dataset,
+            pk=self.kwargs['dataset_id'])
+        return Instance.objects.filter(dataset=dataset)
 
 
 

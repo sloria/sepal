@@ -60,11 +60,12 @@ def read_datasource(dataset, source_path, feature_row=0):
 
 
 @task()
-def extract_features(dataset, audiofile_path):
+def extract_features(inst, audiofile_path):
     import yaafelib as yf
     import wave
     import contextlib
- 
+    
+    dataset = inst.dataset
     n_frames, sample_rate, duration = 0, 0, 0
     with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:
         n_frames = audiofile.getnframes()
@@ -95,9 +96,6 @@ def extract_features(dataset, audiofile_path):
             dataset.features.add(f)
 
     # Create instance
-    inst = Instance.objects.create(
-        dataset=dataset,
-        species=dataset.species)
     for feature in dataset.features.all():
         inst.features.add(feature)
     inst.save()

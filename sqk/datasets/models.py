@@ -10,7 +10,7 @@ class Species(models.Model):
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, default='')
-    species = models.ForeignKey(Species, default=0, related_name='species')
+    species = models.ForeignKey(Species, null=True, related_name='species')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
@@ -48,8 +48,14 @@ class Instance(models.Model):
     def values_as_list(self):
         return [v.value for v in self.sorted_values()]
 
+class FeatureSet(models.Model):
+    name = models.CharField(max_length=100)
+    def __unicode__(self):
+        return self.name
+
 class Feature(models.Model):
     #TODO: support for meta values
+    feature_set = models.ForeignKey(FeatureSet, null=True)
     datasets = models.ManyToManyField(Dataset,
         related_name='features')
     instances = models.ManyToManyField(
@@ -59,6 +65,7 @@ class Feature(models.Model):
     name = models.CharField(max_length=100)
     def __unicode__(self):
         return self.name
+
 
 class Value(models.Model):
     feature = models.ForeignKey(Feature, related_name='values')

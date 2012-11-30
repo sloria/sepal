@@ -1,7 +1,7 @@
 '''urlconf for sqk.datasets'''
 
 from django.conf.urls.defaults import url, patterns
-from sqk.datasets.views import DatasetList, DatasetDetail, DatasetCreate, DatasetEdit, DatasetDelete, InstanceDetail, InstanceDelete
+from sqk.datasets.views import *
 
 urlpatterns = patterns('',
     # ex: /datasets/
@@ -22,11 +22,20 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/delete/$', DatasetDelete.as_view(),
         name='delete'),
 
-    # TODO: /datasets/3/instances/4  <-- should capture dataset pk
     # ex: /datasets/instances/452/ 
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/$', 
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$', 
         InstanceDetail.as_view(),
         name='instance_detail'),
+
+    # ex: /datasets/instances/452/ready.json
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/ready.json$', 
+        InstanceDetail.as_view(),
+        name='instance_ready'),
+
+    # ex: /datasets/instances/452/row/
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row$', 
+        InstanceRow.as_view(),
+        name='instance_row'),
 
     # ex: /datasets/instances/452/delete/
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/delete/$', 
