@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load dataset_tags %}
 <div class="block">
   <div class="block-heading">Data</div>
 <table id="dataset-table" class="table table-striped">
@@ -20,15 +21,7 @@
   {# TODO: add ability to select instances #}
   <tbody>
     {% for instance in dataset.sorted_instances %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      {% for value in instance.sorted_values %}
-        <td>{{ value|floatformat:3 }}</td>
-      {% endfor %}
-      <td>{{ instance.label.label }}</td>
-      <td><a href="{% url 'datasets:instance_detail' dataset.pk instance.pk %}"><i class="icon-bar-chart"></i></a>
-      <td><a href="{% url 'datasets:instance_delete' dataset.pk instance.pk %}"><i class="icon-remove"></i></a>
-    </tr>
+      {% instance_row instance %}
     {% endfor %}
   </tbody>
 </table>
