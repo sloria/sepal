@@ -72,33 +72,45 @@
       </tbody>
     </table>
   </div>
+
   {% show_dataset dataset %}
+
   {% crispy upload_form %}
   <script>
-   
     // Global constants
     var TEST_CSV_URL = "{{ STATIC_URL }}figures/ex.csv";
     var PADDING = 40;
     var X_DIM, Y_DIM;
+    var LABEL_PROP_NAME = "label";
+    var CHART_WIDTH = 500;
+    var CHART_HEIGHT = 200;
 
+    // Calculates the min & max values for each feature across all instances
+    // @param - the instances to be visualized
+    // @return - Object of the form: 
+    //    {
+    //      "domainMin": 0
+    //      "domainMax": instances.length
+    //        "features" : [
+    //          "name": < feature name >,
+    //          "rangeMin" : < min value for feature >,
+    //          "rangeMax" : < max value for feature >
+    //        ]
+    //    }
     function getMinAndMaxRangeForFeatures(instances) {
-    
       var returnObj = {"domainMin": 0, "domainMax": instances.length, features: []};
-
       // First get property names
       var propNames = [];
       for (var key in instances[0]) {
-        if (instances[0].hasOwnProperty(key)) {
+        if (key !== LABEL_PROP_NAME && instances[0].hasOwnProperty(key)) {
           propNames.push(key);
         }
       }
-
       // Now go through each instance and find the max and min values for each feature
       for (var j = 0; j < propNames.length; j++) {
         var prop = propNames[j];
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
-
         for (var i = 0; i < instances.length; i++) {
           var inst = instances[i];
           var floatVal = parseFloat(inst[prop]);
@@ -108,95 +120,118 @@
         // the min and max values for this feature have been found
         returnObj.features.push({"name": prop, "rangeMin": min, "rangeMax" : max});
       }
-      
       return returnObj;
     }
 
-    $(document).ready(function() {
+    // Draws a new scatter plot based on supplied list of data
+    // @param data - Object of the form:
+    //   {
+    //     "instances" : [
+    //       {       
+    //         "feature_0" : "val_0",
+    //         ...
+    //         "feature_N" : "val_N",
+    //         "label" : "label_val"
+    //       }
+    //     ], 
+    //     "labels" : [
+    //       "label_0",
+    //       ...
+    //       "label_N"
+    //     ]  
+    //   }
+    // @return - Nothing.
+    function scatterPlot(svg, data) {
+      var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);      
+      console.log(domainRangeObj);
+      // TODO: Set up way for user to select X and Y dimensions
+      X_DIM = domainRangeObj.features[0];
+      Y_DIM = domainRangeObj.features[1];
+      // set up scales
+      var xScale = d3.scale.linear()
+                      .domain([X_DIM.rangeMin, X_DIM.rangeMax])
+                      .range([PADDING, CHART_WIDTH - PADDING]);
+      var yScale = d3.scale.linear()
+                      .domain([Y_DIM.rangeMin, Y_DIM.rangeMax])
+                      .range([CHART_HEIGHT - PADDING, PADDING]);
+      var categoryScale = d3.scale.ordinal()
+                      .domain(data.labels)
+                      .range(d3.scale.category10().range());
+      // set up axes
+      var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom")
+                    .ticks(4);
+      var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    .ticks(4);
+      svg.append("g")
+          .attr("class", "axis")
+          .attr("id", "x-axis")
+          .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
+          .call(xAxis);
+      svg.append("g")
+          .attr("class", "axis")
+          .attr("id", "y-axis")
+          .attr("transform", "translate(" + PADDING + ", 0)")
+          .call(yAxis);
 
-      // Constants
-      var CHART_WIDTH = 500,
-          CHART_HEIGHT = 200;
-          
-      var svg = d3.select("div#chart")
+      // Add plot points
+      var circleGroup = 
+          svg.append("g")
+            .attr("id", "plot-points");
+
+      circleGroup.selectAll("circle")
+        .data(data.instances)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d){
+          // This says use this instance's attribute value which
+          // which has been chosen for the x-axis
+          return xScale(d[X_DIM.name]);            
+        })
+        .attr("cy", function(d){
+          return yScale(d[Y_DIM.name]);
+        })
+        .attr("r", 5)
+        .style("fill", function(d){
+          console.log(d.label);
+          return categoryScale(d.label);
+        });
+    }
+
+    $(document).ready(function() {
+      // HUGE Hack to get data from server response into JS
+      // TODO: remove this once JSON endpoint is set up
+      var data = {"instances": [], "labels": ["bonded", "loner", "pimp", "skank"]};
+      {% for instance in dataset.sorted_instances %}
+        var instData = {};
+        {% for value in instance.sorted_values %}
+          var index = {{forloop.counter}};
+
+          {% for feature in instance.sorted_features %}
+            var index2 = {{ forloop.counter }};
+            if (index === index2) {
+              instData["{{feature}}"] = {{value}};
+            }
+          {% endfor %}
+        {% endfor %}
+        var randomNum = Math.floor(Math.random() * 4);
+        instData["label"] = data["labels"][randomNum];
+        data.instances.push(instData);
+      {% endfor %}
+      
+      // If there's data currently uploaded, begin to visualize
+      if (data) {
+        var svg = d3.select("div#chart")
                   .append("svg")
                   .attr("width", CHART_WIDTH)
                   .attr("height", CHART_HEIGHT);
-
-      d3.csv(TEST_CSV_URL, function(parsedCsv){
-
-        var domainRangeObj = getMinAndMaxRangeForFeatures(parsedCsv);
-        // TODO: Set up way for user to select X and Y dimensions
-        X_DIM = domainRangeObj.features[0];
-        Y_DIM = domainRangeObj.features[1];
-
-        // set up scales
-        var xScale = d3.scale.linear()
-                        .domain([X_DIM.rangeMin, X_DIM.rangeMax])
-                        .range([PADDING, CHART_WIDTH - PADDING]);
-
-        var yScale = d3.scale.linear()
-                        .domain([Y_DIM.rangeMin, Y_DIM.rangeMax])
-                        .range([CHART_HEIGHT - PADDING, PADDING]);
-
-        // set up axes
-        var xAxis = d3.svg.axis()
-                      .scale(xScale)
-                      .orient("bottom")
-                      .ticks(4);
-
-        var yAxis = d3.svg.axis()
-                      .scale(yScale)
-                      .orient("left")
-                      .ticks(4);
-
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
-            .call(xAxis);
-
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + PADDING + ", 0)")
-            .call(yAxis);
-
-        svg.selectAll("text")
-          .data(parsedCsv)
-          .enter()
-          .append("text")
-          .text(function(d) {
-            console.log(d);
-            return d[X_DIM.name] + "," + d[Y_DIM.name];
-          })
-          .attr("x", function(d) {
-            return xScale(d[X_DIM.name]);
-          })
-          .attr("y", function(d) {
-            return yScale(d[Y_DIM.name]);
-          })
-          .attr("fill", "red");
-
-        // Add plot points
-        svg.selectAll("circle")
-          .data(parsedCsv)
-          .enter()
-          .append("circle")
-          .attr("cx", function(d){
-            console.log(d[X_DIM.name]);
-            console.log(xScale(d[X_DIM.name]));
-            return xScale(d[X_DIM.name]);            
-          })
-          .attr("cy", function(d){
-            return yScale(d[Y_DIM.name]);
-          })
-          .attr("r", 5);
-
-        // Add plot labels
-        
-
-      });
-
-      
+        scatterPlot(svg, data);
+      } else {
+        console.log("No data!");
+      }
 
     });
   </script>
