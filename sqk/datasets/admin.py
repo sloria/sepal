@@ -1,12 +1,12 @@
-from sqk.datasets.models import Dataset, Instance, Feature, Value, Species
+from sqk.datasets.models import *
 from django.contrib import admin
 
 class InstanceInline(admin.TabularInline):
     model = Instance
     extra = 1
 
-class ValueInline(admin.TabularInline):
-    model = Value
+class FeatureValueInline(admin.TabularInline):
+    model = FeatureValue
     extra = 1
 
 class FeatureInstanceInline(admin.TabularInline):
@@ -34,11 +34,11 @@ class InstanceAdmin(admin.ModelAdmin):
         (None, {'fields': ['dataset',]}),
     ]
     list_display = ('dataset', 'pk')
-    inlines = [FeatureInstanceInline, ValueInline]
+    inlines = [FeatureInstanceInline, FeatureValueInline]
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'is_label_name']})
+        (None, {'fields': ['name',]})
     ]
     list_display = ('name','pk')
     inlines = [FeatureInstanceInline, FeatureDatasetInline]

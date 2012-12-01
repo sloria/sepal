@@ -5,7 +5,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
-from sqk.datasets.models import Dataset, Instance
+from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
 ## Dataset views

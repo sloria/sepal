@@ -3,7 +3,7 @@ import csv
 import os
 from django.conf import settings
 
-from models import Feature, Instance, Species, Value
+from models import *
 
 @task()
 def handle_uploaded_file(f):

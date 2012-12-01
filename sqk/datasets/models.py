@@ -2,6 +2,17 @@ from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
+class LabelName(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    def __unicode__(self):
+        return unicode(self.name)
+
+class LabelValue(models.Model):
+    label_name = models.ForeignKey(LabelName, null=True, related_name='label_values')
+    value = models.CharField(max_length=100, null=True)
+    def __unicode__(self):
+        return unicode(self.value)
+
 class Species(models.Model):
     name = models.CharField(max_length=100, default='')
     def __unicode__(self):
