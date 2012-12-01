@@ -1,10 +1,11 @@
+import os
 from django.views.generic import View, ListView, DetailView, CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 

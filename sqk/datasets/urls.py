@@ -1,7 +1,7 @@
 '''urlconf for sqk.datasets'''
 
 from django.conf.urls.defaults import url, patterns
-from sqk.datasets.views import DatasetList, DatasetDetail, DatasetCreate, DatasetEdit, DatasetDelete, InstanceDetail, InstanceDelete
+from sqk.datasets.views import DatasetList, DatasetDetail, DatasetCreate, DatasetEdit, DatasetDelete, InstanceDetail, InstanceDelete, LabelNameCreate
 
 urlpatterns = patterns('',
     # ex: /datasets/

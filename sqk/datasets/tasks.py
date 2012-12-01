@@ -54,7 +54,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                         continue
                     feature = None
                     feature = dataset.features.get(name=features[v])
-                    v = Value.objects.create(value=val, 
+                    v = FeatureValue.objects.create(value=val, 
                             feature=feature,
                             instance=inst)
 
@@ -106,23 +106,23 @@ def extract_features(dataset, audiofile_path):
         # Save energy data
         for i in range(energy[0].size):
             energy_mean = energy[:, i].mean()
-            v = Value.objects.create(value=energy_mean,
+            v = FeatureValue.objects.create(value=energy_mean,
                 feature=Feature.objects.get(name='energy_mean'),
                 instance=inst)
 
         # Save energy data
         for i in range(zcr[0].size):
             zcr_mean = zcr[:, i].mean()
-            v = Value.objects.create(value=zcr_mean,
+            v = FeatureValue.objects.create(value=zcr_mean,
                 feature=Feature.objects.get(name='zcr_mean'),
                 instance=inst)
 
     # Save sample_rate and duration data
-    Value.objects.create(value=sample_rate,
+    FeatureValue.objects.create(value=sample_rate,
         feature=Feature.objects.get(name='sample_rate'),
         instance=inst)
 
-    Value.objects.create(value=duration,
+    FeatureValue.objects.create(value=duration,
         feature=Feature.objects.get(name='duration'),
         instance=inst)
 
