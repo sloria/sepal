@@ -1,4 +1,3 @@
-import os
 from django.views.generic import View, ListView, DetailView, CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -125,11 +124,36 @@ class InstanceDelete(DeleteView):
 
 
 ## Feature views
+# Class to manage feature lists for datasets
+# Model     : Feature (datasets/models.py) 
+class LabelNameCreate(FormView, SingleObjectMixin):
 
-class LabelCreate(CreateView):
-    model = Feature
-    context_object_name = 'label'
+    model = LabelName
+    form_class = LabelNameForm
+    context_object_name = 'label_name'
     template_name = 'features/new_label.html'
+
+
+    def get_context_data(self, **kwargs):
+        # Get context objects that get passed to template
+        context = super(InstanceDetail, self).get_context_data(**kwargs)
+        context['dataset'] = self.kwargs['dataset_id']
+        return context
+
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'data_'
+            'label_name': self.get_object(),
+            'upload_form': self.get_form(LabelNameForm),
+        }
+        return super(LabelNameCreate, self).get_context_data(**context)
+
+    def form_valid(self, form):
+        dataset = self.kwargs['dataset_id']
+
+
+
 
 
 

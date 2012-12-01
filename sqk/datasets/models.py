@@ -10,7 +10,8 @@ class Species(models.Model):
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, default='')
-    species = models.ForeignKey(Species, default=0, related_name='species')
+    species = models.ForeignKey(Species, default=0, related_name='datasets')
+    label_name = models.ForeignKey(LabelName, null=True, related_name='datasets')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
@@ -46,6 +47,10 @@ class Instance(models.Model):
     def values_as_list(self):
         return [v.value for v in self.sorted_values()]
 
+# Extract features from the audio files
+# 
+# Labels        : Categories
+# FeatureValues : Values exrtacted from the audio files
 class Feature(models.Model):
     #TODO: support for meta values
     datasets = models.ManyToManyField(Dataset,
@@ -55,14 +60,23 @@ class Feature(models.Model):
         null=True, 
         related_name='features')
     name = models.CharField(max_length=100)
-    is_label_name = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 
-class Value(models.Model):
+class FeatureValue(models.Model):
     feature = models.ForeignKey(Feature, related_name='values')
     instance = models.ForeignKey(Instance, related_name='values')
     value = models.FloatField()
     def __unicode__(self):
         return unicode(self.value)
 
+class LabelName(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    def __unicode__(self):
+        return unicode(self.name)
+
+class LabelValue(models.Model):
+    label_name = models.ForeignKey(LabelName, null=True, related_name='label_values')
+    value = models.CharField(max_length=100, null=True)
+    def __unicode__(self):
+        return unicode(self.value)

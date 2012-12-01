@@ -1,2 +1,11 @@
 {% extends "base.html" %}
-{% load url from future %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="block">
+        <div class="block-heading">New Label</div>
+        {# TODO: form styling #}
+        {% crispy form %}
+    </div>
+</div>
+{% endblock content %}
