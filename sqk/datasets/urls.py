@@ -35,5 +35,6 @@ urlpatterns = patterns('',
 
     # ex: /datasets/3/labels/create
         # ex: /datasets/new/
-    url(r'^(?P<dataset_id>\d)/labels/create/$', LabelNameCreate.as_view(), name='label_create'),
+    url(r'^(?P<dataset_id>\d+)/labels/create/$', 
+        LabelNameCreate.as_view(), name='create_label'),
 )

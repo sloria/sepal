@@ -29,6 +29,8 @@ class DatasetDisplay(DetailView):
         return super(DatasetDisplay, self).get_context_data(**context)
 
 class DatasetAddDatasource(FormView, SingleObjectMixin):
+    '''View for adding data to a dataset.
+    '''
     model = Dataset
     form_class = DatasourceForm
     template_name = 'datasets/detail.html'
