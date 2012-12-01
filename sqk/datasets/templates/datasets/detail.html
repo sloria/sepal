@@ -81,9 +81,12 @@
     var TEST_CSV_URL = "{{ STATIC_URL }}figures/ex.csv";
     var PADDING = 40;
     var X_DIM, Y_DIM;
+    var X_DIM_INDEX, Y_DIM_INDEX;
     var LABEL_PROP_NAME = "label";
     var CHART_WIDTH = 500;
     var CHART_HEIGHT = 200;
+    var selectedDimensions = [];
+    var data;
 
     // Calculates the min & max values for each feature across all instances
     // @param - the instances to be visualized
@@ -145,8 +148,8 @@
       var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);      
       console.log(domainRangeObj);
       // TODO: Set up way for user to select X and Y dimensions
-      X_DIM = domainRangeObj.features[0];
-      Y_DIM = domainRangeObj.features[1];
+      X_DIM = domainRangeObj.features[X_DIM_INDEX];
+      Y_DIM = domainRangeObj.features[Y_DIM_INDEX];
       // set up scales
       var xScale = d3.scale.linear()
                       .domain([X_DIM.rangeMin, X_DIM.rangeMax])
@@ -201,10 +204,38 @@
         });
     }
 
+    function addToSelectedDimensions(dimension) {
+      selectedDimensions.push(dimension);
+      console.log(selectedDimensions);
+      if (selectedDimensions.length == 2) {
+          // TODO: don't always append...
+          var svg = d3.select("div#chart")
+                    .append("svg")
+                    .attr("width", CHART_WIDTH)
+                    .attr("height", CHART_HEIGHT);
+          X_DIM_INDEX = parseInt(selectedDimensions[0]);
+          Y_DIM_INDEX = parseInt(selectedDimensions[1]);
+          scatterPlot(svg, data);
+      } else if (selectedDimensions > 2) {
+          console.log("DO some PCA");
+      }
+    }
+
+    function removeFromSelectedDimensions(dimension) {
+      var removeIndex = selectedDimensions.indexOf(dimension);
+      selectedDimensions.splice(removeIndex, 1);
+      if (selectedDimensions.length < 2) {
+        // remove the SVG
+        if (d3.select("svg")) {
+          d3.select("svg").remove();
+        }
+      }
+    }
+
     $(document).ready(function() {
       // HUGE Hack to get data from server response into JS
       // TODO: remove this once JSON endpoint is set up
-      var data = {"instances": [], "labels": ["bonded", "loner", "pimp", "skank"]};
+      data = {"instances": [], "labels": ["bonded", "loner", "pimp", "skank"]};
       {% for instance in dataset.sorted_instances %}
         var instData = {};
         {% for value in instance.sorted_values %}
@@ -222,16 +253,16 @@
         data.instances.push(instData);
       {% endfor %}
       
-      // If there's data currently uploaded, begin to visualize
-      if (data) {
-        var svg = d3.select("div#chart")
-                  .append("svg")
-                  .attr("width", CHART_WIDTH)
-                  .attr("height", CHART_HEIGHT);
-        scatterPlot(svg, data);
-      } else {
-        console.log("No data!");
-      }
+      // Update selected dimensions when a checkbox is un/checked
+      $('input.feature-cb').on('click', function() {
+        var self = this;
+        var val = $(self).val();
+        if ($(self).attr('checked')) {
+          addToSelectedDimensions(val);
+        } else {
+          removeFromSelectedDimensions(val);
+        }
+      });
 
     });
   </script>
