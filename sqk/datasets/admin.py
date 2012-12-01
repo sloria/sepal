@@ -38,7 +38,7 @@ class InstanceAdmin(admin.ModelAdmin):
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name']})
+        (None, {'fields': ['name', 'is_label_name']})
     ]
     list_display = ('name','pk')
     inlines = [FeatureInstanceInline, FeatureDatasetInline]

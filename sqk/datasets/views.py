@@ -1,5 +1,5 @@
 import os
-from django.views.generic import View, ListView, DetailView, FormView, UpdateView, DeleteView
+from django.views.generic import View, ListView, DetailView, CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404, render
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
 from sqk.datasets.models import Dataset, Instance
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
+
+## Dataset views
 
 class DatasetList(ListView):
     model = Dataset
@@ -92,6 +94,9 @@ class DatasetDelete(DeleteView):
     context_object_name = 'object'
     success_url = reverse_lazy('datasets:index')
 
+
+## Instance views
+
 class InstanceDetail(DetailView):
     model = Instance
     context_object_name = 'instance'
@@ -109,14 +114,23 @@ class InstanceDetail(DetailView):
         context['dataset'] = self.get_object().dataset
         return context
 
-
-
 class InstanceDelete(DeleteView):
     model = Instance
     template_name='instances/delete.html'
     context_object_name = 'object'
 
     def get_success_url(self):
-        return reverse_lazy('datasets:detail', kwargs={'pk': self.kwargs['dataset_id']})
+        return reverse_lazy('datasets:detail', 
+            kwargs={'pk': self.kwargs['dataset_id']})
+
+
+## Feature views
+
+# class LabelCreate(CreateView):
+#     model = Feature
+#     context_object_name = 'label'
+#     template_name = 'features/new_label.html'
+
+
 
 

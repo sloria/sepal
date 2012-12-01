@@ -19,6 +19,9 @@
             <i class="icon-pencil"></i>
             Edit
         </a>
+        <a href="#" class="btn">
+            <i class="icon-tag"></i>
+            Create Label
         <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
             <i class="icon-remove"></i>
             Delete
@@ -34,7 +37,8 @@
     </div>
 
     <div class="block">
-        <div class="block-heading">Information</div>
+        <a class="block-heading" data-toggle="collapse" href="#information-menu">Information</a>
+        <div id="information-menu" class="accordian-body collapse" style="height: auto;">
         <table>
             <tbody>
                 <tr>
@@ -55,6 +59,7 @@
                 {% endif %}
             </tbody>
         </table>
+    </div>
     </div>
 {% show_dataset dataset %}
 {% crispy upload_form %}

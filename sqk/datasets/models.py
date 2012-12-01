@@ -41,8 +41,6 @@ class Instance(models.Model):
             return filtered_vals.order_by('feature')
         else:
             return self.values.order_by('feature')
-    def values_as_list(self):
-        return [value.value for value in self.sorted_values()]
     def sorted_features(self):
         return self.features.order_by('pk')
     def values_as_list(self):
@@ -57,6 +55,7 @@ class Feature(models.Model):
         null=True, 
         related_name='features')
     name = models.CharField(max_length=100)
+    is_label_name = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 
@@ -66,3 +65,4 @@ class Value(models.Model):
     value = models.FloatField()
     def __unicode__(self):
         return unicode(self.value)
+
