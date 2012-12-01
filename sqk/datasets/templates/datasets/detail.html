@@ -38,6 +38,7 @@
       <i class="icon-pencil"></i>
       Edit
     </a>
+    <a href="{% url 'datasets:create_label' dataset.pk  %}"
     <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
       <i class="icon-remove"></i>
       Delete
@@ -221,9 +222,9 @@
         instData["label"] = data["labels"][randomNum];
         data.instances.push(instData);
       {% endfor %}
-      
+
       // If there's data currently uploaded, begin to visualize
-      if (data) {
+      if (data.instances.length) {
         var svg = d3.select("div#chart")
                   .append("svg")
                   .attr("width", CHART_WIDTH)
