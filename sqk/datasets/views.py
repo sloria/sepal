@@ -126,10 +126,10 @@ class InstanceDelete(DeleteView):
 
 ## Feature views
 
-# class LabelCreate(CreateView):
-#     model = Feature
-#     context_object_name = 'label'
-#     template_name = 'features/new_label.html'
+class LabelCreate(CreateView):
+    model = Feature
+    context_object_name = 'label'
+    template_name = 'features/new_label.html'
 
 
 
