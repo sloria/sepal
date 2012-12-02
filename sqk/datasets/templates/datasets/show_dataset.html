@@ -9,9 +9,9 @@
       {% for feature in dataset.sorted_features %}
 
         {% if feature.is_label_name %}
-          <th><input type="checkbox" name="feature" value="{{ feature.name }}">{{ feature.name }}<em> (Label)</em></th>
+          <th><input type="checkbox" class="feature-cb" name="feature" value="{{ forloop.counter0 }}">{{ feature.name }}<em> (Label)</em></th>
         {% else %}
-          <th><input type="checkbox" name="feature" value="{{ feature.name }}">{{ feature.name }}</th>
+          <th><input type="checkbox" class="feature-cb" name="feature" value="{{ forloop.counter0 }}">{{ feature.name }}</th>
         {% endif %}
       {% endfor %}
     </tr>
