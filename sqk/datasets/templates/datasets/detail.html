@@ -79,14 +79,16 @@
   <script>
     // Global constants
     var TEST_CSV_URL = "{{ STATIC_URL }}figures/ex.csv";
-    var PADDING = 40;
+    
     var X_DIM, Y_DIM;
     var X_DIM_INDEX, Y_DIM_INDEX;
     var LABEL_PROP_NAME = "label";
     var CHART_WIDTH = 500;
-    var CHART_HEIGHT = 200;
+    var CHART_HEIGHT = 500;
+    var PADDING = CHART_WIDTH / 10;
     var selectedDimensions = [];
     var data;
+    var svg;
 
     // Calculates the min & max values for each feature across all instances
     // @param - the instances to be visualized
@@ -144,12 +146,12 @@
     //     ]  
     //   }
     // @return - Nothing.
-    function scatterPlot(svg, data) {
-      var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);      
-      console.log(domainRangeObj);
-      // TODO: Set up way for user to select X and Y dimensions
-      X_DIM = domainRangeObj.features[X_DIM_INDEX];
-      Y_DIM = domainRangeObj.features[Y_DIM_INDEX];
+    function scatterPlot() {
+      var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);     
+
+      X_DIM = (X_DIM_INDEX) ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {"rangeMin" : 0, "rangeMax" : data.instances.length-1, "name": "dummy"};
+      Y_DIM = (Y_DIM_INDEX) ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {"rangeMin" : 0, "rangeMax" : data.instances.length-1, "name": "dummy"};
+
       // set up scales
       var xScale = d3.scale.linear()
                       .domain([X_DIM.rangeMin, X_DIM.rangeMax])
@@ -160,62 +162,147 @@
       var categoryScale = d3.scale.ordinal()
                       .domain(data.labels)
                       .range(d3.scale.category10().range());
+
       // set up axes
       var xAxis = d3.svg.axis()
                     .scale(xScale)
                     .orient("bottom")
                     .ticks(4);
+
       var yAxis = d3.svg.axis()
                     .scale(yScale)
                     .orient("left")
                     .ticks(4);
+
+      // set up legend
+      svg.selectAll("rect.legend-rect")
+          .data(data.labels)
+          .enter()
+          .append("rect")
+          .attr("class", "legend-rect")
+          .attr("x", function(d, i){
+            return xScale(i) - 10;
+          })
+          .attr("y", function(d, i){
+            return PADDING/2;
+          })
+          .attr("width", 10)
+          .attr("height", 10)
+          .style("fill", function(d, i){
+            return categoryScale(data.labels[i]);
+          });
+
+      svg.selectAll("text.legend")
+        .data(data.labels)
+        .enter()
+        .append("text")
+        .attr("class", "legend")
+        .attr("x", function(d,i){
+          return xScale(i) + 15;
+        })
+        .attr("y", function(d,i){
+          return (PADDING/2) + 10;
+        })
+        .text(function(d, i){
+          return data.labels[i];
+        })
+
+      svg.selectAll("g.axis")
+        .remove();  
+
       svg.append("g")
           .attr("class", "axis")
           .attr("id", "x-axis")
           .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
+          .transition().duration(250)
           .call(xAxis);
+
       svg.append("g")
           .attr("class", "axis")
           .attr("id", "y-axis")
           .attr("transform", "translate(" + PADDING + ", 0)")
+          .transition().duration(250)
           .call(yAxis);
 
-      // Add plot points
-      var circleGroup = 
-          svg.append("g")
-            .attr("id", "plot-points");
+      svg.select("text.x-label")
+        .remove();
 
-      circleGroup.selectAll("circle")
-        .data(data.instances)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d){
-          // This says use this instance's attribute value which
-          // which has been chosen for the x-axis
-          return xScale(d[X_DIM.name]);            
-        })
-        .attr("cy", function(d){
-          return yScale(d[Y_DIM.name]);
-        })
-        .attr("r", 5)
-        .style("fill", function(d){
-          console.log(d.label);
-          return categoryScale(d.label);
+      svg.append("text")
+        .attr("class", "x-label")
+        .attr("text-anchor", "end")
+        .attr("x", CHART_WIDTH - PADDING)
+        .attr("y", CHART_HEIGHT - (PADDING + 10))
+        .style("fill", "#C4C4C4")
+        .text(function() {
+          if (X_DIM_INDEX) {
+            return X_DIM.name;
+          } else {
+            return "Select X";
+          }
         });
+
+      svg.select("text.y-label")
+        .remove();
+
+      svg.append("text")
+        .attr("class", "y-label")
+        .attr("text-anchor", "end")
+        .attr("y", (PADDING + 10))
+        .attr("dx", (PADDING * -1.1))
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .style("fill", "#C4C4C4")
+        .text(function() {
+          if (Y_DIM_INDEX) {
+            return Y_DIM.name;
+          } else {
+            return "Select Y";
+          }
+        });
+
+      updatePlotPoints(svg, data, xScale, yScale, categoryScale);
+    }
+
+    function updatePlotPoints(svg, data, xScale, yScale, categoryScale) {
+      var plotPoints = svg.selectAll("circle")
+          .data(data.instances);
+
+      // Update
+      plotPoints.transition().duration(500)
+        .attr("cx", function(d, i) {
+          var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+          return xScale(scaleInput);  
+      })
+        .transition().duration(500)
+        .attr("cy", function(d, i) {
+          var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+          return yScale(scaleInput);
+      });   
+
+      plotPoints.enter().append("circle")
+          .attr("cx", function(d, i){
+            var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+            return xScale(scaleInput);                  
+          })
+          .attr("cy", function(d, i){
+            var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+            return yScale(scaleInput);
+          })
+          .attr("r", 5)
+          .style("fill", function(d) {
+            return categoryScale(d.label);
+          });
+
+      plotPoints.exit()
+        .remove();
     }
 
     function addToSelectedDimensions(dimension) {
       selectedDimensions.push(dimension);
-      console.log(selectedDimensions);
       if (selectedDimensions.length == 2) {
-          // TODO: don't always append...
-          var svg = d3.select("div#chart")
-                    .append("svg")
-                    .attr("width", CHART_WIDTH)
-                    .attr("height", CHART_HEIGHT);
-          X_DIM_INDEX = parseInt(selectedDimensions[0]);
-          Y_DIM_INDEX = parseInt(selectedDimensions[1]);
-          scatterPlot(svg, data);
+          X_DIM_INDEX = selectedDimensions[0];
+          Y_DIM_INDEX = selectedDimensions[1];
+          scatterPlot();
       } else if (selectedDimensions > 2) {
           console.log("DO some PCA");
       }
@@ -225,10 +312,9 @@
       var removeIndex = selectedDimensions.indexOf(dimension);
       selectedDimensions.splice(removeIndex, 1);
       if (selectedDimensions.length < 2) {
-        // remove the SVG
-        if (d3.select("svg")) {
-          d3.select("svg").remove();
-        }
+        X_DIM_INDEX = null;
+        Y_DIM_INDEX = null;
+        scatterPlot();
       }
     }
 
@@ -252,7 +338,12 @@
         instData["label"] = data["labels"][randomNum];
         data.instances.push(instData);
       {% endfor %}
-      
+
+      svg = d3.select("div#chart")
+                    .append("svg")
+                    .attr("width", CHART_WIDTH)
+                    .attr("height", CHART_HEIGHT);
+      scatterPlot();
       // Update selected dimensions when a checkbox is un/checked
       $('input.feature-cb').on('click', function() {
         var self = this;
@@ -263,7 +354,6 @@
           removeFromSelectedDimensions(val);
         }
       });
-
     });
   </script>
 </div>
