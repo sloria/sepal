@@ -129,9 +129,7 @@ class InstanceDelete(DeleteView):
 ## Feature views
 # Class to manage feature lists for datasets
 # Model     : Feature (datasets/models.py) 
-class LabelNameCreate(FormView, SingleObjectMixin):
-
-    model = LabelName
+class LabelNameCreate(FormView):
     form_class = LabelNameForm
     context_object_name = 'label_name'
     template_name = 'features/new_label.html'
@@ -139,21 +137,23 @@ class LabelNameCreate(FormView, SingleObjectMixin):
 
     def get_context_data(self, **kwargs):
         # Get context objects that get passed to template
-        context = super(InstanceDetail, self).get_context_data(**kwargs)
+        context = super(LabelNameCreate, self).get_context_data(**kwargs)
         context['dataset'] = self.kwargs['dataset_id']
+        context['upload_form'] = self.get_form(LabelNameForm)
         return context
-
-
-    def get_context_data(self, **kwargs):
-        context = {
-            'data_'
-            'label_name': self.get_object(),
-            'upload_form': self.get_form(LabelNameForm),
-        }
-        return super(LabelNameCreate, self).get_context_data(**context)
 
     def form_valid(self, form):
         dataset = self.kwargs['dataset_id']
+
+    def form_valid(self, form):
+        # Save the new label object
+        label = form.save()
+        # Add the associated values
+        label.label_values.add(form.cleaned_data['value1'])
+        label.label_values.add(form.cleaned_data['value2'])
+        label.label_values.add(form.cleaned_data['value3'])
+        label.save()
+        return super(DatasetCreate, self).form_valid(form)
 
 
 
