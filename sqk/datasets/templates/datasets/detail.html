@@ -5,23 +5,23 @@
 {% load crispy_forms_tags %}
 {% block static %}
 <style>
-  .axis path,
-  .axis line {
-      fill: none;
-      stroke: black;
-      shape-rendering: crispEdges;
-  }
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
 
-  .axis text {
-      font-family: sans-serif;
-      font-size: 11px;
-  }
+.axis text {
+  font-family: sans-serif;
+  font-size: 11px;
+}
 
-  .point-label {
-    "font-family", "sans-serif";
-    "font-size", "11px";
-    "fill", "red";
-  }
+.point-label {
+  "font-family", "sans-serif";
+  "font-size", "11px";
+  "fill", "red";
+}
 </style>
 <script src="http://d3js.org/d3.v2.js"></script>
 {# <script type="text/javascript" src="{{ STATIC_URL }}js/example_figure.js"></script> #}
@@ -31,52 +31,68 @@
 {% block content %}
 <div class="container">
   <h1 class="page-title center">{{ dataset.name }}</h1>
-    
+{# FIXME: rows don't span 12 #}
   {# Dataset control buttons #}
-  <div class="btn-toolbar">
-    <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
-      <i class="icon-pencil"></i>
-      Edit
-    </a>
-    <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
-      <i class="icon-remove"></i>
-      Delete
-    </a>
-  </div>
-    
-  <div class="block">
-    <div class="block-heading">Visualization</div>
-    <div id="chart"></div>  
-  </div>
+  <div class="row">
+    <div class="btn-toolbar">
+      <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
+        <i class="icon-pencil"></i>
+        Edit
+      </a>
+      <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn">
+        <i class="icon-pencil"></i> Create Label</a>
+        <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
+          <i class="icon-remove"></i>
+          Delete
+        </a>
+      </div>
+    </div><!-- end row-->
+    <div class="row">
+      <div class="block span6" data-toggle="collapse" href="#chart">
+        <div class="block-heading">Visualization</div>
+        <div id="chart" class="collapse in">
+        </div>  
+      </div><!-- end block -->
 
-  <div class="block">
-    <div class="block-heading">Information</div>
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <td>  {{ dataset.name }}</td>
-        </tr>
-        {% if dataset.description  %}
-        <tr>
-          <th>Description</th>
-          <td>  {{ dataset.description }}</td>
-        </tr>
-        {% endif %}
-        {% if dataset.species %}
-        <tr>
-          <th>Species</th>
-          <td><em> {{ dataset.species }} </em></td>
-        </tr>
-        {% endif %}
-      </tbody>
-    </table>
-  </div>
+      <div class="block span5">
+        <div class="block-heading">Control Panel</div>
+        {% for feature in dataset.sorted_features %}
+        <th><input type="checkbox" class="feature-cb" name="feature" value="{{ forloop.counter0 }}">{{ feature.name }}</th>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="block span12">
+        <div class="block-heading" data-toggle="collapse" href="#info">Information</div>
+        <div id="info" class="collapse in">
+          <table>
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <td>  {{ dataset.name }}</td>
+              </tr>
+              {% if dataset.description  %}
+              <tr>
+                <th>Description</th>
+                <td>  {{ dataset.description }}</td>
+              </tr>
+              {% endif %}
+              {% if dataset.species %}
+              <tr>
+                <th>Species</th>
+                <td><em> {{ dataset.species }} </em></td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-  {% show_dataset dataset %}
+    {% show_dataset dataset %}
 
-  {% crispy upload_form %}
-  <script>
+    {% crispy upload_form %}
+    <script>
     // Global constants
     var X_DIM, Y_DIM;
     var X_DIM_INDEX, Y_DIM_INDEX;
@@ -154,117 +170,117 @@
 
       // set up scales
       var xScale = d3.scale.linear()
-                      .domain([X_DIM.rangeMin, X_DIM.rangeMax])
-                      .range([PADDING, CHART_WIDTH - PADDING]);
+      .domain([X_DIM.rangeMin, X_DIM.rangeMax])
+      .range([PADDING, CHART_WIDTH - PADDING]);
       var yScale = d3.scale.linear()
-                      .domain([Y_DIM.rangeMin, Y_DIM.rangeMax])
-                      .range([CHART_HEIGHT - PADDING, PADDING]);
+      .domain([Y_DIM.rangeMin, Y_DIM.rangeMax])
+      .range([CHART_HEIGHT - PADDING, PADDING]);
       var categoryScale = d3.scale.ordinal()
-                      .domain(data.labels)
-                      .range(d3.scale.category10().range());
+      .domain(data.labels)
+      .range(d3.scale.category10().range());
 
       // set up axes
       var xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .orient("bottom")
-                    .ticks(4);
+      .scale(xScale)
+      .orient("bottom")
+      .ticks(4);
 
       var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(4);
+      .scale(yScale)
+      .orient("left")
+      .ticks(4);
 
       // set up legend
       var legendXScale = 
-          d3.scale.linear()
-             .domain([0, data.labels.length-1])
-             .range([PADDING, CHART_WIDTH - PADDING]);
+      d3.scale.linear()
+      .domain([0, data.labels.length-1])
+      .range([PADDING, CHART_WIDTH - PADDING]);
 
       svg.selectAll("rect.legend-rect")
-        .data(data.labels)
-        .enter()
-        .append("rect")
-        .attr("class", "legend-rect")
-        .attr("x", function(d, i){
-          return legendXScale(i);  
-        })
-        .attr("y", function(d, i){
-          return PADDING/3;
-        })
-        .attr("width", 10)
-        .attr("height", 10)
-        .style("fill", function(d, i){
-          return categoryScale(data.labels[i]);
-        });
+      .data(data.labels)
+      .enter()
+      .append("rect")
+      .attr("class", "legend-rect")
+      .attr("x", function(d, i){
+        return legendXScale(i);  
+      })
+      .attr("y", function(d, i){
+        return PADDING/3;
+      })
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", function(d, i){
+        return categoryScale(data.labels[i]);
+      });
 
       svg.selectAll("text.legend")
-        .data(data.labels)
-        .enter()
-        .append("text")
-        .attr("class", "legend")
-        .attr("x", function(d,i){
-          return legendXScale(i) + 15;
-        })
-        .attr("y", function(d,i){
-          return (PADDING/3) + 10;
-        })
-        .text(function(d, i){
-          return data.labels[i];
-        })
+      .data(data.labels)
+      .enter()
+      .append("text")
+      .attr("class", "legend")
+      .attr("x", function(d,i){
+        return legendXScale(i) + 15;
+      })
+      .attr("y", function(d,i){
+        return (PADDING/3) + 10;
+      })
+      .text(function(d, i){
+        return data.labels[i];
+      })
 
       // Set up x-axis tick marks
       svg.selectAll("g.axis")
-        .remove();  
+      .remove();  
       svg.append("g")
-          .attr("class", "axis")
-          .attr("id", "x-axis")
-          .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
-          .transition().duration(250)
-          .call(xAxis);
+      .attr("class", "axis")
+      .attr("id", "x-axis")
+      .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
+      .transition().duration(250)
+      .call(xAxis);
 
       // Set up y-axis tick marks
       svg.append("g")
-          .attr("class", "axis")
-          .attr("id", "y-axis")
-          .attr("transform", "translate(" + PADDING + ", 0)")
-          .transition().duration(250)
-          .call(yAxis);
+      .attr("class", "axis")
+      .attr("id", "y-axis")
+      .attr("transform", "translate(" + PADDING + ", 0)")
+      .transition().duration(250)
+      .call(yAxis);
 
       // Label the x-axis
       svg.select("text.x-label")
-        .remove();
+      .remove();
       svg.append("text")
-        .attr("class", "x-label")
-        .attr("text-anchor", "end")
-        .attr("x", CHART_WIDTH - PADDING)
-        .attr("y", CHART_HEIGHT - (PADDING + 10))
-        .style("fill", "#C4C4C4")
-        .text(function() {
-          if (X_DIM_INDEX) {
-            return X_DIM.name;
-          } else {
-            return "Select X";
-          }
-        });
+      .attr("class", "x-label")
+      .attr("text-anchor", "end")
+      .attr("x", CHART_WIDTH - PADDING)
+      .attr("y", CHART_HEIGHT - (PADDING + 10))
+      .style("fill", "#C4C4C4")
+      .text(function() {
+        if (X_DIM_INDEX) {
+          return X_DIM.name;
+        } else {
+          return "Select X";
+        }
+      });
 
       // Label the y-axis
       svg.select("text.y-label")
-        .remove();
+      .remove();
       svg.append("text")
-        .attr("class", "y-label")
-        .attr("text-anchor", "end")
-        .attr("y", (PADDING + 10))
-        .attr("dx", (PADDING * -1.1))
-        .attr("dy", ".75em")
-        .attr("transform", "rotate(-90)")
-        .style("fill", "#C4C4C4")
-        .text(function() {
-          if (Y_DIM_INDEX) {
-            return Y_DIM.name;
-          } else {
-            return "Select Y";
-          }
-        });
+      .attr("class", "y-label")
+      .attr("text-anchor", "end")
+      .attr("y", (PADDING + 10))
+      .attr("dx", (PADDING * -1.1))
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .style("fill", "#C4C4C4")
+      .text(function() {
+        if (Y_DIM_INDEX) {
+          return Y_DIM.name;
+        } else {
+          return "Select Y";
+        }
+      });
       
       // Call the main update method
       updatePlotPoints(svg, data, xScale, yScale, categoryScale);
@@ -274,7 +290,7 @@
     // are made on the data table
     function updatePlotPoints(svg, data, xScale, yScale, categoryScale) {
       var plotPoints = svg.selectAll("circle")
-          .data(data.instances);
+      .data(data.instances);
       // Update
       plotPoints.transition().duration(1000).delay(500)
         .attr("cx", function(d, i) {
@@ -304,7 +320,7 @@
           });
       // If there's less data now, remove those plots points
       plotPoints.exit()
-        .remove();
+      .remove();
     }
 
     // A user has selected a dimension checkbox on the data table
@@ -313,17 +329,17 @@
     function addToSelectedDimensions(dimension) {
       selectedDimensions.push(dimension);
       if (selectedDimensions.length == 2) {
-          console.log(selectedDimensions);
+        console.log(selectedDimensions);
           // There's 2 dimensions, we can plot now
           X_DIM_INDEX = selectedDimensions[0];
           Y_DIM_INDEX = selectedDimensions[1];
           scatterPlot();
-      } else if (selectedDimensions > 2) {
+        } else if (selectedDimensions > 2) {
           // TODO: send asynchronous request for 
           // PCA-ified data
           console.log("DO some PCA");
+        }
       }
-    }
 
     // A user has de-selected a dimension checkbox on the data table
     // This updates the global variable which keeps track of what's
@@ -340,35 +356,35 @@
           // TODO: this code is replicated, re-think this
           X_DIM_INDEX = selectedDimensions[0];
           Y_DIM_INDEX = selectedDimensions[1];
+        }
+        scatterPlot();
       }
-      scatterPlot();
-    }
 
-    $(document).ready(function() {
+      $(document).ready(function() {
       // HUGE Hack to get data from server response into JS
       // TODO: remove this once JSON endpoint is set up
       data = {"instances": [], "labels": ["bonded", "loner", "pimp", "skank"]};
       {% for instance in dataset.sorted_instances %}
-        var instData = {};
-        {% for value in instance.sorted_values %}
-          var index = {{forloop.counter}};
+      var instData = {};
+      {% for value in instance.sorted_values %}
+      var index = {{forloop.counter}};
 
-          {% for feature in instance.sorted_features %}
-            var index2 = {{ forloop.counter }};
-            if (index === index2) {
-              instData["{{feature}}"] = {{value}};
-            }
-          {% endfor %}
-        {% endfor %}
-        var randomNum = Math.floor(Math.random() * 4);
-        instData["label"] = data["labels"][randomNum];
-        data.instances.push(instData);
+      {% for feature in instance.sorted_features %}
+      var index2 = {{ forloop.counter }};
+      if (index === index2) {
+        instData["{{feature}}"] = {{value}};
+      }
+      {% endfor %}
+      {% endfor %}
+      var randomNum = Math.floor(Math.random() * 4);
+      instData["label"] = data["labels"][randomNum];
+      data.instances.push(instData);
       {% endfor %}
 
       svg = d3.select("div#chart")
-                    .append("svg")
-                    .attr("width", CHART_WIDTH)
-                    .attr("height", CHART_HEIGHT);
+      .append("svg")
+      .attr("width", CHART_WIDTH)
+      .attr("height", CHART_HEIGHT);
 
       // Draw the basic circles even though no dimensions
       // have been selected yet                    
@@ -385,6 +401,7 @@
         }
       });
     });
-  </script>
+</script>
 </div>
+
 {% endblock content %}

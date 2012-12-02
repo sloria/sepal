@@ -100,23 +100,24 @@ class LabelNameForm(forms.ModelForm):
         super(LabelNameForm, self).__init__(*args, **kwargs)
 
     def clean_name(self):
-        name = LabelName.objects.get_or_create(
+        name, created = LabelName.objects.get_or_create(
             name=self.cleaned_data['name'])
+        
         return name
 
     def clean_value1(self):
-        value1 = LabelValue.objects.get_or_create(
+        value1, created = LabelValue.objects.get_or_create(
             value=self.cleaned_data['value1'])
         return value1
 
     def clean_value2(self):
-        value2 = LabelValue.objects.get_or_create(
+        value2, created = LabelValue.objects.get_or_create(
             value=self.cleaned_data['value2'])
         return value2
 
     def clean_value3(self):
         if self.cleaned_data['value3']:
-            value3 = LabelValue.objects.get_or_create(
+            value3, created = LabelValue.objects.get_or_create(
                 value=self.cleaned_data['value3'])
             return value3
         else: return None
