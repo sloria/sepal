@@ -44,21 +44,23 @@
   </div><!-- end row-->
 
   <div class="row">
-    <div class="span6">
+    <div class="span9">
       <div class="block">
-        <div class="block-heading">Visualization</div>
-        <div id="chart"></div>
+        <div class="block-heading" data-toggle="collapse" href="#chart">Visualization</div>
+        <div id="chart" class="collapse in"></div>
       </div>
     </div>
-    <div class="span6">
-      <div class="span6">
+    <div class="span3">
+      <div class="span3">
         <center>
-          <div class="block block-heading">Feature selection</div>
-          <div class="btn-group btn-group" data-toggle="buttons-checkbox" style="margin-top:25px">
+          <div class="block block-heading" data-toggle="collapse" href="#control">Feature selection</div>
+          <div id="control" class="collapse in">
+          <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
             {% for feature in dataset.sorted_features %}
             <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name }}</button>
             {% endfor %}
           </div>
+        </div>
         </center>
       </div>
     </div>
