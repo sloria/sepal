@@ -22,10 +22,10 @@ class DatasetInline(admin.TabularInline):
 
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description', 'species',]}),
+        (None, {'fields': ['name', 'description', 'species', 'label_name']}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
-    list_display = ('name', 'created_at', 'description', 'pk')
+    list_display = ('name', 'label_name', 'created_at', 'description', 'pk')
     inlines = [InstanceInline, FeatureDatasetInline]
     search_fields = ['name']
 
@@ -50,8 +50,15 @@ class SpeciesAdmin(admin.ModelAdmin):
     list_display = ('name','pk')
     inlines = [DatasetInline]
 
+class LabelNameAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['name']})
+    ]
+    list_display = ('name','pk')
+    inlines = [DatasetInline]
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(Species, SpeciesAdmin)
+admin.site.register(LabelName, LabelNameAdmin)
