@@ -9,6 +9,10 @@ class FeatureValueInline(admin.TabularInline):
     model = FeatureValue
     extra = 1
 
+class LabelValueInline(admin.TabularInline):
+    model = LabelValue
+    extra = 3
+
 class FeatureInstanceInline(admin.TabularInline):
     model = Feature.instances.through
     extra = 1
@@ -31,7 +35,7 @@ class DatasetAdmin(admin.ModelAdmin):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset',]}),
+        (None, {'fields': ['dataset', 'label_value']}),
     ]
     list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, FeatureValueInline]
@@ -55,7 +59,7 @@ class LabelNameAdmin(admin.ModelAdmin):
         (None, {'fields': ['name']})
     ]
     list_display = ('name','pk')
-    inlines = [DatasetInline]
+    inlines = [DatasetInline, LabelValueInline]
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)

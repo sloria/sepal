@@ -22,7 +22,6 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/delete/$', DatasetDelete.as_view(),
         name='delete'),
 
-    # TODO: /datasets/3/instances/4  <-- should capture dataset pk
     # ex: /datasets/instances/452/ 
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/$', 
         InstanceDetail.as_view(),

@@ -21,6 +21,10 @@ class DatasetDisplay(DetailView):
     model = Dataset
     context_object_name = 'dataset'
     template_name = 'datasets/detail.html'
+    
+    def get_query_set(self):
+        return Dataset.objects.filter(pk=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = {
             'upload_form': DatasourceForm(),
@@ -134,26 +138,29 @@ class LabelNameCreate(FormView):
     context_object_name = 'label_name'
     template_name = 'features/new_label.html'
 
-
     def get_context_data(self, **kwargs):
         # Get context objects that get passed to template
         context = super(LabelNameCreate, self).get_context_data(**kwargs)
-        context['dataset'] = self.kwargs['dataset_id']
+        context['dataset'] = Dataset.objects.get(pk=self.kwargs['dataset_id'])
         context['upload_form'] = self.get_form(LabelNameForm)
         return context
 
-    def form_valid(self, form):
-        dataset = self.kwargs['dataset_id']
-
-    def form_valid(self, form):
-        # Save the new label object
-        label = form.save()
+    def form_valid(self, form): # TODO: getorcreate everything
+        dataset, created = Dataset.objects.get_or_create(pk=self.kwargs['dataset_id'])
+        # Save the new label object and associate with dataset
+        label, created = LabelName.objects.get_or_create(name=form.cleaned_data['name'])
+        label.datasets.add(dataset)
         # Add the associated values
-        label.label_values.add(form.cleaned_data['value1'])
-        label.label_values.add(form.cleaned_data['value2'])
-        label.label_values.add(form.cleaned_data['value3'])
+        value_1_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value1'])
+        value_2_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value2'])
+        label.label_values.add(value_1_obj)
+        label.label_values.add(value_2_obj)
         label.save()
-        return super(DatasetCreate, self).form_valid(form)
+        return super(LabelNameCreate, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('datasets:detail', 
+            kwargs={'pk': self.kwargs['dataset_id']})
 
 
 
