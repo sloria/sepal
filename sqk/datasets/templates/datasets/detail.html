@@ -276,12 +276,12 @@
       var plotPoints = svg.selectAll("circle")
           .data(data.instances);
       // Update
-      plotPoints.transition().duration(500)
+      plotPoints.transition().duration(1000).delay(500)
         .attr("cx", function(d, i) {
           var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
           return xScale(scaleInput);  
       })
-        .transition().duration(500)
+        .transition().duration(1500).delay(500)
         .attr("cy", function(d, i) {
           var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
           return yScale(scaleInput);
@@ -291,11 +291,14 @@
             var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
             return xScale(scaleInput);                  
           })
+          .attr("cy", function(d, i) {
+            return CHART_HEIGHT * Math.random();
+          }).transition().duration(3000).delay(1000)
           .attr("cy", function(d, i){
             var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
             return yScale(scaleInput);
           })
-          .attr("r", 5)
+          .attr("r", 6)
           .style("fill", function(d) {
             return categoryScale(d.label);
           });
