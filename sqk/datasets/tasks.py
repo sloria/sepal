@@ -68,7 +68,7 @@ def read_datasource(dataset, source_path, feature_row=0):
 
                 print row[-1]
                 label_value_obj, created = LabelValue.objects.get_or_create(
-                                            value=row[-1])
+                                            value__iexact=row[-1])
                 inst.label_value = label_value_obj
                 inst.save()
 

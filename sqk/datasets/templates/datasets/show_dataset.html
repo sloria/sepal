@@ -8,10 +8,10 @@
       <tr>
         <th>#</th>
         {% if dataset.label_name %}
-        <th>{{ dataset.label_name }}</th>
+        <th>{{ dataset.label_name|capfirst }}</th>
         {% endif %}
         {% for feature in dataset.sorted_features %}
-        <th><input type="checkbox" class="feature-cb" name="feature" value="{{ forloop.counter0 }}">{{ feature.name }}</th>
+        <th>{{ feature.name|capfirst }}</th>
         {% endfor %}
       </tr>
     </thead>

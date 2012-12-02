@@ -37,7 +37,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
     '''
     model = Dataset
     form_class = DatasourceForm
-    template_name = 'datasets/detail.html'
+    template_name = 'datasets/detail.html#visualization'
 
     def get_context_data(self, **kwargs):
         context = {
