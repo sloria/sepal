@@ -152,6 +152,8 @@
       X_DIM = (X_DIM_INDEX) ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {"rangeMin" : 0, "rangeMax" : data.instances.length-1, "name": "dummy"};
       Y_DIM = (Y_DIM_INDEX) ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {"rangeMin" : 0, "rangeMax" : data.instances.length-1, "name": "dummy"};
 
+      console.log(X_DIM);
+
       // set up scales
       var xScale = d3.scale.linear()
                       .domain([X_DIM.rangeMin, X_DIM.rangeMax])
@@ -175,16 +177,21 @@
                     .ticks(4);
 
       // set up legend
+      var legendXScale = 
+          d3.scale.linear()
+             .domain([0, data.labels.length-1])
+             .range([PADDING, CHART_WIDTH - PADDING]);
+
       svg.selectAll("rect.legend-rect")
         .data(data.labels)
         .enter()
         .append("rect")
         .attr("class", "legend-rect")
         .attr("x", function(d, i){
-          return xScale(i) - 10;
+          return legendXScale(i);  
         })
         .attr("y", function(d, i){
-          return PADDING/2;
+          return PADDING/3;
         })
         .attr("width", 10)
         .attr("height", 10)
@@ -198,10 +205,10 @@
         .append("text")
         .attr("class", "legend")
         .attr("x", function(d,i){
-          return xScale(i) + 15;
+          return legendXScale(i) + 15;
         })
         .attr("y", function(d,i){
-          return (PADDING/2) + 10;
+          return (PADDING/3) + 10;
         })
         .text(function(d, i){
           return data.labels[i];
@@ -305,6 +312,7 @@
     function addToSelectedDimensions(dimension) {
       selectedDimensions.push(dimension);
       if (selectedDimensions.length == 2) {
+          console.log(selectedDimensions);
           // There's 2 dimensions, we can plot now
           X_DIM_INDEX = selectedDimensions[0];
           Y_DIM_INDEX = selectedDimensions[1];
@@ -327,8 +335,12 @@
         // reset the x & y dimensino pointers to be null
         X_DIM_INDEX = null;
         Y_DIM_INDEX = null;
-        scatterPlot();
+      } else {
+          // TODO: this code is replicated, re-think this
+          X_DIM_INDEX = selectedDimensions[0];
+          Y_DIM_INDEX = selectedDimensions[1];
       }
+      scatterPlot();
     }
 
     $(document).ready(function() {
