@@ -61,8 +61,16 @@ class LabelNameAdmin(admin.ModelAdmin):
     list_display = ('name','pk')
     inlines = [DatasetInline, LabelValueInline]
 
+class LabelValueAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['value']})
+    ]
+    list_display = ('value','pk')
+    inlines = []
+
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(Species, SpeciesAdmin)
 admin.site.register(LabelName, LabelNameAdmin)
+admin.site.register(LabelValue, LabelValueAdmin)

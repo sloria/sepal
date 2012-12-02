@@ -28,16 +28,20 @@ def read_datasource(dataset, source_path, feature_row=0):
         for i, row in enumerate(data):
             # Parse header
             if i == feature_row:
-                for j, feature_name in enumerate(row):
-                    features.append(feature_name.lower())
+                for j in range(len(row)-1):
+                    features.append(row[j].lower())
                     f = None
                     # Create feature if it doesn't exist
-                    if Feature.objects.filter(name=feature_name.lower()).count() == 0:
-                        f = Feature.objects.create(name=feature_name.lower())
+                    if Feature.objects.filter(name=row[j].lower()).count() == 0:
+                        f = Feature.objects.create(name=row[j].lower())
                     else:
                         f = Feature.objects.filter().get(
-                            name=feature_name.lower())
+                            name=row[j].lower())
                     dataset.features.add(f)
+
+                label_name, created = LabelName.objects.get_or_create(
+                    name=row[-1])
+                dataset.label_name = label_name
                 dataset.save()
             # Parse data
             else:
@@ -61,6 +65,12 @@ def read_datasource(dataset, source_path, feature_row=0):
                     v = FeatureValue.objects.create(value=val, 
                             feature=feature,
                             instance=inst)
+
+                print row[-1]
+                label_value_obj, created = LabelValue.objects.get_or_create(
+                                            value=row[-1])
+                inst.label_value = label_value_obj
+                inst.save()
 
 
 @task()
