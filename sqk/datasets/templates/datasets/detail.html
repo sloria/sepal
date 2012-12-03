@@ -36,16 +36,16 @@
   <div class="row">
     <div class="span12">
       <div class="btn-toolbar">
-        <a href="#addSourceForm" class="btn"><i class="icon-pencil"></i> Add data</a>
+        <a href="#addSourceForm" class="btn btn-primary"><i class="icon-plus-sign"></i> Add data</a>
 
-        <a href="#dataset" class="btn"><i class="icon-table"></i> Data</a>
+        <a href="#datasetHeading" class="btn btn-primary"><i class="icon-table"></i> Data</a>
         
-        <a href="#visualization" class="btn"><i class="icon-pencil"></i> Visualize</a>
+        <a data-toggle="collapse" href="#chart" class="btn btn-primary"><i class="icon-bar-chart"></i> Visualize</a>
 
 
-        <a href="{% url 'datasets:edit' dataset.pk %}" class="btn"><i class="icon-pencil"></i> Edit</a>
+        <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
         
-        <a href="{% url 'datasets:delete' dataset.pk %}" class="btn"><i class="icon-remove"></i> Delete</a>
+        <a href="{% url 'datasets:delete' dataset.pk %}" class="btn btn-primary"><i class="icon-remove"></i> Delete</a>
       </div>
     </div>
   </div><!-- end row-->
@@ -83,21 +83,16 @@
   <div class="row">
     <div class="span9">
       <div class="block">
-        {# Collapse viz block if no data #}
         <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
           Visualization</div>
-          {% if dataset.sorted_instances %}
-          <div id="chart" class="collapse in"></div>
-          {% else %}
           <div id="chart" class="collapse out"></div>
-          {% endif %}
         </div>
       </div>
       <div class="span3">
         <div class="span3">
           <center>
             <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
-            <div id="control" class="collapse in">
+            <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
                 {% for feature in dataset.sorted_features %}
                 <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name }}</button>
@@ -116,7 +111,7 @@
   <div class="row">
     <div class="span12">
       <div class="btn-toolbar">
-      <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn"><i class="icon-beaker"></i> Add Independent Variable</a>
+      <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn btn-info"><i class="icon-beaker"></i> Add Independent Variable</a>
       </div>
     </div>
   </div><!-- end row-->
