@@ -155,11 +155,11 @@ def extract_features(dataset, audiofile_path):
 
     # Save sample_rate and duration data
     FeatureValue.objects.create(value=sample_rate,
-        feature=Feature.objects.get(name__iexact='Sample rate'),
+        feature=Feature.objects.get(name='Sample rate'),
         instance=inst)
 
     FeatureValue.objects.create(value=duration,
-        feature=Feature.objects.get(name__iexact='Duration'),
+        feature=Feature.objects.get(name='Duration'),
         instance=inst)
 
 
