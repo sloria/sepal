@@ -8,10 +8,10 @@
       <tr>
         <th>#</th>
         {% if dataset.label_name %}
-        <th>{{ dataset.label_name|capfirst }}</th>
+        <th>{{ dataset.label_name|title }}</th>
         {% endif %}
         {% for feature in dataset.sorted_features %}
-        <th>{{ feature.name|capfirst }}</th>
+        <th>{{ feature.name|title }}</th>
         {% endfor %}
       </tr>
     </thead>
@@ -23,7 +23,7 @@
       <tr>
         <td>{{ forloop.counter }}</td>
         {% if dataset.label_name %}
-          <td>{{ instance.label_value }}</td>
+          <td>{{ instance.label_value|capfirst }}</td>
         {% endif %}
         {% for value in instance.sorted_values %}
         <td>{{ value|floatformat:3 }}</td>

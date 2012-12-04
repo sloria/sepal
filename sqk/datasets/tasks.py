@@ -125,8 +125,8 @@ def extract_features(dataset, audiofile_path):
         if dataset.features.filter(name=display_name).count() == 0:
             dataset.features.add(f)
 
-    rate_obj, created = Feature.objects.get_or_create(name='Sample rate')
-    duration_obj, created = Feature.objects.get_or_create(name='Duration')
+    rate_obj, created = Feature.objects.get_or_create(name='sample rate')
+    duration_obj, created = Feature.objects.get_or_create(name='duration')
     
     if dataset.features.filter(name='Sample rate').count() == 0:
         dataset.features.add(rate_obj)
@@ -155,11 +155,11 @@ def extract_features(dataset, audiofile_path):
 
     # Save sample_rate and duration data
     FeatureValue.objects.create(value=sample_rate,
-        feature=Feature.objects.get(name='Sample rate'),
+        feature=Feature.objects.get(name='sample rate'),
         instance=inst)
 
     FeatureValue.objects.create(value=duration,
-        feature=Feature.objects.get(name='Duration'),
+        feature=Feature.objects.get(name='duration'),
         instance=inst)
 
 

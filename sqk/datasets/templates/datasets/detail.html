@@ -97,7 +97,7 @@
             <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
                 {% for feature in dataset.sorted_features %}
-                <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name }}</button>
+                <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
                 {% endfor %}
               </div>
             </div>
