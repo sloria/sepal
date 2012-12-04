@@ -5,23 +5,24 @@
 {% load crispy_forms_tags %}
 {% block static %}
 <style>
-  .axis path,
-  .axis line {
-      fill: none;
-      stroke: black;
-      shape-rendering: crispEdges;
-  }
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
 
-  .axis text {
-      font-family: sans-serif;
-      font-size: 11px;
-  }
+.axis text {
+  font-family: "Helvetica Neue, Helvetica, Arial, sans-serif";
+  font-size: 11px;
+}
 
-  .point-label {
-    "font-family", "sans-serif";
-    "font-size", "11px";
-    "fill", "red";
-  }
+.point-label {
+  "font-family", "sans-serif";
+  "font-size", "11px";
+  "fill", "red";
+}
+
 </style>
 <script src="http://d3js.org/d3.v2.js"></script>
 {# <script type="text/javascript" src="{{ STATIC_URL }}js/example_figure.js"></script> #}
@@ -31,59 +32,123 @@
 {% block content %}
 <div class="container">
   <h1 class="page-title center">{{ dataset.name }}</h1>
-    
   {# Dataset control buttons #}
-  <div class="btn-toolbar">
-    <a href="{% url 'datasets:edit' dataset.pk %}" class="btn">
-      <i class="icon-pencil"></i>
-      Edit
-    </a>
-    <a href="{% url 'datasets:delete' dataset.pk %}" class="btn">
-      <i class="icon-remove"></i>
-      Delete
-    </a>
-  </div>
-    
-  <div class="block">
-    <div class="block-heading">Visualization</div>
-    <div id="chart"></div>  
+  <div class="row">
+    <div class="span12">
+      <div class="btn-toolbar">
+        <div class="btn-group">
+          <a href="#addSourceForm" class="btn btn-primary"><i class="icon-plus-sign"></i> Add data</a>
+
+          <a href="#datasetHeading" class="btn btn-primary"><i class="icon-table"></i> Table</a>
+          <a data-toggle="collapse" href="#chart" class="btn btn-primary"><i class="icon-bar-chart"></i> Visualize</a>
+        </div>
+        <div class="btn-group pull-right">
+          <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
+
+          <a href="{% url 'datasets:delete' dataset.pk %}" class="btn btn-primary"><i class="icon-remove"></i> Delete</a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- end row-->
+
+  <div class="row">
+    <div class="block span12">
+      <div class="block-heading" data-toggle="collapse" href="#info">Information</div>
+      <div id="info" class="collapse in">
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <td>  {{ dataset.name }}</td>
+            </tr>
+            {% if dataset.description  %}
+            <tr>
+              <th>Description</th>
+              <td>  {{ dataset.description }}</td>
+            </tr>
+            {% endif %}
+            {% if dataset.species %}
+            <tr>
+              <th>Species</th>
+              <td><em> {{ dataset.species }} </em></td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- end Information row-->
+
+
+  {# Visualization and Control #}
+  <div class="row">
+    <div class="span9">
+      <div class="block">
+        <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
+          Visualization</div>
+          <div id="chart" class="collapse out"></div>
+        </div>
+      </div>
+      <div class="span3">
+        <div class="span3">
+          <center>
+            <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
+            <div id="control" class="collapse out">
+              <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
+                {% for feature in dataset.sorted_features %}
+                <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
+                {% endfor %}
+              </div>
+            </div>
+          </center>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="block">
-    <div class="block-heading">Information</div>
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <td>  {{ dataset.name }}</td>
-        </tr>
-        {% if dataset.description  %}
-        <tr>
-          <th>Description</th>
-          <td>  {{ dataset.description }}</td>
-        </tr>
-        {% endif %}
-        {% if dataset.species %}
-        <tr>
-          <th>Species</th>
-          <td><em> {{ dataset.species }} </em></td>
-        </tr>
-        {% endif %}
-      </tbody>
-    </table>
-  </div>
+  <div class="container">
+    <div class="row">
+      <div class="span12">
+        <div class="btn-toolbar">
+          <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn btn-info"><i class="icon-beaker"></i> Add Variable</a>
+        </div>
+      </div>
+    </div><!-- end row-->
 
-  {% show_dataset dataset %}
+    <div class="row">
+      {% show_dataset dataset %}
+    </div>
 
-  {% crispy upload_form %}
-  <script>
-    // Global constants
-    var TEST_CSV_URL = "{{ STATIC_URL }}figures/ex.csv";
-    var PADDING = 40;
+    <div class="row">
+      <div class="span12">
+        {% crispy upload_form %}
+      </div>
+    </div>
+    <script>
+    // The scatter plot requires 2 dimensions to be selected 
+    // before points can be plotted. 
+    // Selected dimensions are stored in the
+    // these two global vars:
     var X_DIM, Y_DIM;
+    // When these are set, they have this form:
+    // {"minVal": < minimum value for this feature across all instances>, "maxVal": <same idea>, "name": <name of the feature>}
+    // When the user hasn't selected enough dimensions, the vars are reset to:
+    // {"minVal" : 0, "maxVal" : < number of instances >, "name": "dummy"}
+
+    // The index of the dimensions a user selects are stored in these
+    // Where the first dimension selection is the x-axis
+    // These are used to index into list of attribute names to set up X_DIM & Y_DIM
+    var X_DIM_INDEX, Y_DIM_INDEX;
+
+    // Global constants
     var LABEL_PROP_NAME = "label";
     var CHART_WIDTH = 500;
-    var CHART_HEIGHT = 200;
+    var CHART_HEIGHT = 500;
+    var PADDING = CHART_WIDTH / 10;
+    var selectedDimensions = [];
+    var data;
+    var svg;
 
     // Calculates the min & max values for each feature across all instances
     // @param - the instances to be visualized
@@ -93,8 +158,8 @@
     //      "domainMax": instances.length
     //        "features" : [
     //          "name": < feature name >,
-    //          "rangeMin" : < min value for feature >,
-    //          "rangeMax" : < max value for feature >
+    //          "minVal" : < min value for feature >,
+    //          "maxVal" : < max value for feature >
     //        ]
     //    }
     function getMinAndMaxRangeForFeatures(instances) {
@@ -118,7 +183,7 @@
           max = (floatVal > max) ? floatVal : max;
         }
         // the min and max values for this feature have been found
-        returnObj.features.push({"name": prop, "rangeMin": min, "rangeMax" : max});
+        returnObj.features.push({"name": prop, "minVal": min, "maxVal" : max});
       }
       return returnObj;
     }
@@ -141,99 +206,256 @@
     //     ]  
     //   }
     // @return - Nothing.
-    function scatterPlot(svg, data) {
-      var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);      
-      console.log(domainRangeObj);
-      // TODO: Set up way for user to select X and Y dimensions
-      X_DIM = domainRangeObj.features[0];
-      Y_DIM = domainRangeObj.features[1];
+    function scatterPlot() {
+      // This gets the min & max values for each feature across all instances
+      var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);     
+
+      X_DIM = (X_DIM_INDEX) ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {"minVal" : 0, "maxVal" : data.instances.length-1, "name": "dummy"};
+      Y_DIM = (Y_DIM_INDEX) ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {"minVal" : 0, "maxVal" : data.instances.length-1, "name": "dummy"};
+
       // set up scales
       var xScale = d3.scale.linear()
-                      .domain([X_DIM.rangeMin, X_DIM.rangeMax])
-                      .range([PADDING, CHART_WIDTH - PADDING]);
+      .domain([X_DIM.minVal, X_DIM.maxVal])
+      .range([PADDING, CHART_WIDTH - PADDING]);
       var yScale = d3.scale.linear()
-                      .domain([Y_DIM.rangeMin, Y_DIM.rangeMax])
-                      .range([CHART_HEIGHT - PADDING, PADDING]);
+      .domain([Y_DIM.minVal, Y_DIM.maxVal])
+      .range([CHART_HEIGHT - PADDING, PADDING]);
       var categoryScale = d3.scale.ordinal()
-                      .domain(data.labels)
-                      .range(d3.scale.category10().range());
+      .domain(data.labels)
+      .range(d3.scale.category10().range());
+
       // set up axes
       var xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .orient("bottom")
-                    .ticks(4);
+      .scale(xScale)
+      .orient("bottom")
+      .ticks(4);
+
       var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(4);
-      svg.append("g")
-          .attr("class", "axis")
-          .attr("id", "x-axis")
-          .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
-          .call(xAxis);
-      svg.append("g")
-          .attr("class", "axis")
-          .attr("id", "y-axis")
-          .attr("transform", "translate(" + PADDING + ", 0)")
-          .call(yAxis);
+      .scale(yScale)
+      .orient("left")
+      .ticks(4);
 
-      // Add plot points
-      var circleGroup = 
-          svg.append("g")
-            .attr("id", "plot-points");
+      // set up legend
+      var legendXScale = 
+      d3.scale.linear()
+      .domain([0, data.labels.length-1])
+      .range([PADDING, (CHART_WIDTH/2) - PADDING]);
 
-      circleGroup.selectAll("circle")
-        .data(data.instances)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d){
-          // This says use this instance's attribute value which
-          // which has been chosen for the x-axis
-          return xScale(d[X_DIM.name]);            
-        })
-        .attr("cy", function(d){
-          return yScale(d[Y_DIM.name]);
-        })
-        .attr("r", 5)
-        .style("fill", function(d){
-          console.log(d.label);
-          return categoryScale(d.label);
-        });
+      svg.selectAll("rect.legend-rect")
+      .data(data.labels)
+      .enter()
+      .append("rect")
+      .attr("class", "legend-rect")
+      .attr("x", function(d, i){
+        return legendXScale(i);  
+      })
+      .attr("y", function(d, i){
+        return PADDING/3;
+      })
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", function(d, i){
+        return categoryScale(data.labels[i]);
+      });
+
+      svg.selectAll("text.legend")
+      .data(data.labels)
+      .enter()
+      .append("text")
+      .attr("class", "legend")
+      .attr("x", function(d,i){
+        return legendXScale(i) + 15;
+      })
+      .attr("y", function(d,i){
+        return (PADDING/3) + 10;
+      })
+      .text(function(d, i){
+        return data.labels[i];
+      })
+      .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
+      .style("font-size", "12px");
+
+      // test comment
+
+      // Set up x-axis tick marks
+      svg.selectAll("g.axis")
+      .remove();  
+      svg.append("g")
+      .attr("class", "axis")
+      .attr("id", "x-axis")
+      .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING ) + ")")
+      .transition().duration(250)
+      .call(xAxis);
+
+      // Set up y-axis tick marks
+      svg.append("g")
+      .attr("class", "axis")
+      .attr("id", "y-axis")
+      .attr("transform", "translate(" + PADDING + ", 0)")
+      .transition().duration(250)
+      .call(yAxis);
+
+      // Label the x-axis
+      svg.select("text.x-label")
+      .remove();
+      svg.append("text")
+      .attr("class", "x-label")
+      .attr("text-anchor", "end")
+      .attr("x", CHART_WIDTH - PADDING)
+      .attr("y", CHART_HEIGHT - (PADDING - 35))
+      .style("fill", "#C4C4C4")
+      .text(function() {
+        if (X_DIM_INDEX) {
+          return X_DIM.name;
+        } else {
+          return "Select X";
+        }
+      });
+
+      // Label the y-axis
+      svg.select("text.y-label")
+      .remove();
+      svg.append("text")
+      .attr("class", "y-label")
+      .attr("text-anchor", "end")
+      .attr("y", (PADDING - 35))
+      .attr("dx", (PADDING * -1.1))
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .style("fill", "#C4C4C4")
+      .text(function() {
+        if (Y_DIM_INDEX) {
+          return Y_DIM.name;
+        } else {
+          return "Select Y";
+        }
+      });
+      
+      // Call the main update method
+      updatePlotPoints(svg, data, xScale, yScale, categoryScale);
     }
 
-    $(document).ready(function() {
-      // HUGE Hack to get data from server response into JS
-      // TODO: remove this once JSON endpoint is set up
-      var data = {"instances": [], "labels": ["bonded", "loner", "pimp", "skank"]};
-      {% for instance in dataset.sorted_instances %}
-        var instData = {};
-        {% for value in instance.sorted_values %}
-          var index = {{forloop.counter}};
+    // Main method which controls the points on the plot as selections
+    // are made on the data table
+    function updatePlotPoints(svg, data, xScale, yScale, categoryScale) {
+      var plotPoints = svg.selectAll("circle")
+      .data(data.instances);
+      // Update
+      plotPoints.transition().duration(1000).delay(500)
+      .attr("cx", function(d, i) {
+        var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+        return xScale(scaleInput);  
+      })
+      .transition().duration(1500).delay(500)
+      .attr("cy", function(d, i) {
+        var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+        return yScale(scaleInput);
+      });
+      plotPoints.enter().append("circle")
+      .attr("cx", function(d, i){
+        var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+        return xScale(scaleInput);                  
+      })
+      .attr("cy", function(d, i) {
+        return CHART_HEIGHT * Math.random();
+      }).transition().duration(3000).delay(400)
+      .attr("cy", function(d, i){
+        var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+        return yScale(scaleInput);
+      })
+      .attr("r", 6)
+      .style("fill", function(d) {
+        return categoryScale(d.label);
+      });
+      // If there's less data now, remove those plots points
+      plotPoints.exit()
+      .remove();
+    }
 
-          {% for feature in instance.sorted_features %}
-            var index2 = {{ forloop.counter }};
-            if (index === index2) {
-              instData["{{feature}}"] = {{value}};
-            }
-          {% endfor %}
-        {% endfor %}
-        var randomNum = Math.floor(Math.random() * 4);
-        instData["label"] = data["labels"][randomNum];
-        data.instances.push(instData);
-      {% endfor %}
-      
-      // If there's data currently uploaded, begin to visualize
-      if (data) {
-        var svg = d3.select("div#chart")
-                  .append("svg")
-                  .attr("width", CHART_WIDTH)
-                  .attr("height", CHART_HEIGHT);
-        scatterPlot(svg, data);
+    // A user has selected a dimension checkbox on the data table
+    // This updates the global variable which keeps track of what's
+    // been checked and passes that to the viz
+    function addToSelectedDimensions(dimension) {
+      selectedDimensions.push(dimension);
+      if (selectedDimensions.length > 2) {
+        // TODO: send asynchronous request for 
+        // PCA-ified data
+        // Right now, it's going to slice out the first element
+        var index = selectedDimensions.splice(0, 1);
+        $('button.feature-btn[value=' + index[0] + ']').removeClass('active');
+      }
+      X_DIM_INDEX = selectedDimensions[0];
+      Y_DIM_INDEX = selectedDimensions[1];
+      scatterPlot();
+    }
+
+    // A user has de-selected a dimension checkbox on the data table
+    // This updates the global variable which keeps track of what's
+    // been checked and passes that to the viz
+    function removeFromSelectedDimensions(dimension) {
+      var removeIndex = selectedDimensions.indexOf(dimension);
+      selectedDimensions.splice(removeIndex, 1);
+      if (selectedDimensions.length < 2) {
+        // There's no longer 2 dimensions selected, 
+        // reset the x & y dimensino pointers to be null
+        X_DIM_INDEX = null;
+        Y_DIM_INDEX = null;
       } else {
-        console.log("No data!");
+          // TODO: this code is replicated, re-think this
+          X_DIM_INDEX = selectedDimensions[0];
+          Y_DIM_INDEX = selectedDimensions[1];
+        }
+        scatterPlot();
       }
 
+      $(document).ready(function() {
+      // HUGE Hack to get data from server response into JS
+      // TODO: remove this once JSON endpoint is set up
+      data = {"instances": [], "labels": []};
+      {% for instance in dataset.sorted_instances %}
+      var instData = {};
+      {% for value in instance.sorted_values %}
+      var index = {{forloop.counter}};
+      {% for feature in instance.sorted_features %}
+      var index2 = {{ forloop.counter }};
+      if (index === index2) {
+        instData["{{feature}}"] = {{value}};
+      }
+      {% endfor %}
+      {% endfor %}
+      var label = "{{instance.label_value}}";
+      instData["label"] = label;
+      data.instances.push(instData);
+      // Add this label to the set of known labels for this data if it's not there
+      if (data.labels.indexOf(label) == -1) {
+        data.labels.push(label);
+      }
+      {% endfor %}
+
+      svg = d3.select("div#chart")
+      .append("svg")
+      .attr("width", CHART_WIDTH)
+      .attr("height", CHART_HEIGHT);
+
+      // Draw the basic circles even though no dimensions
+      // have been selected yet                    
+      scatterPlot();
+
+      // Update selected dimensions when a feature button is selected
+      $('button.feature-btn').on('click', function() {
+        var self = this;
+        // Because of some weirdness with Bootstrap, the 'active' class
+        // is not present when this click handler is fired after a button is selected
+        // So, the absence of the 'active' class means it's active.
+        var val = $(self).val();
+        if (!$(self).hasClass('active')) {
+          addToSelectedDimensions(val);
+        } else {
+          removeFromSelectedDimensions(val);
+        }
+      });
+
     });
-  </script>
+</script>
 </div>
 {% endblock content %}

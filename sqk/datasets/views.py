@@ -21,6 +21,10 @@ class DatasetDisplay(DetailView):
     model = Dataset
     context_object_name = 'dataset'
     template_name = 'datasets/detail.html'
+    
+    def get_query_set(self):
+        return Dataset.objects.filter(pk=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = {
             'upload_form': DatasourceForm(),
@@ -29,9 +33,11 @@ class DatasetDisplay(DetailView):
         return super(DatasetDisplay, self).get_context_data(**context)
 
 class DatasetAddDatasource(FormView, SingleObjectMixin):
+    '''View for adding data to a dataset.
+    '''
     model = Dataset
     form_class = DatasourceForm
-    template_name = 'datasets/detail.html'
+    template_name = 'datasets/detail.html#visualization'
 
     def get_context_data(self, **kwargs):
         context = {
@@ -127,31 +133,34 @@ class InstanceDelete(DeleteView):
 ## Feature views
 # Class to manage feature lists for datasets
 # Model     : Feature (datasets/models.py) 
-class LabelNameCreate(FormView, SingleObjectMixin):
-
-    model = LabelName
+class LabelNameCreate(FormView):
     form_class = LabelNameForm
     context_object_name = 'label_name'
     template_name = 'features/new_label.html'
 
-
     def get_context_data(self, **kwargs):
         # Get context objects that get passed to template
-        context = super(InstanceDetail, self).get_context_data(**kwargs)
-        context['dataset'] = self.kwargs['dataset_id']
+        context = super(LabelNameCreate, self).get_context_data(**kwargs)
+        context['dataset'] = Dataset.objects.get(pk=self.kwargs['dataset_id'])
+        context['upload_form'] = self.get_form(LabelNameForm)
         return context
 
+    def form_valid(self, form): # TODO: getorcreate everything
+        dataset, created = Dataset.objects.get_or_create(pk=self.kwargs['dataset_id'])
+        # Save the new label object and associate with dataset
+        label, created = LabelName.objects.get_or_create(name=form.cleaned_data['name'])
+        label.datasets.add(dataset)
+        # Add the associated values
+        value_1_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value1'])
+        value_2_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value2'])
+        label.label_values.add(value_1_obj)
+        label.label_values.add(value_2_obj)
+        label.save()
+        return super(LabelNameCreate, self).form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = {
-            'data_'
-            'label_name': self.get_object(),
-            'upload_form': self.get_form(LabelNameForm),
-        }
-        return super(LabelNameCreate, self).get_context_data(**context)
-
-    def form_valid(self, form):
-        dataset = self.kwargs['dataset_id']
+    def get_success_url(self):
+        return reverse_lazy('datasets:detail', 
+            kwargs={'pk': self.kwargs['dataset_id']})
 
 
 

@@ -81,16 +81,11 @@ class DatasourceForm(forms.Form):
     #         raise forms.ValidationError('No audio file selected.')
     #     return self.cleaned_data['sample_rate']
 
-class LabelNameForm(forms.ModelForm):
-    name = forms.CharField(required=False,
-        widget=forms.Textarea(attrs={'rows': 5}))
+class LabelNameForm(forms.Form):
+    name = forms.CharField(required=False,)
     value1 = forms.CharField(required=True,)
     value2 = forms.CharField(required=True,)
-    value3 = forms.CharField(required=False,)
-
-    class Meta:
-        model = LabelName
-        fields = ('name', 'value1', 'value2', 'value3')
+    # value3 = forms.CharField(required=False,)
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -99,27 +94,6 @@ class LabelNameForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         super(LabelNameForm, self).__init__(*args, **kwargs)
 
-    def clean_name(self):
-        name = LabelName.objects.get_or_create(
-            name=self.cleaned_data['name'])
-        return name
-
-    def clean_value1(self):
-        value1 = LabelValue.objects.get_or_create(
-            value=self.cleaned_data['value1'])
-        return value1
-
-    def clean_value2(self):
-        value2 = LabelValue.objects.get_or_create(
-            value=self.cleaned_data['value2'])
-        return value2
-
-    def clean_value3(self):
-        if self.cleaned_data['value3']:
-            value3 = LabelValue.objects.get_or_create(
-                value=self.cleaned_data['value3'])
-            return value3
-        else: return None
 
 
     

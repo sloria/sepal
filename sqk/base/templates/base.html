@@ -21,10 +21,10 @@
   <meta name="viewport" content="width=device-width">
 
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css">
   {# <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.css"> #}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.1.min.js"><\/script>')</script>
@@ -45,7 +45,7 @@
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
   {% include "header.html" %}
   
-  {# {% block header %}{% endblock %} #}
+  {% block header %}{% endblock %}
   
   <div id="main">
       {% block content %}{% endblock %}

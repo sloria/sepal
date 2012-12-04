@@ -1,36 +1,38 @@
 {% load url from future %}
-<div class="block">
-  <div class="block-heading">Data</div>
-<table id="dataset-table" class="table table-striped">
-  {# Header #}
-  <thead>
-    <tr>
-      <th>#</th>
-      {% for feature in dataset.sorted_features %}
-
-        {% if feature.is_label_name %}
-          <th><input type="checkbox" name="feature" value="{{ feature.name }}">{{ feature.name }}<em> (Label)</em></th>
-        {% else %}
-          <th><input type="checkbox" name="feature" value="{{ feature.name }}">{{ feature.name }}</th>
+<div class="block span12">
+  <div id="datasetHeading" class="block-heading" data-toggle="collapse" href="#dataset">Data</div>
+  <div id="dataset" class="collapse in">
+    <table id="dataset-table" class="table table-striped">
+    {# Header #}
+    <thead>
+      <tr>
+        <th>#</th>
+        {% if dataset.label_name %}
+        <th>{{ dataset.label_name|title }}</th>
         {% endif %}
-      {% endfor %}
-    </tr>
-  </thead>
-  
-  {# Data #}
-  {# TODO: add ability to select instances #}
-  <tbody>
-    {% for instance in dataset.sorted_instances %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      {% for value in instance.sorted_values %}
+        {% for feature in dataset.sorted_features %}
+        <th>{{ feature.name|title }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+
+    {# Data #}
+    {# TODO: add ability to select instances #}
+    <tbody>
+      {% for instance in dataset.sorted_instances %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        {% if dataset.label_name %}
+          <td>{{ instance.label_value|capfirst }}</td>
+        {% endif %}
+        {% for value in instance.sorted_values %}
         <td>{{ value|floatformat:3 }}</td>
-      {% endfor %}
-      <td>{{ instance.label.label }}</td>
-      <td><a href="{% url 'datasets:instance_detail' dataset.pk instance.pk %}"><i class="icon-bar-chart"></i></a>
-      <td><a href="{% url 'datasets:instance_delete' dataset.pk instance.pk %}"><i class="icon-remove"></i></a>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-</div>
+        {% endfor %}
+        <td>{{ instance.label.label }}</td>
+          <td><a href="{% url 'datasets:instance_delete' dataset.pk instance.pk %}"><i class="icon-remove"></i></a>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
