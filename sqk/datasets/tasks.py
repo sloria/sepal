@@ -29,6 +29,7 @@ def read_datasource(dataset, source_path, feature_row=0):
         data = csv.reader(s)
         features = [] # List of feature names
         feature_obj_list = [] # List of feature objects
+        label_name_obj_list = [] # List of LabelName objects
         for i, row in enumerate(data):
             # Parse header
             if i == feature_row:
@@ -45,6 +46,7 @@ def read_datasource(dataset, source_path, feature_row=0):
 
                 label_name, created = LabelName.objects.get_or_create(
                     name=row[-1])
+                label_name_obj_list.append(label_name)
                 dataset.label_name = label_name
                 dataset.save()
             # Parse data
@@ -73,7 +75,9 @@ def read_datasource(dataset, source_path, feature_row=0):
                 print row[-1]
                 label_value_obj, created = LabelValue.objects.get_or_create(
                                             value__iexact=row[-1])
-                inst.label_value = label_value_obj
+                label_value_obj.label_name = label_name
+                label_value_obj.save()
+                inst.label_values.add(label_value_obj)
                 inst.save()
 
 

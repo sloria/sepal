@@ -413,19 +413,21 @@
       // HUGE Hack to get data from server response into JS
       // TODO: remove this once JSON endpoint is set up
       data = {"instances": [], "labels": []};
-      {% for instance in dataset.sorted_instances %}
+      {% for inst in data %}
       var instData = {};
-      {% for value in instance.sorted_values %}
+      {% for value in inst.values %}
       var index = {{forloop.counter}};
-      {% for feature in instance.sorted_features %}
+      {% for feature in feature_names %}
       var index2 = {{ forloop.counter }};
       if (index === index2) {
         instData["{{feature}}"] = {{value}};
       }
       {% endfor %}
       {% endfor %}
-      var label = "{{instance.label_value}}";
-      instData["label"] = label;
+      {% for label_name, label_value in inst.labels.items %}
+        var label = "{{label_value}}";
+        instData["label"] = label;
+      {% endfor %}
       data.instances.push(instData);
       // Add this label to the set of known labels for this data if it's not there
       if (data.labels.indexOf(label) == -1) {

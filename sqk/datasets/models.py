@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 class LabelName(models.Model):
-    name = models.CharField(max_length=100, null=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
     def __unicode__(self):
         return unicode(self.name)
 
@@ -20,8 +20,10 @@ class Species(models.Model):
 
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
-    description = models.CharField(max_length=500, default='')
-    species = models.ForeignKey(Species, default=0, related_name='datasets')
+    description = models.CharField(max_length=500, null=True, blank=True)
+    species = models.ForeignKey(Species, null=True, blank=True,
+                                related_name='datasets')
+    # TODO: Dataset should have many label names. Or just treat them like features (no relationship to dataset)
     label_name = models.ForeignKey(LabelName, null=True, related_name='datasets')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
@@ -38,8 +40,8 @@ class Dataset(models.Model):
         '''Returns a 2D array of instance values.
 
         Example:
-        >> dataset.values_as_list()
-        {1432: [0.0458984375, 71.7224358880516],
+        >> dataset.values()
+        {1432: ([0.0458984375, 71.7224358880516], {'Marital status',
         1433: [0.23984375, 73.7244358880516]}
         '''
         instance_ids = self.instances.values_list('pk', flat=True).order_by('pk')
@@ -49,6 +51,34 @@ class Dataset(models.Model):
                     instance__id=inst_id).values_list(
                         'value', flat=True).order_by('feature') 
         return data
+    def labels(self):
+        '''Returns a list of dicts corresponding to the label_name:label_value 
+        pairs for each instance in this dataset.
+
+        Example:
+        >> dataset.labels()
+        [{u'marital status': u'bonded', u'genotype': u'homozygous'},
+        {u'marital status': u'bachelor', u'genotype': u'heterozygous'}
+        ...]
+        '''
+        return [inst.labels() for inst in self.instances.order_by('pk')]
+    def get_data(self):
+        '''Returns the data as a list of dicts with instance attributes as 
+        keys and instance values as values.
+
+        Example:
+        >> dataset.get_data()
+
+        [{'pk': 1425, 'values': [10.32, 3.4], 'labels': {'marital': 'bonded,}},
+         {'pk': 1426, 'values': [10.34, 2.4], 'labels': {'marital': 'unbonded,}},
+         ]
+        '''
+        data = []
+        for inst in self.instances.order_by('pk'):
+            data.append({'pk': inst.pk, 
+                        'values': inst.values_as_list(), 
+                        'labels': inst.labels()})
+        return data
     class Meta:
         get_latest_by = "created_at"
 
@@ -56,7 +86,7 @@ class Dataset(models.Model):
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     species = models.ForeignKey(Species, related_name='instances')
-    label_values = models.ManyToManyField(LabelValue, null=True,
+    label_values = models.ManyToManyField(LabelValue, null=True, blank=True,
         related_name='instances')
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
@@ -84,6 +114,18 @@ class Instance(models.Model):
         [0.0458984375, 71.7224358880516]
         '''
         return self.values.values_list('value', flat=True).order_by('feature')
+    def labels(self):
+        '''Returns a dict with label names as keys and label values as values.
+
+        Example:
+        >> inst.labels()
+        {u'marital status': u'bonded', u'genotype': u'heterozygous' }
+        '''
+        labels = {}
+        for label_value in self.label_values.order_by('pk'):
+            label_name = label_value.label_name.name # A unicode str
+            labels[label_name] = label_value.value # Also a unicode str
+        return labels
     class Meta:
         get_latest_by = 'pk'
 
@@ -118,6 +160,6 @@ class LabelValue(models.Model):
     '''A value for a label type, e.g. Bachelor
     '''
     label_name = models.ForeignKey(LabelName, null=True, related_name='label_values')
-    value = models.CharField(max_length=100, null=True)
+    value = models.CharField(max_length=100, default='None')
     def __unicode__(self):
         return unicode(self.value)

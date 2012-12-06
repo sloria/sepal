@@ -11,7 +11,6 @@
           <th>{{ dataset.label_name|title }}</th>
           {% endif %}
 
-          {# FIXME: dataset.instances is a QuerySet. Must be a list #}
               {% for feature_name in feature_names %}
               <th>{{ feature_name|title }}</th>
               {% endfor %}
@@ -21,16 +20,19 @@
       {# Data #}
       {# TODO: add ability to select instances #}
       <tbody>
-        {% for instance_id, values in dataset.values.items %}
+        {% for inst in data %}
         <tr>
           <td>{{ forloop.counter }}</td>
+          {# FIXME: Label name not showing #}
           {% if dataset.label_name %}
-          <td>{{ instance.label_value|capfirst }}</td>
+          {% for label_name, label_value in inst.labels.items %}
+          <td>{{ label_value }}</td>
+          {% endfor %}
           {% endif %}
-          {% for value in values %}
+          {% for value in inst.values %}
           <td>{{ value|floatformat:3 }}</td>
           {% endfor %}
-          <td><a href="{% url 'datasets:instance_delete' dataset.pk instance_id %}"><i class="icon-remove"></i></a>
+          <td><a href="{% url 'datasets:instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a>
           </tr>
           {% endfor %}
         </tbody>

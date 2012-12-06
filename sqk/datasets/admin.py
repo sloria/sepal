@@ -32,7 +32,7 @@ class DatasetAdmin(admin.ModelAdmin):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset', 'label_value']}),
+        (None, {'fields': ['dataset', 'label_values']}),
     ]
     list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, FeatureValueInline]
@@ -60,7 +60,7 @@ class LabelNameAdmin(admin.ModelAdmin):
 
 class LabelValueAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['value']})
+        (None, {'fields': ['value', 'label_name']})
     ]
     list_display = ('value','pk')
     inlines = []

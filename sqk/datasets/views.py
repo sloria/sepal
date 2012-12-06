@@ -26,11 +26,14 @@ class DatasetDisplay(DetailView):
         return Dataset.objects.filter(pk=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
+        dataset = self.get_object()
         context = {
             'upload_form': DatasourceForm(),
+            'data': dataset.get_data()
         }
         if self.get_object().instances.exists():
-            context['feature_objects'] = list(self.get_object().last_instance().feature_objects())
+            context['feature_objects'] = list(dataset.last_instance().feature_objects())
+            context['feature_names'] = list(dataset.last_instance().feature_names())
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
