@@ -82,6 +82,7 @@
 
   {# Visualization and Control #}
   <div class="row">
+    {# Visualization panel #}
     <div class="span9">
       <div class="block">
         <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
@@ -89,13 +90,14 @@
           <div id="chart" class="collapse out"></div>
         </div>
       </div>
+      {# Axes control #}
       <div class="span3">
         <div class="span3">
           <center>
             <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
             <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
-                {% for feature in features %}
+                {% for feature in feature_objects %}
                 <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
                 {% endfor %}
               </div>

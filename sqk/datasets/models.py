@@ -34,9 +34,21 @@ class Dataset(models.Model):
         return self.instances.reverse()[0]
     def sorted_instances(self):
         return self.instances.order_by('pk')
-    def values_as_list(self):
-        return [self.sorted_instances()[i].values_as_list() for i in range(
-            len(self.sorted_instances()))]
+    def values(self):
+        '''Returns a 2D array of instance values.
+
+        Example:
+        >> dataset.values_as_list()
+        {1432: [0.0458984375, 71.7224358880516],
+        1433: [0.23984375, 73.7244358880516]}
+        '''
+        instance_ids = self.instances.values_list('pk', flat=True).order_by('pk')
+        data = {}
+        for inst_id in instance_ids:
+            data[inst_id] = FeatureValue.objects.filter(
+                    instance__id=inst_id).values_list(
+                        'value', flat=True).order_by('feature') 
+        return data
     class Meta:
         get_latest_by = "created_at"
 
@@ -50,25 +62,36 @@ class Instance(models.Model):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def get_cname(self):
         return 'instance'
-    def sorted_values(self, exclude_dur_and_rate=False):
-        if exclude_dur_and_rate:
-            filtered_vals = self.values.exclude(
-                                feature__name='duration').exclude(
-                                feature__name='sample_rate')
-            return filtered_vals.order_by('feature')
-        else:
-            return self.values.order_by('feature')
-    def sorted_features(self):
+    def feature_names(self):
+        '''Returns a list of the feature names (unicode strings) associated
+        with this instance, ordered by feature pk.
+
+        Example:
+        >> inst.sorted_features()
+        [u'zcr', u'spectral spread',]
+        '''
+        return self.features.values_list('name', flat=True).order_by('pk')
+    def feature_objects(self):
+        '''Returns a list of feature objects associated with this instance.
+        '''
         return self.features.order_by('pk')
     def values_as_list(self):
-        return [v.value for v in self.sorted_values()]
+        '''Returns a list of the values (floats) associated with this 
+        instance, ordered by feature pk.
+
+        Examples:
+        >> inst.values_as_list()
+        [0.0458984375, 71.7224358880516]
+        '''
+        return self.values.values_list('value', flat=True).order_by('feature')
+    class Meta:
+        get_latest_by = 'pk'
 
 # Extract features from the audio files
 # 
 # Labels        : Categories
 # FeatureValues : Values exrtacted from the audio files
 class Feature(models.Model):
-    #TODO: support for meta values
     instances = models.ManyToManyField(
         Instance, 
         null=True, 
@@ -85,11 +108,15 @@ class FeatureValue(models.Model):
         return unicode(self.value)
 
 class LabelName(models.Model):
+    '''The name of label (called Variables in the templates), e.g. Marital Status
+    '''
     name = models.CharField(max_length=100, null=True)
     def __unicode__(self):
         return unicode(self.name)
 
 class LabelValue(models.Model):
+    '''A value for a label type, e.g. Bachelor
+    '''
     label_name = models.ForeignKey(LabelName, null=True, related_name='label_values')
     value = models.CharField(max_length=100, null=True)
     def __unicode__(self):

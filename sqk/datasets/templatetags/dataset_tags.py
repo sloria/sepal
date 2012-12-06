@@ -7,7 +7,7 @@ register = template.Library()
 def show_dataset(dataset):
     context = {'dataset': dataset}
     if dataset.instances.exists():
-        context['features'] = list(dataset.last_instance().sorted_features())
+        context['feature_names'] = list(dataset.last_instance().feature_names())
     return context
 
 

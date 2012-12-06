@@ -30,7 +30,7 @@ class DatasetDisplay(DetailView):
             'upload_form': DatasourceForm(),
         }
         if self.get_object().instances.exists():
-            context['features'] = list(self.get_object().last_instance().sorted_features())
+            context['feature_objects'] = list(self.get_object().last_instance().feature_objects())
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
