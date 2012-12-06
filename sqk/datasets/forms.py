@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import FormActions
-from sqk.datasets.models import Dataset, Species
+from sqk.datasets.models import *
 
 
 class DatasetForm(forms.ModelForm):
@@ -80,6 +80,23 @@ class DatasourceForm(forms.Form):
     #     if self.cleaned_data['sample_rate'] and not self.cleaned_data['audio']:
     #         raise forms.ValidationError('No audio file selected.')
     #     return self.cleaned_data['sample_rate']
+
+class LabelNameForm(forms.Form):
+    name = forms.CharField(required=False,)
+    value1 = forms.CharField(required=True,)
+    value2 = forms.CharField(required=True,)
+    # value3 = forms.CharField(required=False,)
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_id = 'labelNameForm'
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Submit'))
+        super(LabelNameForm, self).__init__(*args, **kwargs)
+
+
+
+    
 
 
 

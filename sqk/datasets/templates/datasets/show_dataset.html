@@ -1,28 +1,40 @@
 {% load url from future %}
-{% load dataset_tags %}
-<div class="block">
-  <div class="block-heading">Data</div>
-<table id="dataset-table" class="table table-striped">
-  {# Header #}
-  <thead>
-    <tr>
-      <th>#</th>
-      {% for feature in dataset.sorted_features %}
-        {% if feature.is_label_name %}
-          <th>{{ feature.name }}<em> (Label)</em></th>
-        {% else %}
-          <th>{{ feature.name }}</th>
-        {% endif %}
-      {% endfor %}
-    </tr>
-  </thead>
-  
-  {# Data #}
-  {# TODO: add ability to select instances #}
-  <tbody>
-    {% for instance in dataset.sorted_instances %}
-      {% instance_row instance %}
-    {% endfor %}
-  </tbody>
-</table>
-</div>
+<div class="block span12">
+  <div id="datasetHeading" class="block-heading" data-toggle="collapse" href="#dataset">Data</div>
+  <div id="dataset" class="collapse in">
+    <table id="dataset-table" class="table table-striped">
+      {# Header #}
+      <thead>
+        <tr>
+          <th>#</th>
+          {% if dataset.label_name %}
+          <th>{{ dataset.label_name|title }}</th>
+          {% endif %}
+
+              {% for feature_name in feature_names %}
+              <th>{{ feature_name|title }}</th>
+              {% endfor %}
+        </tr>
+      </thead>
+
+      {# Data #}
+      {# TODO: add ability to select instances #}
+      <tbody>
+        {% for inst in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          {% if dataset.label_name %}
+          {% for label_name, label_value in inst.labels.items %}
+          <td>{{ label_value|title }}</td>
+          {% endfor %}
+          {% endif %}
+          {% for value in inst.values %}
+          <td>{{ value|floatformat:3 }}</td>
+          {% endfor %}
+          <td><a href="{% url 'datasets:instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
