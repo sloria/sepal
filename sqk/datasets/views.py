@@ -110,12 +110,7 @@ class DatasetDelete(DeleteView):
     context_object_name = 'object'
     success_url = reverse_lazy('datasets:index')
 
-
-<<<<<<< HEAD
-=======
 ## Instance views
-
->>>>>>> master
 class InstanceDetail(DetailView):
     model = Instance
     context_object_name = 'instance'
@@ -141,7 +136,6 @@ class InstanceDetail(DetailView):
         context['dataset'] = self.get_object().dataset
         return context
 
-<<<<<<< HEAD
 class InstanceRow(DetailView):
     model = Instance
     template_name = 'instances/instance_row.html'
@@ -151,10 +145,6 @@ class InstanceRow(DetailView):
             pk=self.kwargs['dataset_id'])
         return Instance.objects.filter(dataset=dataset)
 
-
-
-=======
->>>>>>> master
 class InstanceDelete(DeleteView):
     model = Instance
     template_name='instances/delete.html'
