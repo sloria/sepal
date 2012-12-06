@@ -25,7 +25,6 @@
 
 </style>
 <script src="http://d3js.org/d3.v2.js"></script>
-{# <script type="text/javascript" src="{{ STATIC_URL }}js/example_figure.js"></script> #}
 <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
 {% endblock static %}
 
@@ -96,7 +95,7 @@
             <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
             <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
-                {% for feature in dataset.sorted_features %}
+                {% for feature in features %}
                 <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
                 {% endfor %}
               </div>
