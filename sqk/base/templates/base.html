@@ -13,7 +13,7 @@
   More info: h5bp.com/i/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>{% block page_title %}{{ _("Sqk | Mine your Audio") }}{% endblock %}</title>
+  <title>{% block page_title %}{{ _("Sepal | Mine your Audio") }}{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
 
@@ -43,7 +43,7 @@
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
   chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-  {% include "header.html" %}
+  {% include "nav.html" %}
   
   {% block header %}{% endblock %}
   
@@ -57,7 +57,7 @@
   <!-- Other JavaScript at the bottom for fast page loading -->
 
   <!-- scripts concatenated and minified via build script -->
-  <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+  <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/plugins.js"></script>
   <script src="{{ STATIC_URL }}js/script.js"></script>
   <!-- end scripts -->
