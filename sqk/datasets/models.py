@@ -56,7 +56,7 @@ class Dataset(models.Model):
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     species = models.ForeignKey(Species, related_name='instances')
-    label_value = models.ForeignKey(LabelValue, null=True,
+    label_values = models.ManyToManyField(LabelValue, null=True,
         related_name='instances')
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
