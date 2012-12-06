@@ -319,7 +319,7 @@
       svg.append("text")
       .attr("class", "y-label")
       .attr("text-anchor", "end")
-      .attr("y", (PADDING - 35))
+      .attr("y", (PADDING - 40))
       .attr("dx", (PADDING * -1.1))
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
@@ -420,12 +420,12 @@
       {% for feature in feature_names %}
       var index2 = {{ forloop.counter }};
       if (index === index2) {
-        instData["{{feature}}"] = {{value}};
+        instData["{{feature|title}}"] = {{value}};
       }
       {% endfor %}
       {% endfor %}
       {% for label_name, label_value in inst.labels.items %}
-        var label = "{{label_value}}";
+        var label = "{{label_value|title}}";
         instData["label"] = label;
       {% endfor %}
       data.instances.push(instData);

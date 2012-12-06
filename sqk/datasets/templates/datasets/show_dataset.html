@@ -23,10 +23,9 @@
         {% for inst in data %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          {# FIXME: Label name not showing #}
           {% if dataset.label_name %}
           {% for label_name, label_value in inst.labels.items %}
-          <td>{{ label_value }}</td>
+          <td>{{ label_value|title }}</td>
           {% endfor %}
           {% endif %}
           {% for value in inst.values %}
