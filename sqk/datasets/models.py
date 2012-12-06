@@ -30,13 +30,16 @@ class Dataset(models.Model):
         return 'dataset'
     def get_absolute_url(self):
         return reverse('datasets:detail', kwargs={'pk': self.pk})
-    def sorted_features(self):
-        return self.features.order_by('pk')
+    def last_instance(self):
+        return self.instances.reverse()[0]
     def sorted_instances(self):
         return self.instances.order_by('pk')
     def values_as_list(self):
         return [self.sorted_instances()[i].values_as_list() for i in range(
             len(self.sorted_instances()))]
+    class Meta:
+        get_latest_by = "created_at"
+
 
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
@@ -66,8 +69,6 @@ class Instance(models.Model):
 # FeatureValues : Values exrtacted from the audio files
 class Feature(models.Model):
     #TODO: support for meta values
-    datasets = models.ManyToManyField(Dataset,
-        related_name='features')
     instances = models.ManyToManyField(
         Instance, 
         null=True, 
