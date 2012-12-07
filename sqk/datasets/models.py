@@ -129,24 +129,11 @@ class Instance(models.Model):
     class Meta:
         get_latest_by = 'pk'
 
-<<<<<<< HEAD
-class FeatureSet(models.Model):
-    name = models.CharField(max_length=100)
-    def __unicode__(self):
-        return self.name
-
-class Feature(models.Model):
-    #TODO: support for meta values
-    feature_set = models.ForeignKey(FeatureSet, null=True)
-    datasets = models.ManyToManyField(Dataset,
-        related_name='features')
-=======
 # Extract features from the audio files
 # 
 # Labels        : Categories
 # FeatureValues : Values exrtacted from the audio files
 class Feature(models.Model):
->>>>>>> master
     instances = models.ManyToManyField(
         Instance, 
         null=True, 
@@ -155,12 +142,7 @@ class Feature(models.Model):
     def __unicode__(self):
         return self.name
 
-<<<<<<< HEAD
-
-class Value(models.Model):
-=======
 class FeatureValue(models.Model):
->>>>>>> master
     feature = models.ForeignKey(Feature, related_name='values')
     instance = models.ForeignKey(Instance, related_name='values')
     value = models.FloatField()
