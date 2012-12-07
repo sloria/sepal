@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import simplejson as json
 from django import http
 
+from djcelery.views import is_task_successful
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
@@ -72,10 +73,8 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
-            extract_features.delay(instance,
+            result = extract_features.delay(instance,
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
-
-
         return super(DatasetAddDatasource, self).form_valid(form)
 
 
@@ -135,6 +134,10 @@ class InstanceDetail(DetailView):
         #     pk=self.kwargs['pk'])
         context['dataset'] = self.get_object().dataset
         return context
+
+class ExtractionStatus(View):
+    def get(self, request, *args, **kwargs):
+        return is_task_successful(request, )
 
 class InstanceRow(DetailView):
     model = Instance
