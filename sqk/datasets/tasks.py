@@ -72,6 +72,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                             instance=inst)
 
                 print row[-1]
+                # Create label value and add it to the label
                 label_value_obj, created = LabelValue.objects.get_or_create(
                                             value=row[-1].lower())
                 label_value_obj.label_name = label_name
@@ -142,6 +143,13 @@ def extract_features(dataset, audiofile_path):
         species=dataset.species)
     for feature in feature_obj_list:
         inst.features.add(feature)
+    
+    # Add a placeholder label name and label value to instance
+    # This is necessary in order for plotting to work
+    no_label_name, c = LabelName.objects.get_or_create(name='none')
+    no_label, c = LabelValue.objects.get_or_create(value="none",
+                                                    label_name=no_label_name)
+    inst.label_values.add(no_label)
     inst.save()
 
     for display_name, output in outputs.iteritems():
@@ -163,16 +171,6 @@ def extract_features(dataset, audiofile_path):
     FeatureValue.objects.create(value=duration,
         feature=Feature.objects.get(name='duration'),
         instance=inst)
-
-
-
-
-
-
-
-
-
-
 
 
 
