@@ -49,50 +49,7 @@ hr {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #fff;
 }
-/*Navbar*/
-.navbar {
-  margin: 0px 0px 1em 0px;
-  padding: 0px;
-}
-.navbar .brand {
-  text-shadow: none;
-}
-.navbar .nav > li > a {
-  color: #fff;
-  text-shadow: none;
-}
-.navbar .nav > li:hover {
-  background-color: #444;
-}
-.navbar .nav > li > a:hover {
-  color: #fff;
-}
-.navbar .navbar-inner {
-  background: #555555;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #444444), color-stop(1, #555555));
-  background: -ms-linear-gradient(bottom, #444444, #555555);
-  background: -moz-linear-gradient(center bottom, #444444 0%, #555555 100%);
-  background: -o-linear-gradient(bottom, #444444, #555555);
-  filter: none;
-  filter: progid:dximagetransform.microsoft.gradient(startColorStr='#444444', EndColorStr='#555555');
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555',EndColorStr='#444444')";
-  margin: 0px;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-  border: 0px;
-  border-bottom: 1px solid #222;
-  -webkit-box-shadow: 0px 1px 0px #f0f0f0;
-  -moz-box-shadow: 0px 1px 0px #f0f0f0;
-  box-shadow: 0px 1px 0px #f0f0f0;
-}
-.navbar .nav li.dropdown.open > .dropdown-toggle {
-  background-color: #444;
-  color: #fff;
-}
+
 footer {
   padding: 1em;
   margin-top: 4em;

@@ -17,9 +17,6 @@ class FeatureInstanceInline(admin.TabularInline):
     model = Feature.instances.through
     extra = 1
 
-class FeatureDatasetInline(admin.TabularInline):
-    model = Feature.datasets.through
-    extra = 1
 
 class DatasetInline(admin.TabularInline):
     model = Dataset
@@ -30,12 +27,12 @@ class DatasetAdmin(admin.ModelAdmin):
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
     list_display = ('name', 'label_name', 'created_at', 'description', 'pk')
-    inlines = [InstanceInline, FeatureDatasetInline]
+    inlines = [InstanceInline,]
     search_fields = ['name']
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset', 'label_value']}),
+        (None, {'fields': ['dataset', 'label_values']}),
     ]
     list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, FeatureValueInline]
@@ -45,7 +42,7 @@ class FeatureAdmin(admin.ModelAdmin):
         (None, {'fields': ['name',]})
     ]
     list_display = ('name','pk')
-    inlines = [FeatureInstanceInline, FeatureDatasetInline]
+    inlines = [FeatureInstanceInline,]
 
 class SpeciesAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -63,7 +60,7 @@ class LabelNameAdmin(admin.ModelAdmin):
 
 class LabelValueAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['value']})
+        (None, {'fields': ['value', 'label_name']})
     ]
     list_display = ('value','pk')
     inlines = []

@@ -20,11 +20,16 @@ def handle_uploaded_file(f):
 @task()
 def read_datasource(dataset, source_path, feature_row=0):
     '''Parse a datasource (csv) and saves data to the database.
+
+    IMPORTANT: As of now, this method is for demo purposes. It assumes
+    that the the independent variable is in the last row.
     '''
     with open(source_path, 'r') as s:
         # TODO: file type handling
         data = csv.reader(s)
-        features = []
+        features = [] # List of feature names
+        feature_obj_list = [] # List of feature objects
+        label_name = None
         for i, row in enumerate(data):
             # Parse header
             if i == feature_row:
@@ -37,7 +42,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                     else:
                         f = Feature.objects.filter().get(
                             name=row[j].lower())
-                    dataset.features.add(f)
+                    feature_obj_list.append(f)
 
                 label_name, created = LabelName.objects.get_or_create(
                     name=row[-1])
@@ -49,7 +54,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                 inst = Instance.objects.create(
                     dataset=dataset,
                     species=dataset.species)
-                for feature in dataset.features.all():
+                for feature in feature_obj_list:
                     inst.features.add(feature)
                 inst.save()
                 for v, value_str in enumerate(row):
@@ -61,15 +66,18 @@ def read_datasource(dataset, source_path, feature_row=0):
                         # TODO: Eventually accept non-numeric data
                         continue
                     feature = None
-                    feature = dataset.features.get(name=features[v])
+                    feature = inst.features.get(name=features[v])
                     v = FeatureValue.objects.create(value=val, 
                             feature=feature,
                             instance=inst)
 
                 print row[-1]
+                # Create label value and add it to the label
                 label_value_obj, created = LabelValue.objects.get_or_create(
-                                            value__iexact=row[-1])
-                inst.label_value = label_value_obj
+                                            value=row[-1].lower())
+                label_value_obj.label_name = label_name
+                label_value_obj.save()
+                inst.label_values.add(label_value_obj)
                 inst.save()
 
 
@@ -119,29 +127,32 @@ def extract_features(dataset, audiofile_path):
                 a = engine.readOutput(output_name) # 2D array
                 outputs[display_name] = a.transpose()[0]
 
-    # Create features and add to dataset
+    # Create features 
+    feature_obj_list = []
     for display_name in outputs.keys():
         f, created = Feature.objects.get_or_create(name=display_name.lower())
-        if dataset.features.filter(name=display_name).count() == 0:
-            dataset.features.add(f)
+        feature_obj_list.append(f)
 
     rate_obj, created = Feature.objects.get_or_create(name='sample rate')
+    feature_obj_list.append(rate_obj)
     duration_obj, created = Feature.objects.get_or_create(name='duration')
-    
-    if dataset.features.filter(name='Sample rate').count() == 0:
-        dataset.features.add(rate_obj)
-    if dataset.features.filter(name='Duration').count() == 0:
-        dataset.features.add(duration_obj)
+    feature_obj_list.append(duration_obj)
 
     # Create instance
     inst = Instance.objects.create(
         dataset=dataset,
         species=dataset.species)
-    for feature in dataset.features.all():
+    for feature in feature_obj_list:
         inst.features.add(feature)
+    
+    # Add a placeholder label name and label value to instance
+    # This is necessary in order for plotting to work
+    no_label_name, c = LabelName.objects.get_or_create(name='none')
+    no_label, c = LabelValue.objects.get_or_create(value="none",
+                                                    label_name=no_label_name)
+    inst.label_values.add(no_label)
     inst.save()
 
-    print repr(outputs)
     for display_name, output in outputs.iteritems():
         if output.size > 0: # Avoid empty data
             # Save output data
@@ -161,16 +172,6 @@ def extract_features(dataset, audiofile_path):
     FeatureValue.objects.create(value=duration,
         feature=Feature.objects.get(name='duration'),
         instance=inst)
-
-
-
-
-
-
-
-
-
-
 
 
 

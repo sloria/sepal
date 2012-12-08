@@ -25,7 +25,6 @@
 
 </style>
 <script src="http://d3js.org/d3.v2.js"></script>
-{# <script type="text/javascript" src="{{ STATIC_URL }}js/example_figure.js"></script> #}
 <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
 {% endblock static %}
 
@@ -83,6 +82,7 @@
 
   {# Visualization and Control #}
   <div class="row">
+    {# Visualization panel #}
     <div class="span9">
       <div class="block">
         <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
@@ -90,13 +90,14 @@
           <div id="chart" class="collapse out"></div>
         </div>
       </div>
+      {# Axes control #}
       <div class="span3">
         <div class="span3">
           <center>
             <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
             <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
-                {% for feature in dataset.sorted_features %}
+                {% for feature in feature_objects %}
                 <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
                 {% endfor %}
               </div>
@@ -318,7 +319,7 @@
       svg.append("text")
       .attr("class", "y-label")
       .attr("text-anchor", "end")
-      .attr("y", (PADDING - 35))
+      .attr("y", (PADDING - 40))
       .attr("dx", (PADDING * -1.1))
       .attr("dy", ".75em")
       .attr("transform", "rotate(-90)")
@@ -412,19 +413,21 @@
       // HUGE Hack to get data from server response into JS
       // TODO: remove this once JSON endpoint is set up
       data = {"instances": [], "labels": []};
-      {% for instance in dataset.sorted_instances %}
+      {% for inst in data %}
       var instData = {};
-      {% for value in instance.sorted_values %}
+      {% for value in inst.values %}
       var index = {{forloop.counter}};
-      {% for feature in instance.sorted_features %}
+      {% for feature in feature_names %}
       var index2 = {{ forloop.counter }};
       if (index === index2) {
-        instData["{{feature}}"] = {{value}};
+        instData["{{feature|title}}"] = {{value}};
       }
       {% endfor %}
       {% endfor %}
-      var label = "{{instance.label_value}}";
-      instData["label"] = label;
+      {% for label_name, label_value in inst.labels.items %}
+        var label = "{{label_value|title}}";
+        instData["label"] = label;
+      {% endfor %}
       data.instances.push(instData);
       // Add this label to the set of known labels for this data if it's not there
       if (data.labels.indexOf(label) == -1) {
