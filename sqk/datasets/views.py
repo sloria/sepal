@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
@@ -166,6 +166,11 @@ class LabelNameCreate(FormView):
     def get_success_url(self):
         return reverse_lazy('datasets:detail', 
             kwargs={'pk': self.kwargs['dataset_id']})
+
+class LabelValueCreate(FormView):
+    form_class = LabelValueForm
+    # TODO: Finish label create view
+
 
 
 
