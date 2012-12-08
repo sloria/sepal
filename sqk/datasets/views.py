@@ -167,6 +167,11 @@ class LabelNameCreate(FormView):
         return reverse_lazy('datasets:detail', 
             kwargs={'pk': self.kwargs['dataset_id']})
 
+class LabelValueCreate(FormView):
+    form_class = LabelValueForm
+    # TODO: Finish label create view
+
+
 
 
 
