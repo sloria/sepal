@@ -6,7 +6,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 from django.utils import simplejson
 from django.http import HttpResponseRedirect, HttpResponse
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
@@ -75,19 +75,16 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         return super(DatasetAddDatasource, self).form_valid(form)
 
 class DatasetDetail(View):
+    
     def get(self, request, *args, **kwargs):
-        print "GOT it"
         view = DatasetDisplay.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print 
         message = {"name": ""}
         if request.is_ajax():
             # dataset = get_object_or_404(Dataset, pk=dataset_id)
             message['name'] = request.POST['value']
-        else:
-            message = "You're the lying type, I can just tell."
         json = simplejson.dumps(message)
         return HttpResponse(json, mimetype='application/json') 
 
@@ -179,14 +176,31 @@ class LabelValueCreate(FormView):
     form_class = LabelValueForm
     # TODO: Finish label create view
 
-def update_name(request, dataset_id):   
+def update_name(request, dataset_id):
+    '''View for updating the dataset name using X-editable.
+    '''
     message = {"name": ''}
     if request.is_ajax():
+        # Save new Dataset name
         dataset = get_object_or_404(Dataset, pk=dataset_id)
         dataset.name = request.POST['value']
         dataset.save()
         message['name'] = request.POST['value']
 
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+@ensure_csrf_cookie
+def update_instance_label(request, dataset_id, instance_id):
+    '''View for updating an instance label name using X-editable.
+    '''
+    message = {"label": ''}
+    if request.is_ajax():
+        new_label = request.POST['value']
+        inst = get_object_or_404(Dataset, pk=instance_id)
+        # TODO: save new label
+        inst.save()
+        message['label'] = new_label
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 

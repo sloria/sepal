@@ -25,7 +25,15 @@
           <td>{{ forloop.counter }}</td>
           {% if dataset.label_name %}
           {% for label_name, label_value in inst.labels.items %}
-          <td>{{ label_value|title }}</td>
+          <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value|title }}</td></a>
+          <script>
+          $('#instance_label_{{ inst.pk }}').editable({
+           type: 'text',
+           pk: {{ inst.pk }},
+           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk %}',
+           title: 'Edit instance label'
+         });
+          </script>
           {% endfor %}
           {% endif %}
           {% for value in inst.values %}
