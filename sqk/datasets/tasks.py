@@ -46,8 +46,6 @@ def read_datasource(dataset, source_path, feature_row=0):
 
                 label_name, created = LabelName.objects.get_or_create(
                     name=row[-1])
-                dataset.label_name = label_name
-                dataset.save()
             # Parse data
             else:
                 # Create instance and add it to dataset

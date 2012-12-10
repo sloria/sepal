@@ -81,12 +81,8 @@ class DatasetDetail(View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        message = {"name": ""}
-        if request.is_ajax():
-            # dataset = get_object_or_404(Dataset, pk=dataset_id)
-            message['name'] = request.POST['value']
-        json = simplejson.dumps(message)
-        return HttpResponse(json, mimetype='application/json') 
+        view = DatasetAddDatasource.as_view()
+        return view(request, *args, **kwargs)
 
 
 class DatasetCreate(FormView):

@@ -7,13 +7,15 @@
       <thead>
         <tr>
           <th>#</th>
-          {% if dataset.label_name %}
-          <th>{{ dataset.label_name|title }}</th>
+          {% if dataset.instances %}
+          {% for label_name, label_value in dataset.last_instance.labels.items %}
+          <th>{{ label_name|title }}</th>
+          {% endfor %}
           {% endif %}
 
-              {% for feature_name in feature_names %}
-              <th>{{ feature_name|title }}</th>
-              {% endfor %}
+          {% for feature_name in feature_names %}
+          <th>{{ feature_name|title }}</th>
+          {% endfor %}
         </tr>
       </thead>
 
@@ -23,7 +25,8 @@
         {% for inst in data %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          {% if dataset.label_name %}
+
+          {% if inst.labels %}
           {% for label_name, label_value in inst.labels.items %}
           <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value|title }}</td></a>
           <script>
@@ -35,6 +38,8 @@
          });
           </script>
           {% endfor %}
+          {% else %}
+          <td>No label</td>
           {% endif %}
           {% for value in inst.values %}
           <td>{{ value|floatformat:3 }}</td>
