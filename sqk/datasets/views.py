@@ -179,23 +179,6 @@ class LabelValueCreate(FormView):
     form_class = LabelValueForm
     # TODO: Finish label create view
 
-
-
-class DatasetAjaxUpdate(UpdateView):
-    form_class = DatasetEditForm
-    def form_valid(self, form):
-        """
-        If the request is ajax, save the form and return a json response.
-        Otherwise return super as expected.
-        """
-        pi
-        new_name = form.cleaned_data['value']
-        return HttpResponse(json.dumps("success"),
-            mimetype="application/json")
-        # return super(DatasetAjaxUpdateView, self).form_valid(form)     
-
-
-
 def update_name(request, dataset_id):   
     message = {"name": ''}
     if request.is_ajax():
@@ -206,10 +189,6 @@ def update_name(request, dataset_id):
 
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
-
-
-
-
 
 
 
