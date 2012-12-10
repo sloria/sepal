@@ -32,7 +32,6 @@ class DatasetEditForm(forms.ModelForm):
     '''Form for editing the title, species, and description
     of a dataset.
     '''
-    # TODO: allow creation of new species object
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
     class Meta:

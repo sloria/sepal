@@ -4,6 +4,9 @@ from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
+from django.utils import simplejson
+from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.csrf import csrf_protect
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
@@ -69,19 +72,24 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             handle_uploaded_file(f)
             extract_features(self.object,
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
-
-
         return super(DatasetAddDatasource, self).form_valid(form)
-
 
 class DatasetDetail(View):
     def get(self, request, *args, **kwargs):
+        print "GOT it"
         view = DatasetDisplay.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = DatasetAddDatasource.as_view()
-        return view(request, *args, **kwargs)
+        print 
+        message = {"name": ""}
+        if request.is_ajax():
+            # dataset = get_object_or_404(Dataset, pk=dataset_id)
+            message['name'] = request.POST['value']
+        else:
+            message = "You're the lying type, I can just tell."
+        json = simplejson.dumps(message)
+        return HttpResponse(json, mimetype='application/json') 
 
 
 class DatasetCreate(FormView):
@@ -170,6 +178,36 @@ class LabelNameCreate(FormView):
 class LabelValueCreate(FormView):
     form_class = LabelValueForm
     # TODO: Finish label create view
+
+
+
+class DatasetAjaxUpdate(UpdateView):
+    form_class = DatasetEditForm
+    def form_valid(self, form):
+        """
+        If the request is ajax, save the form and return a json response.
+        Otherwise return super as expected.
+        """
+        pi
+        new_name = form.cleaned_data['value']
+        return HttpResponse(json.dumps("success"),
+            mimetype="application/json")
+        # return super(DatasetAjaxUpdateView, self).form_valid(form)     
+
+
+
+def update_name(request, dataset_id):   
+    message = {"name": ''}
+    if request.is_ajax():
+        dataset = get_object_or_404(Dataset, pk=dataset_id)
+        dataset.name = request.POST['value']
+        dataset.save()
+        message['name'] = request.POST['value']
+
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+
 
 
 
