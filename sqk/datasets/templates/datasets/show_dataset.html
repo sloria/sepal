@@ -7,7 +7,7 @@
       <thead>
         <tr>
           <th>#</th>
-          {% if dataset.instances %}
+          {% if dataset.instances.all %}
           {% for label_name, label_value in dataset.last_instance.labels.items %}
           <th>{{ label_name|title }}</th>
           {% endfor %}

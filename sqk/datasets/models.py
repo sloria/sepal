@@ -5,14 +5,14 @@ from django.core.urlresolvers import reverse
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
     '''
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100, default='no label', blank=True)
     def __unicode__(self):
         return unicode(self.name)
 
 class LabelValue(models.Model):
     '''A value for a label type, e.g. Bachelor
     '''
-    label_name = models.ForeignKey(LabelName, null=True, related_name='label_values')
+    label_name = models.ForeignKey(LabelName, related_name='label_values')
     value = models.CharField(max_length=100, default='none')
     def __unicode__(self):
         return unicode(self.value)
