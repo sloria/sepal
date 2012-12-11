@@ -7,7 +7,7 @@
 {# Include X-editable #}
 <link href="{{ STATIC_URL }}bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
 <script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.js"></script>
-
+<script src=" {{ STATIC_URL }}jquery-cookie-master/jquery.cookie.js"></script>
 {# Include D3 and figure styling #}
 <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
 <script src="http://d3js.org/d3.v2.js"></script>
@@ -113,12 +113,22 @@
     <div class="row">
       {% show_dataset dataset %}
       <script>
-        $.ajaxSetup({
+      {% for inst in dataset.get_data %}
+          $('#instance_label_{{ inst.pk }}').editable({
+           type: 'text',
+           pk: {{ inst.pk }},
+           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk %}',
+           title: 'Edit instance label'
+         });
+      {% endfor %}
+      var csrftoken = $.cookie('csrftoken');
+      
+    $.ajaxSetup({
           crossDomain: false, // obviates need for sameOrigin test
           beforeSend: function(xhr, settings) {
-          xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-          }
-        });
+          xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+      }
+   });
       </script>
     </div>
 

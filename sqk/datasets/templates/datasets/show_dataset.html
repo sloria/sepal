@@ -29,14 +29,6 @@
           {% if inst.labels %}
           {% for label_name, label_value in inst.labels.items %}
           <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value|title }}</td></a>
-          <script>
-          $('#instance_label_{{ inst.pk }}').editable({
-           type: 'text',
-           pk: {{ inst.pk }},
-           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk %}',
-           title: 'Edit instance label'
-         });
-          </script>
           {% endfor %}
           {% else %}
           <td>No label</td>

@@ -77,11 +77,11 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 class DatasetDetail(View):
     
     def get(self, request, *args, **kwargs):
-        view = DatasetDisplay.as_view()
+        view = ensure_csrf_cookie(DatasetDisplay.as_view())
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = DatasetAddDatasource.as_view()
+        view = ensure_csrf_cookie(DatasetAddDatasource.as_view())
         return view(request, *args, **kwargs)
 
 
@@ -186,7 +186,6 @@ def update_name(request, dataset_id):
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 
-@ensure_csrf_cookie
 def update_instance_label(request, dataset_id, instance_id):
     '''View for updating an instance label name using X-editable.
     '''

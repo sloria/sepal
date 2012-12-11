@@ -22,7 +22,7 @@ urlpatterns = patterns('',
 
     # ex: /datasets/3/update_name
     # X-editable dataset name
-    url(r'^(?P<dataset_id>\d+)/update_name/$', update_name ,
+    url(r'^(?P<dataset_id>\d+)/update_name/$', ensure_csrf_cookie(update_name),
         name='update_name'),
 
     # ex: /datasets/3/delete/

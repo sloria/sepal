@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-party apps, patches, fixes
-    'commonware.response.cookies',
     'djcelery',
     'django_nose',
     'debug_toolbar',
