@@ -188,14 +188,23 @@ def update_name(request, dataset_id):
     return HttpResponse(json, mimetype='application/json') 
 
 @ensure_csrf_cookie
-def update_instance_label(request, dataset_id, instance_id):
+def update_instance_label(request, instance_id, label_name_id):
     '''View for updating an instance label name using X-editable.
     '''
     message = {"label": ''}
     if request.is_ajax():
-        new_label = request.POST['value']
-        # TODO: save new label
-        message['label'] = request.POST['value']
+        new_label_value = request.POST['value'].lower() # e.g. u'bonded'
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id) # the label name
+        # Get the instance
+        inst = get_object_or_404(Instance, pk=instance_id)
+        # Replace the old label value with the new one
+        old_label_value_obj = inst.label_values.get(label_name=label_name_obj)
+        inst.label_values.remove(old_label_value_obj)
+        new_label_value_obj, created = LabelValue.objects.get_or_create(
+                                        value=new_label_value,
+                                        label_name=label_name_obj)
+        inst.label_values.add(new_label_value_obj)
+        message['label'] = new_label_value
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 

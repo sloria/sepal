@@ -22,7 +22,7 @@
       {# Data #}
       {# TODO: add ability to select instances #}
       <tbody>
-        {% for inst in data %}
+        {% for inst in dataset.instances.all %}
         <tr>
           <td>{{ forloop.counter }}</td>
 
@@ -33,7 +33,7 @@
           $('#instance_label_{{ inst.pk }}').editable({
            type: 'text',
            pk: {{ inst.pk }},
-           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk %}',
+           url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
            title: 'Edit instance label'
          });
           </script>
@@ -41,7 +41,7 @@
           {% else %}
           <td>No label</td>
           {% endif %}
-          {% for value in inst.values %}
+          {% for value in inst.values_as_list %}
           <td>{{ value|floatformat:3 }}</td>
           {% endfor %}
           <td><a href="{% url 'datasets:instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a>

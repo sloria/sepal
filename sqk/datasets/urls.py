@@ -36,7 +36,7 @@ urlpatterns = patterns('',
 
     # ex: /datasets/instances/452/ 
     # X-editable instance label
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/update_label$', 
+    url(r'^/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$', 
         update_instance_label,
         name='update_instance_label'),
 
