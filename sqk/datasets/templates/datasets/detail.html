@@ -113,20 +113,11 @@
     <div class="row">
       {% show_dataset dataset %}
       <script>
-      {% for inst in dataset.get_data %}
-          $('#instance_label_{{ inst.pk }}').editable({
-           type: 'text',
-           pk: {{ inst.pk }},
-           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk %}',
-           title: 'Edit instance label'
-         });
-      {% endfor %}
       var csrftoken = $.cookie('csrftoken');
-      
     $.ajaxSetup({
           crossDomain: false, // obviates need for sameOrigin test
           beforeSend: function(xhr, settings) {
-          xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
       }
    });
       </script>

@@ -172,6 +172,7 @@ class LabelValueCreate(FormView):
     form_class = LabelValueForm
     # TODO: Finish label create view
 
+@ensure_csrf_cookie
 def update_name(request, dataset_id):
     '''View for updating the dataset name using X-editable.
     '''
@@ -186,16 +187,15 @@ def update_name(request, dataset_id):
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 
+@ensure_csrf_cookie
 def update_instance_label(request, dataset_id, instance_id):
     '''View for updating an instance label name using X-editable.
     '''
     message = {"label": ''}
     if request.is_ajax():
         new_label = request.POST['value']
-        inst = get_object_or_404(Dataset, pk=instance_id)
         # TODO: save new label
-        inst.save()
-        message['label'] = new_label
+        message['label'] = request.POST['value']
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 
