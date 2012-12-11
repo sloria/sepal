@@ -120,15 +120,11 @@ class Instance(models.Model):
         return self.values.values_list('value', flat=True).order_by('feature')
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
-
-        Example:
-        >> inst.labels()
-        {u'marital status': u'bonded', u'genotype': u'heterozygous' }
         '''
         labels = {}
         for label_value in self.label_values.order_by('pk'):
-            label_name = label_value.label_name.name # A unicode str
-            labels[label_name] = label_value.value # Also a unicode str
+            label_name = label_value.label_name # A label_name str
+            labels[label_name] = label_value # Also a unicode str
         return labels
     class Meta:
         get_latest_by = 'pk'
