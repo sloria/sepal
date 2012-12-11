@@ -3,16 +3,6 @@
 {% load url from future %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{% block static %}
-{# Include X-editable #}
-<link href="{{ STATIC_URL }}bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
-<script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.js"></script>
-<script src=" {{ STATIC_URL }}jquery-cookie-master/jquery.cookie.js"></script>
-{# Include D3 and figure styling #}
-<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
-<script src="http://d3js.org/d3.v2.js"></script>
-{% endblock static %}
-
 {% block content %}
 <div class="container">
   <h1 class="page-title center">
@@ -54,10 +44,6 @@
       <div id="info" class="collapse in">
         <table>
           <tbody>
-            <tr>
-              <th>Name</th>
-              <td>  {{ dataset.name }}</td>
-            </tr>
             <tr>
               <th>Description</th>
               <td>  {{ dataset.description }}</td>
@@ -112,15 +98,6 @@
 
     <div class="row">
       {% show_dataset dataset %}
-      <script>
-      var csrftoken = $.cookie('csrftoken');
-    $.ajaxSetup({
-          crossDomain: false, // obviates need for sameOrigin test
-          beforeSend: function(xhr, settings) {
-          xhr.setRequestHeader("X-CSRFToken", csrftoken);
-      }
-   });
-      </script>
     </div>
 
     <div class="row">
@@ -459,7 +436,6 @@
           removeFromSelectedDimensions(val);
         }
       });
-
     });
 </script>
 </div>

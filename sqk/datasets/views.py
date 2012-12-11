@@ -172,6 +172,9 @@ class LabelValueCreate(FormView):
     form_class = LabelValueForm
     # TODO: Finish label create view
 
+
+# X-editable views 
+
 @ensure_csrf_cookie
 def update_name(request, dataset_id):
     '''View for updating the dataset name using X-editable.

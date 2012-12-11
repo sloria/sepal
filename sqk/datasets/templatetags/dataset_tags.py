@@ -10,5 +10,7 @@ def show_dataset(dataset):
         context['feature_names'] = list(dataset.last_instance().feature_names())
     return context
 
-
-          
+@register.inclusion_tag('datasets/plot_dataset.js')
+def plot_dataset(dataset):
+    context = {'dataset': dataset, 'data': dataset.get_data()}
+    return context
