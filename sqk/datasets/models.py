@@ -12,7 +12,7 @@ class LabelName(models.Model):
 class LabelValue(models.Model):
     '''A value for a label type, e.g. Bachelor
     '''
-    label_name = models.ForeignKey(LabelName, related_name='label_values')
+    label_name = models.ForeignKey(LabelName, related_name='label_values', null=True)
     value = models.CharField(max_length=100, default='none')
     def __unicode__(self):
         return unicode(self.value)
