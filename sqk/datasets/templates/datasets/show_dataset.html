@@ -34,6 +34,7 @@
            type: 'text',
            pk: {{ inst.pk }},
            url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
+           value: '',
            title: 'Edit instance label'
          });
           </script>

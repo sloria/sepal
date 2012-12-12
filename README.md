@@ -13,6 +13,7 @@
 - Install prerequisites
 - cd to sqk directory
 - Edit compiled.txt to choose your database adapter.
+- if windows: install all the exe's in requirements/win64/*
 - $ pip install -r requirements/dev.txt
 - $ cp sqk/settings/local-dist.py sqk/settings/local.py (local.py shouldn't be added
   to your source control)
