@@ -72,9 +72,8 @@ def read_datasource(dataset, source_path, feature_row=0):
                 print row[-1]
                 # Create label value and add it to the label
                 label_value_obj, created = LabelValue.objects.get_or_create(
-                                            value=row[-1].lower())
-                label_value_obj.label_name = label_name
-                label_value_obj.save()
+                                            value=row[-1].lower(),
+                                            label_name=label_name)
                 inst.label_values.add(label_value_obj)
                 inst.save()
 
