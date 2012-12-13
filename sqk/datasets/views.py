@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
-from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
+from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features, update_label_values
 
 ## Dataset views
 
@@ -208,6 +208,21 @@ def update_instance_label(request, instance_id, label_name_id):
                                         label_name=label_name_obj)
         inst.label_values.add(new_label_value_obj)
         message['label'] = new_label_value
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+
+@ensure_csrf_cookie
+def update_label_name(request, dataset_id, label_name_id):
+    '''View for updating a label name using X-editable.
+    '''
+    message = {"name": ''}
+    if request.is_ajax():
+        new_label_name = request.POST['value']
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)
+        label_name_obj.name = new_label_name
+        label_name_obj.save()
+        message['name'] = new_label_name
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 

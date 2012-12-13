@@ -4,6 +4,10 @@ from django.core.urlresolvers import reverse
 
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
+
+    NOTE: The name column does not validate uniqueness. This is because different 
+    datasets should have different LabelName objects associated with them, even if 
+    the they have the same variable. This ensures that the names will be editable.
     '''
     name = models.CharField(max_length=100, default='no label', blank=True)
     def __unicode__(self):
@@ -27,8 +31,6 @@ class Dataset(models.Model):
     description = models.CharField(max_length=500, null=True, blank=True)
     species = models.ForeignKey(Species, null=True, blank=True,
                                 related_name='datasets')
-    # TODO: Dataset should have many label names. Or just treat them like features (no relationship to dataset)
-    # label_name = models.ForeignKey(LabelName, null=True, related_name='datasets')
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
@@ -55,17 +57,6 @@ class Dataset(models.Model):
                     instance__id=inst_id).values_list(
                         'value', flat=True).order_by('feature') 
         return data
-    # def labels(self):
-    #     '''Returns a list of dicts corresponding to the label_name:label_value 
-    #     pairs for each instance in this dataset.
-
-    #     Example:
-    #     >> dataset.labels()
-    #     [{u'marital status': u'bonded', u'genotype': u'homozygous'},
-    #     {u'marital status': u'bachelor', u'genotype': u'heterozygous'}
-    #     ...]
-    #     '''
-    #     return [inst.labels() for inst in self.instances.order_by('pk')]
     def get_data(self):
         '''Returns the data as a list of dicts with instance attributes as 
         keys and instance values as values.
@@ -120,6 +111,10 @@ class Instance(models.Model):
         return self.values.values_list('value', flat=True).order_by('feature')
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
+
+        Example:
+        >> inst.labels()
+        {<LabelName: Marital status>: <LabelValue: unbonded>}
         '''
         labels = {}
         for label_value in self.label_values.order_by('pk'):

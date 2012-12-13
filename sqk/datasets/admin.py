@@ -56,7 +56,7 @@ class LabelNameAdmin(admin.ModelAdmin):
         (None, {'fields': ['name']})
     ]
     list_display = ('name','pk')
-    inlines = [DatasetInline, LabelValueInline]
+    inlines = [LabelValueInline]
 
 class LabelValueAdmin(admin.ModelAdmin):
     fieldsets = [

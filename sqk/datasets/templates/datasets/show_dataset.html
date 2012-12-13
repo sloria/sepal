@@ -9,7 +9,15 @@
           <th>#</th>
           {% if dataset.instances.all %}
           {% for label_name, label_value in dataset.last_instance.labels.items %}
-          <th>{{ label_name|title }}</th>
+          <th><a href="#" id="label_name{{ label_name.pk }}">{{ label_name|title }}</a></th>
+          <script>
+            $('#label_name{{ label_name.pk }}').editable({
+             type: 'text',
+             pk: {{ label_name.pk }},
+             url: '{% url 'datasets:update_label_name' dataset.pk label_name.pk  %}',
+             title: 'Edit label name'
+           });
+          </script>
           {% endfor %}
           {% endif %}
 
