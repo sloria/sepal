@@ -4,6 +4,10 @@ from django.core.urlresolvers import reverse
 
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
+
+    NOTE: The name column does not validate uniqueness. This is because different 
+    datasets should have different LabelName objects associated with them, even if 
+    the they have the same variable. This ensures that the names will be editable.
     '''
     name = models.CharField(max_length=100, default='no label', blank=True)
     def __unicode__(self):
