@@ -34,9 +34,6 @@ South
 numpy
 matplotlib
 
-# Images
-PIL
-
 # Various tidbits
 commonware
 -e git://github.com/mozilla/nuggets.git#egg=nuggets

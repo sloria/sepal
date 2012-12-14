@@ -1,6 +1,7 @@
 import csv
 import os
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 import yaafelib as yf
 import wave
@@ -8,6 +9,24 @@ import contextlib
 from celery import task
 
 from models import *
+
+@task()
+def update_label_values(dataset, label_name_id, new_label_name_id):
+    '''Updates the label name column of each instance in dataset.
+    Used when updating a label name.
+    '''
+    # TODO:
+    # Create new label_values with same values but new label name
+    # Then Update each instance with the newly created label_values
+    label_values = LabelValue.objects.filter(label_name__id=label_name_id)
+    new_label_name_obj = get_object_or_404(LabelName, pk=new_label_name_id)
+    for label_value in label_values:
+        new_label_value = LabelValue.objects.create(value=label_value.value,
+                                    label_name=new_label_name_obj)
+        # filtered_instances = instances in dataset with this label_value
+        # for inst in filtered_instances:
+        #   replace instance's label_value with new_label_value
+        
 
 @task()
 def handle_uploaded_file(f):
@@ -44,10 +63,8 @@ def read_datasource(dataset, source_path, feature_row=0):
                             name=row[j].lower())
                     feature_obj_list.append(f)
 
-                label_name, created = LabelName.objects.get_or_create(
+                label_name= LabelName.objects.create(
                     name=row[-1])
-                dataset.label_name = label_name
-                dataset.save()
             # Parse data
             else:
                 # Create instance and add it to dataset
@@ -74,9 +91,8 @@ def read_datasource(dataset, source_path, feature_row=0):
                 print row[-1]
                 # Create label value and add it to the label
                 label_value_obj, created = LabelValue.objects.get_or_create(
-                                            value=row[-1].lower())
-                label_value_obj.label_name = label_name
-                label_value_obj.save()
+                                            value=row[-1].lower(),
+                                            label_name=label_name)
                 inst.label_values.add(label_value_obj)
                 inst.save()
 

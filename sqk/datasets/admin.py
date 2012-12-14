@@ -23,16 +23,16 @@ class DatasetInline(admin.TabularInline):
 
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description', 'species', 'label_name']}),
+        (None, {'fields': ['name', 'description', 'species',]}),
         ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
     ]
-    list_display = ('name', 'label_name', 'created_at', 'description', 'pk')
+    list_display = ('name', 'created_at', 'description', 'pk')
     inlines = [InstanceInline,]
     search_fields = ['name']
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset', 'label_values']}),
+        (None, {'fields': ['dataset',]}),
     ]
     list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, FeatureValueInline]
@@ -56,7 +56,7 @@ class LabelNameAdmin(admin.ModelAdmin):
         (None, {'fields': ['name']})
     ]
     list_display = ('name','pk')
-    inlines = [DatasetInline, LabelValueInline]
+    inlines = [LabelValueInline]
 
 class LabelValueAdmin(admin.ModelAdmin):
     fieldsets = [

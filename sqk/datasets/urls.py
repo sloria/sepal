@@ -47,3 +47,24 @@ urlpatterns = patterns('',
     url(r'^(?P<dataset_id>\d+)/labels/create/$', 
         LabelNameCreate.as_view(), name='create_label'),
 )
+
+# URLconfs for X-editable updating
+urlpatterns += patterns('',
+    # ex: /datasets/3/update_name
+    # X-editable dataset name
+    url(r'^(?P<dataset_id>\d+)/update_name/$', update_name,
+        name='update_name'),
+    
+    # ex: /datasets/instances/452/update_label/4
+    # X-editable instance label
+    url(r'^/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$', 
+        update_instance_label,
+        name='update_instance_label'),
+
+    # ex: /datasets/3/update_label/5
+    # X-editable label name
+    url(r'^(?P<dataset_id>\d+)/update_label/(?P<label_name_id>\d+)$', 
+        update_label_name,
+        name='update_label_name'),
+)
+

@@ -4,13 +4,13 @@ from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
-from django.utils import simplejson as json
-from django import http
-
+from django.utils import simplejson
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from djcelery.views import is_task_successful
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
-from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
+from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features, update_label_values
 
 ## Dataset views
 
@@ -68,7 +68,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             # TODO: might not need to do this
             handle_uploaded_file(f)
             # Parse data and save to database
-            read_datasource(self.object, 
+            read_datasource.delay(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
@@ -77,14 +77,14 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         return super(DatasetAddDatasource, self).form_valid(form)
 
-
 class DatasetDetail(View):
+    
     def get(self, request, *args, **kwargs):
-        view = DatasetDisplay.as_view()
+        view = ensure_csrf_cookie(DatasetDisplay.as_view())
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = DatasetAddDatasource.as_view()
+        view = ensure_csrf_cookie(DatasetAddDatasource.as_view())
         return view(request, *args, **kwargs)
 
 
@@ -190,6 +190,58 @@ class LabelNameCreate(FormView):
         return reverse_lazy('datasets:detail', 
             kwargs={'pk': self.kwargs['dataset_id']})
 
+# X-editable views 
+
+@ensure_csrf_cookie
+def update_name(request, dataset_id):
+    '''View for updating the dataset name using X-editable.
+    '''
+    message = {"name": ''}
+    if request.is_ajax():
+        # Save new Dataset name
+        dataset = get_object_or_404(Dataset, pk=dataset_id)
+        dataset.name = request.POST['value']
+        dataset.save()
+        message['name'] = request.POST['value']
+
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+@ensure_csrf_cookie
+def update_instance_label(request, instance_id, label_name_id):
+    '''View for updating an instance label name using X-editable.
+    '''
+    message = {"label": ''}
+    if request.is_ajax():
+        new_label_value = request.POST['value'].lower() # e.g. u'bonded'
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id) # the label name
+        # Get the instance
+        inst = get_object_or_404(Instance, pk=instance_id)
+        # Replace the old label value with the new one
+        old_label_value_obj = inst.label_values.get(label_name=label_name_obj)
+        inst.label_values.remove(old_label_value_obj)
+        new_label_value_obj, created = LabelValue.objects.get_or_create(
+                                        value=new_label_value,
+                                        label_name=label_name_obj)
+        inst.label_values.add(new_label_value_obj)
+        message['label'] = new_label_value
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+
+@ensure_csrf_cookie
+def update_label_name(request, dataset_id, label_name_id):
+    '''View for updating a label name using X-editable.
+    '''
+    message = {"name": ''}
+    if request.is_ajax():
+        new_label_name = request.POST['value']
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)
+        label_name_obj.name = new_label_name
+        label_name_obj.save()
+        message['name'] = new_label_name
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
 
 
 

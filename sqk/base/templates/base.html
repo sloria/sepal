@@ -29,6 +29,17 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.1.min.js"><\/script>')</script>
 
+  {# Jquery cookie plugin #}
+  <script src=" {{ STATIC_URL }}jquery-cookie-master/jquery.cookie.js"></script>
+
+    {# Include X-editable #}
+<link href="{{ STATIC_URL }}bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.js"></script>
+
+  {# D3 and figure styling #}
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/figure.css">
+<script src="http://d3js.org/d3.v2.js"></script>
+
   {% block static %}{% endblock %}
 
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->

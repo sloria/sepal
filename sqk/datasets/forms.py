@@ -6,6 +6,8 @@ from sqk.datasets.models import *
 
 
 class DatasetForm(forms.ModelForm):
+    '''Form for creating a new dataset.
+    '''
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
     species = forms.CharField(required=False,)
@@ -27,6 +29,9 @@ class DatasetForm(forms.ModelForm):
         return species
 
 class DatasetEditForm(forms.ModelForm):
+    '''Form for editing the title, species, and description
+    of a dataset.
+    '''
     # TODO: allow creation of new species object
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
@@ -47,6 +52,8 @@ class DatasetEditForm(forms.ModelForm):
         return species
 
 class DatasourceForm(forms.Form):
+    '''Form for uploading audio or csv files.
+    '''
     csv = forms.FileField(label='CSV', required=False,
         help_text='Optional')
     audio = forms.FileField(label='Audio file (.wav)', required=False,)
@@ -82,6 +89,9 @@ class DatasourceForm(forms.Form):
     #     return self.cleaned_data['sample_rate']
 
 class LabelNameForm(forms.Form):
+    '''Form for creating a new independent variable for a
+    dataset.
+    '''
     name = forms.CharField(required=False,)
     value1 = forms.CharField(required=True,)
     value2 = forms.CharField(required=True,)
@@ -93,6 +103,20 @@ class LabelNameForm(forms.Form):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Submit'))
         super(LabelNameForm, self).__init__(*args, **kwargs)
+
+class LabelValueForm(forms.Form):
+    '''Form for creating a new label value. Should associate
+    the new label value with the instance upon save.
+    '''
+    # TODO: 
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_id = 'labelValueForm'
+        self.helper.form_method = 'post'
+        super(DatasetForm, self).__init__(*args, **kwargs)
+
+    
 
 
 
