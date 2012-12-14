@@ -197,6 +197,10 @@ hr {
   border-bottom: 1px solid #fff;
 }
 
+.label_name {
+  color: #000000;
+}
+
 .block {
   margin-bottom: 1em;
   border: 1px solid #ccc;
@@ -381,5 +385,3 @@ hr {
     display: inline;
   }
 }
-
-

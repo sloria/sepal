@@ -65,7 +65,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             # TODO: might not need to do this
             handle_uploaded_file(f)
             # Parse data and save to database
-            read_datasource(self.object, 
+            read_datasource.delay(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
