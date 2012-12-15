@@ -82,17 +82,21 @@
             <div id="control" class="collapse out">
               <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" style="margin-top:25px">
                 {% for feature in feature_objects %}
-                <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">{{ feature.name|title }}</button>
+                <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">
+                  {% if feature.name == 'zcr' %}
+                    {{ feature.name|upper }}
+                  {% else %}
+                    {{ feature.name|capfirst }}
+                  {% endif %}
+                </button>
                 {% endfor %}
               </div>
             </div>
           </center>
         </div>
-      </div>
-    </div>
-  </div>
+      </div><!--end span3 -->
+    </div><!-- end row -->
 
-  <div class="container">
     {% comment %}
     <div class="row">
       <div class="span12">

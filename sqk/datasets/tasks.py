@@ -145,7 +145,7 @@ def extract_features(instance_id, audiofile_path):
     
     # Add a placeholder label name and label value to instance
     # This is necessary in order for plotting to work
-    no_label_name, c = LabelName.objects.get_or_create(name='none')
+    no_label_name, c = LabelName.objects.get_or_create(name='variable')
     no_label, c = LabelValue.objects.get_or_create(value="none",
                                                     label_name=no_label_name)
     inst.label_values.add(no_label)

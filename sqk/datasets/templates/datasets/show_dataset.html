@@ -9,7 +9,7 @@
           <th rowspan="2">#</th>
           {% if dataset.instances.all %}
           {% for label_name in label_names %}
-          <th rowspan="2"><a href="#" class="label_name" id="label_name{{ label_name.pk }}">{{ label_name|title }}</a></th>
+          <th rowspan="2"><a href="#" class="label_name" id="label_name{{ label_name.pk }}">{{ label_name|capfirst }}</a></th>
           <script>
             $('#label_name{{ label_name.pk }}').editable({
              type: 'text',
@@ -23,7 +23,11 @@
         </tr>
         <tr>
           {% for feature_name in feature_names %}
-          <th>{{ feature_name|title }}&nbsp;&nbsp;</th>
+          {% if feature_name == 'zcr' %}
+              <th>{{ feature_name|upper }}&nbsp;&nbsp;</th>
+          {% else %}
+              <th>{{ feature_name|capfirst }}&nbsp;&nbsp;</th>
+          {% endif %}
           {% endfor %}
           <th>Date added</th>
           <th></th>
@@ -40,7 +44,7 @@
 
             {% if inst.labels %}
             {% for label_name, label_value in inst.labels.items %}
-            <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value|title }}</a></td>
+            <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value }}</a></td>
             {# Initiate editable label value #}
             <script>
             $('#instance_label_{{ inst.pk }}').editable({

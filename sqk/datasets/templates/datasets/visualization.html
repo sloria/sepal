@@ -294,12 +294,16 @@
     {% for feature in feature_names %}
     var index2 = {{ forloop.counter }};
     if (index === index2) {
-      instData["{{feature|title}}"] = {{value}};
+      {% if feature == "zcr" %}
+        instData["{{feature|upper}}"] = {{value}};
+      {% else %}
+        instData["{{feature|capfirst}}"] = {{value}};
+      {% endif %}
     }
     {% endfor %}
     {% endfor %}
     {% for label_name, label_value in inst.labels.items %}
-    var label = "{{label_value|title}}";
+    var label = "{{label_value|upper}}";
     instData["label"] = label;
     {% endfor %}
     data.instances.push(instData);

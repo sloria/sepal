@@ -40,7 +40,7 @@ class DatasetDisplay(DetailView):
             # feature_names is a list of strings
             context['feature_names'] = list(dataset.last_instance().feature_names())
             # label_names is a list of <LabelName> objects
-            context['label_names'] = list(dataset.last_instance().labels().keys())
+            context['label_names'] = list(dataset.instances.all()[0].labels().keys())
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
@@ -63,18 +63,17 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 
     def form_valid(self, form):
         self.object = self.get_object()
-        instance = Instance.objects.create(
-                dataset=self.object,
-                species=self.object.species)
         if form.cleaned_data['csv'] != None:
             f = form.cleaned_data['csv']
             # Save file
-            # TODO: might not need to do this
             handle_uploaded_file(f)
             # Parse data and save to database
             read_datasource(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
+            instance = Instance.objects.create(
+                dataset=self.object,
+                species=self.object.species)
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
             result = extract_features(instance.pk,
