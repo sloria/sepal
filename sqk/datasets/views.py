@@ -146,9 +146,7 @@ def instance_ready(request, dataset_id, instance_id):
     '''
     message = {"ready": ''}
     inst = get_object_or_404(Instance, pk=instance_id)
-    # Assume an instance is ready if it has >= 1 feature
-    ready = len(inst.features.all()) >= 1
-    message['ready'] = ready
+    message['ready'] = inst.as_dict()['ready']
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 

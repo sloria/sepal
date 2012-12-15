@@ -4,9 +4,12 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% block static %}
+<!-- DataTables.net -->
 <script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/datatable.css">
-<script type="text/javascript" src=" {{ STATIC_URL }}js/datasets.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}datatables/media/css/jquery.dataTables.css">
+<!-- DataTables.net Bootstrap integration -->
+<script type="text/javascript" src="{{ STATIC_URL }}js/dataTables.bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dataTables.bootstrap.css">
 {% endblock static %}
 {% block content %}
 <div class="container">
@@ -107,6 +110,11 @@
     </div><!-- end row-->
     {% endcomment %}
 
+    <div class="row">
+      <div class="span12">
+        <p><a href="javacript:void(0)" id="delete">Delete instances</a></p>
+      </div>
+    </div>
 
     <div class="row">
       {% include "datasets/show_dataset.html" %}
