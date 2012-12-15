@@ -26,17 +26,21 @@ class DatasetDisplay(DetailView):
     template_name = 'datasets/detail.html'
     
     def get_query_set(self):
-        return Dataset.objects.filter(pk=self.kwargs['pk']).select_related('instances')
+        return Dataset.objects.filter(pk=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
         context = {
-            'feature_objects': dataset.last_instance().feature_objects(),
             'upload_form': DatasourceForm(),
             'data': dataset.get_data()
         }
         if self.get_object().instances.exists():
+            # feature_objects is a list of <Feature> objects
+            context['feature_objects'] = list(dataset.last_instance().feature_objects())
+            # feature_names is a list of strings
             context['feature_names'] = list(dataset.last_instance().feature_names())
+            # label_names is a list of <LabelName> objects
+            context['label_names'] = list(dataset.last_instance().labels().keys())
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 

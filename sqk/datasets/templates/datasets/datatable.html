@@ -1,5 +1,5 @@
 <script>
-/////////////////DataTable////////////////
+/////////////////Datatable////////////////
 
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
@@ -110,10 +110,19 @@ $.extend( $.fn.dataTableExt.oPagination, {
 } );
 
 $(document).ready(function() {
+    var last_column = {{ feature_names|length }} + {{ label_names|length }} + 2;
+    var initial_display_length = 25; // Show 25 instances per page
     // Prepare dataset as a DataTable
     try {
     $('#dataset-table').dataTable( {
-      "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>"
+      "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+      "iDisplayLength": initial_display_length,
+      "iDisplayStart": {{ data|length }} - initial_display_length, // Start on last page
+      "bFilter": false, // Disable search
+      "aoColumnDefs": [
+          // Last column should not be sortable
+          { 'bSortable': false, 'aTargets': [ last_column ] }
+       ]
     } );
   } catch(ex) {
   }

@@ -75,6 +75,7 @@ class Dataset(models.Model):
         return data
     class Meta:
         get_latest_by = "created_at"
+        ordering = ["-created_at"]
 
 
 class Instance(models.Model):
@@ -82,6 +83,7 @@ class Instance(models.Model):
     species = models.ForeignKey(Species, related_name='instances')
     label_values = models.ManyToManyField(LabelValue, null=True, blank=True,
                     related_name='instances')
+    created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def get_cname(self):
@@ -126,10 +128,12 @@ class Instance(models.Model):
         return {'pk': self.pk, 
                 'values': self.values_as_list(),
                 'labels': self.labels(),
+                'created_at': self.created_at
                 # 'ready': ready
                 }
     class Meta:
-        get_latest_by = 'pk'
+        get_latest_by = 'created_at'
+        ordering = ['pk']
 
 # Extract features from the audio files
 # 
