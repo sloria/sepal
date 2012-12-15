@@ -8,25 +8,7 @@ import wave
 import contextlib
 from celery import task
 
-from models import *
-
-@task()
-def update_label_values(dataset, label_name_id, new_label_name_id):
-    '''Updates the label name column of each instance in dataset.
-    Used when updating a label name.
-    '''
-    # TODO:
-    # Create new label_values with same values but new label name
-    # Then Update each instance with the newly created label_values
-    label_values = LabelValue.objects.filter(label_name__id=label_name_id)
-    new_label_name_obj = get_object_or_404(LabelName, pk=new_label_name_id)
-    for label_value in label_values:
-        new_label_value = LabelValue.objects.create(value=label_value.value,
-                                    label_name=new_label_name_obj)
-        # filtered_instances = instances in dataset with this label_value
-        # for inst in filtered_instances:
-        #   replace instance's label_value with new_label_value
-        
+from models import *        
 
 @task()
 def handle_uploaded_file(f):
@@ -98,7 +80,8 @@ def read_datasource(dataset, source_path, feature_row=0):
 
 
 @task()
-def extract_features(dataset, audiofile_path):
+def extract_features(instance_id, audiofile_path):
+    inst = Instance.objects.get(pk=instance_id)
     n_frames, sample_rate, duration = 0, 0, 0
     with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:
         n_frames = audiofile.getnframes()
@@ -154,9 +137,9 @@ def extract_features(dataset, audiofile_path):
     feature_obj_list.append(duration_obj)
 
     # Create instance
-    inst = Instance.objects.create(
-        dataset=dataset,
-        species=dataset.species)
+    # inst = Instance.objects.create(
+    #     dataset=dataset,
+    #     species=dataset.species)
     for feature in feature_obj_list:
         inst.features.add(feature)
     

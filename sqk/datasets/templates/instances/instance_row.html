@@ -1,19 +1,36 @@
 {% load url from future %}
-<tr data-instance-id="{{ instance.id }}">
-  <td>{{ forloop.counter }} {{ instance.id }}</td>
-      {% for value in instance.sorted_values %}
-        <td>{{ value|floatformat:3 }}</td>
-      {% endfor %}
-      <td>{{ instance.label.label }}</td>
-      <td><a href="{% url 'datasets:instance_detail' instance.dataset.pk instance.pk %}"><i class="icon-bar-chart"></i></a></td>
-      <td><a href="{% url 'datasets:instance_delete' instance.dataset.pk instance.pk %}"><i class="icon-remove"></i></a></td>
-      <td><a href="#" onclick="Datasets.refresh_instance_row({{ instance.id }}); return false;">Refresh</a>
-    </tr>
+{% if inst.ready %}
+<tr>
+  <td>{{ forloop.counter }}</td>
 
-
-    <script type="text/javascript">
-//If is isn't ready yet
-$.ready(function() {
-     Datasets.check_ready({{ instance.id }});
+  {% if inst.labels %}
+  {% for label_name, label_value in inst.labels.items %}
+  <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value|title }}</a></td>
+  {# Initiate editable label value #}
+  <script>
+  $('#instance_label_{{ inst.pk }}').editable({
+   type: 'text',
+   pk: {{ inst.pk }},
+   url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
+   value: '',
+   title: 'Edit instance label'
  });
-     </script>
+  </script>
+  {% endfor %}
+  {% else %}
+  <td>No label</td>
+  {% endif %}
+  {% for value in inst.values %}
+  <td>{{ value|floatformat:3 }}</td>
+  {% endfor %}
+  <td><a href="{% url 'datasets:instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a>
+  </tr>
+{% else %}
+<tr><td>Loading data</td></tr>
+  <script type="text/javascript">
+//If is isn't ready yet
+$(document).ready(function() {
+ Datasets.check_ready({{ inst.pk }});
+});
+</script>
+{% endif %}

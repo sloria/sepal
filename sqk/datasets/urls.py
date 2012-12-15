@@ -28,8 +28,8 @@ urlpatterns = patterns('',
         name='instance_detail'),
 
     # ex: /datasets/instances/452/ready.json
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/ready.json$', 
-        InstanceDetail.as_view(),
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/ready.json$', 
+        instance_ready,
         name='instance_ready'),
 
     # ex: /datasets/instances/452/row/

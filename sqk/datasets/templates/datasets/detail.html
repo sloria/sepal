@@ -6,6 +6,7 @@
 {% block static %}
 <script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/datatable.css">
+<script type="text/javascript" src=" {{ STATIC_URL }}js/datasets.js"></script>
 {% endblock static %}
 {% block content %}
 <div class="container">
@@ -101,7 +102,7 @@
     </div><!-- end row-->
 
     <div class="row">
-      {% show_dataset dataset %}
+      {% include "datasets/show_dataset.html" %}
     </div>
 
     <div class="row">
@@ -109,6 +110,7 @@
         {% crispy upload_form %}
       </div>
     </div>
-{% include "datasets/data.html" %}
+{% include "datasets/visualization.html" %}
+{% include "datasets/datatable.html" %}
 </div>
 {% endblock content %}

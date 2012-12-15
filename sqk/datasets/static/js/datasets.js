@@ -10,10 +10,7 @@ Datasets.refresh_instance_row = function(instance_id){
 
 Datasets.refresh_if_ready = function(instance_id) {
     $.get('instances/' + instance_id + "/ready.json", function(data) {
-        console.dir(data);
-        console.log();
-        alert();
-        if (data.executed) {
+        if (data.ready) {
             Datasets.refresh_instance_row(instance_id);
         } else {
             Datasets.check_ready(instance_id);

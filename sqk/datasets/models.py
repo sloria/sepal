@@ -68,11 +68,10 @@ class Dataset(models.Model):
          {'pk': 1426, 'values': [10.34, 2.4], 'labels': {'marital': 'unbonded,}},
          ]
         '''
+        instances = self.instances.prefetch_related('values', 'label_values__label_name')
         data = []
-        for inst in self.instances.order_by('pk'):
-            data.append({'pk': inst.pk, 
-                        'values': inst.values_as_list(), 
-                        'labels': inst.labels()})
+        for inst in instances:
+            data.append(inst.as_dict())
         return data
     class Meta:
         get_latest_by = "created_at"
@@ -108,7 +107,7 @@ class Instance(models.Model):
         >> inst.values_as_list()
         [0.0458984375, 71.7224358880516]
         '''
-        return self.values.values_list('value', flat=True).order_by('feature')
+        return [v.value for v in self.values.all()]
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
 
@@ -117,10 +116,18 @@ class Instance(models.Model):
         {<LabelName: Marital status>: <LabelValue: unbonded>}
         '''
         labels = {}
-        for label_value in self.label_values.order_by('pk'):
+        for label_value in self.label_values.all():
             label_name = label_value.label_name
             labels[label_name] = label_value
         return labels
+    def as_dict(self):
+        # Assume instance is ready if it has >= 1 feature
+        # ready = len(self.features.all()) >= 1
+        return {'pk': self.pk, 
+                'values': self.values_as_list(),
+                'labels': self.labels(),
+                # 'ready': ready
+                }
     class Meta:
         get_latest_by = 'pk'
 

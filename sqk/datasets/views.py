@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from djcelery.views import is_task_successful
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
 from sqk.datasets.models import *
-from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features, update_label_values
+from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
 ## Dataset views
 
@@ -26,7 +26,7 @@ class DatasetDisplay(DetailView):
     template_name = 'datasets/detail.html'
     
     def get_query_set(self):
-        return Dataset.objects.filter(pk=self.kwargs['pk'])
+        return Dataset.objects.filter(pk=self.kwargs['pk']).select_related('instances')
 
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
@@ -35,7 +35,6 @@ class DatasetDisplay(DetailView):
             'data': dataset.get_data()
         }
         if self.get_object().instances.exists():
-            context['feature_objects'] = list(dataset.last_instance().feature_objects())
             context['feature_names'] = list(dataset.last_instance().feature_names())
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
@@ -68,12 +67,12 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             # TODO: might not need to do this
             handle_uploaded_file(f)
             # Parse data and save to database
-            read_datasource.delay(self.object, 
+            read_datasource(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
-            result = extract_features.delay(instance,
+            result = extract_features(instance.pk,
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         return super(DatasetAddDatasource, self).form_valid(form)
 
@@ -116,8 +115,11 @@ class InstanceDetail(DetailView):
     template_name = 'instances/detail.html'
 
     def render_to_response(self, context):
+        instance = self.get_object()
+        # Assume an instance is ready when it has >= 1 feature
+        ready = len(instance.features.all()) >= 1
         if self.kwargs['format'] == 'json':
-            return http.HttpResponse(json.dumps({'ready': False}), # TODO
+            return http.HttpResponse(json.dumps({'ready': ready}), # TODO
                                      content_type='application/json',
                                      **httpresponse_kwargs)
         else:
@@ -135,9 +137,16 @@ class InstanceDetail(DetailView):
         context['dataset'] = self.get_object().dataset
         return context
 
-class ExtractionStatus(View):
-    def get(self, request, *args, **kwargs):
-        return is_task_successful(request, )
+def instance_ready(request, dataset_id, instance_id):
+    '''View for checking if an instance is ready
+    '''
+    message = {"ready": ''}
+    inst = get_object_or_404(Instance, pk=instance_id)
+    # Assume an instance is ready if it has >= 1 feature
+    ready = len(inst.features.all()) >= 1
+    message['ready'] = ready
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
 
 class InstanceRow(DetailView):
     model = Instance
@@ -147,6 +156,12 @@ class InstanceRow(DetailView):
         dataset = get_object_or_404(Dataset,
             pk=self.kwargs['dataset_id'])
         return Instance.objects.filter(dataset=dataset)
+
+    def get_context_data(self, **kwargs):
+        instance = self.get_object()
+        context = super(InstanceDetail, self).get_context_data(**kwargs)
+        context['inst'] = instance.as_dict()
+        return context
 
 class InstanceDelete(DeleteView):
     model = Instance
