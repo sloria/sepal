@@ -31,6 +31,7 @@ class DatasetDisplay(DetailView):
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
         context = {
+            'feature_objects': dataset.last_instance().feature_objects(),
             'upload_form': DatasourceForm(),
             'data': dataset.get_data()
         }
