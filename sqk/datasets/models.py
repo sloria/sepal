@@ -20,6 +20,8 @@ class LabelValue(models.Model):
     value = models.CharField(max_length=100, default='none')
     def __unicode__(self):
         return unicode(self.value)
+    class Meta:
+        order_with_respect_to = 'label_name'
 
 class Species(models.Model):
     name = models.CharField(max_length=100, default='')
@@ -154,3 +156,5 @@ class FeatureValue(models.Model):
     value = models.FloatField()
     def __unicode__(self):
         return unicode(self.value)
+    class Meta:
+        order_with_respect_to = 'feature'

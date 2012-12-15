@@ -93,6 +93,7 @@
   </div>
 
   <div class="container">
+    {% comment %}
     <div class="row">
       <div class="span12">
         <div class="btn-toolbar">
@@ -100,6 +101,8 @@
         </div>
       </div>
     </div><!-- end row-->
+    {% endcomment %}
+
 
     <div class="row">
       {% include "datasets/show_dataset.html" %}
@@ -110,7 +113,7 @@
         {% crispy upload_form %}
       </div>
     </div>
-{% include "datasets/visualization.html" %}
-{% include "datasets/datatable.html" %}
-</div>
-{% endblock content %}
+    {% include "datasets/visualization.html" %}
+    {% include "datasets/datatable.html" %}
+  </div>
+  {% endblock content %}

@@ -111,7 +111,7 @@ $.extend( $.fn.dataTableExt.oPagination, {
 
 $(document).ready(function() {
     var last_column = {{ feature_names|length }} + {{ label_names|length }} + 2;
-    var initial_display_length = 25; // Show 25 instances per page
+    var initial_display_length = 10;
     // Prepare dataset as a DataTable
     try {
     $('#dataset-table').dataTable( {
