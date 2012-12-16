@@ -174,6 +174,16 @@ class InstanceDelete(DeleteView):
         return reverse_lazy('datasets:detail', 
             kwargs={'pk': self.kwargs['dataset_id']})
 
+def delete_instances(request, dataset_id):
+    # Get the POST keys that contain the work instance
+    selected_instance_keys = [s for s in request.POST.keys() if 'instance' in s]
+    for inst_key in selected_instance_keys:
+        inst_pk = request.POST[inst_key]
+        inst_obj = Instance.objects.get(pk=inst_pk)
+        inst_obj.delete()
+    return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
+
+
 
 ## Feature views
 # Class to manage feature lists for datasets

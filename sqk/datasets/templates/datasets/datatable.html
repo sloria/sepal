@@ -4,24 +4,25 @@ var oTable;
 $(document).ready(function() {
   var last_column = {{ feature_names|length }} + {{ label_names|length }} + 2;
   var initial_display_length = 10;
-  /* Add a click handler to the rows - this could be used as a callback */
-  $("#dataset-table tbody tr").click( function( e ) {
-    if ( $(this).hasClass('info') ) {
-      $(this).removeClass('info');
-    }
-    else {
-      oTable.$('tr.info').removeClass('info');
-      $(this).addClass('info');
-    }
-  });
 
-  /* Add a click handler for the delete row */
-  $('#delete').click( function() {
-    var anSelected = fnGetSelected( oTable );
-    if ( anSelected.length !== 0 ) {
-      oTable.fnDeleteRow( anSelected[0] );
-    }
-  } );
+  /* Add a click handler to the rows - this could be used as a callback */
+  // $("#dataset-table tbody tr").click( function( e ) {
+  //   if ( $(this).hasClass('info') ) {
+  //     $(this).removeClass('info');
+  //   }
+  //   else {
+  //     oTable.$('tr.info').removeClass('info');
+  //     $(this).addClass('info');
+  //   }
+  // });
+
+  // /* Add a click handler for the delete row */
+  // $('#delete').click( function() {
+  //   var anSelected = fnGetSelected( oTable );
+  //   if ( anSelected.length !== 0 ) {
+  //     oTable.fnDeleteRow( anSelected[0] );
+  //   }
+  // } );
 
     // Intialize dataset as a DataTable
     oTable = $('#dataset-table').dataTable( {
@@ -30,17 +31,14 @@ $(document).ready(function() {
       "bFilter": false, // Disable search
       "aoColumnDefs": [
           // Last column should not be sortable
-          { 'bSortable': false, 'aTargets': [ last_column ] }
+          { 'bSortable': false, 'aTargets': [ 0 ] }
           ]
         } );
   });
+
+// Returns the selected rows
 function fnGetSelected( oTableLocal )
 {
-  try {
-    return oTableLocal.$('tr.info');
-  } catch(ex){
-    alert('something went wrong when trying to select a row');
-  }
-
+  return oTableLocal.$('tr.info');
 }
 </script>

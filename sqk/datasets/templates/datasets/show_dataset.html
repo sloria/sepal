@@ -6,8 +6,10 @@
       {# Header #}
       <thead>
         <tr>
-          <th rowspan="2">#</th>
+          {# Only show header if there are instances #}
           {% if dataset.instances.all %}
+          <th rowspan="2"></th>
+          <th rowspan="2">#</th>
           {% for label_name in label_names %}
           <th rowspan="2"><a href="#" class="label_name" id="label_name{{ label_name.pk }}">{{ label_name|capfirst }}</a></th>
           <script>
@@ -30,7 +32,6 @@
           {% endif %}
           {% endfor %}
           <th>Date added</th>
-          <th></th>
           {% endif %}
         </tr>
       </thead>
@@ -39,6 +40,9 @@
       <tbody>
         {% for inst in data %}
           <tr>
+            <td>
+              <input type="checkbox" name="instance_{{ inst.pk }}" value="{{ inst.pk }}">
+            </td>
             <td>{{ forloop.counter }}</td>
 
             {% if inst.labels %}
@@ -62,7 +66,6 @@
             <td>{{ value|floatformat:3 }}</td>
             {% endfor %}
             <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
-            <td><a href="{% url 'datasets:instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a>
             </tr>
           {% endfor %}
         </tbody>

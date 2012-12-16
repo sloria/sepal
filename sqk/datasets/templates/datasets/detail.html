@@ -76,7 +76,7 @@
           Visualization</div>
           <div id="chart" class="collapse out"></div>
         </div>
-      </div>
+    </div>
       {# Axes control #}
       <div class="span3">
         <div class="span3">
@@ -87,9 +87,9 @@
                 {% for feature in feature_objects %}
                 <button type="button" class="btn btn-primary feature-btn" value="{{ forloop.counter0 }}">
                   {% if feature.name == 'zcr' %}
-                    {{ feature.name|upper }}
+                  {{ feature.name|upper }}
                   {% else %}
-                    {{ feature.name|capfirst }}
+                  {{ feature.name|capfirst }}
                   {% endif %}
                 </button>
                 {% endfor %}
@@ -109,23 +109,28 @@
       </div>
     </div><!-- end row-->
     {% endcomment %}
-
-    <div class="row">
-      <div class="span12">
-        <p><a href="javacript:void(0)" id="delete">Delete instances</a></p>
+    <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
+      <div class="row">
+        <div class="span12">
+         <button type="submit"class="btn">
+          <i class="icon-remove"></i> Delete selected instances
+        </button>
       </div>
     </div>
+
+
 
     <div class="row">
       {% include "datasets/show_dataset.html" %}
     </div>
+  </form>
 
-    <div class="row">
-      <div class="span12">
-        {% crispy upload_form %}
-      </div>
+  <div class="row">
+    <div class="span12">
+      {% crispy upload_form %}
     </div>
-    {% include "datasets/visualization.html" %}
-    {% include "datasets/datatable.html" %}
   </div>
-  {% endblock content %}
+  {% include "datasets/visualization.html" %}
+  {% include "datasets/datatable.html" %}
+</div>
+{% endblock content %}
