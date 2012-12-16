@@ -165,18 +165,9 @@ class InstanceRow(DetailView):
         context['inst'] = instance.as_dict()
         return context
 
-class InstanceDelete(DeleteView):
-    model = Instance
-    template_name='instances/delete.html'
-    context_object_name = 'object'
-
-    def get_success_url(self):
-        return reverse_lazy('datasets:detail', 
-            kwargs={'pk': self.kwargs['dataset_id']})
-
 def delete_instances(request, dataset_id):
-    # Get the POST keys that contain the work instance
-    selected_instance_keys = [s for s in request.POST.keys() if 'instance' in s]
+    # Get the POST keys that contain 'instance_select'
+    selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
     for inst_key in selected_instance_keys:
         inst_pk = request.POST[inst_key]
         inst_obj = Instance.objects.get(pk=inst_pk)

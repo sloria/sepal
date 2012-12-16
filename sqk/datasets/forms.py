@@ -69,7 +69,7 @@ class DatasourceForm(forms.Form):
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
             Fieldset(
-                'Add data',
+                'Extract audio features',
                 Div(
                     'audio',
                     # 'sample_rate',

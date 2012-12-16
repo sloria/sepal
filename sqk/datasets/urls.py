@@ -41,11 +41,6 @@ urlpatterns = patterns('',
         InstanceRow.as_view(),
         name='instance_row'),
 
-    # ex: /datasets/instances/452/delete/
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/delete/$', 
-        InstanceDelete.as_view(),
-        name='instance_delete'),
-
     # ex: /datasets/3/labels/create
         # ex: /datasets/new/
     url(r'^(?P<dataset_id>\d+)/labels/create/$', 

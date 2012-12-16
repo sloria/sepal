@@ -114,7 +114,7 @@
     var legendXScale = 
     d3.scale.linear()
     .domain([0, data.labels.length-1])
-    .range([PADDING, (CHART_WIDTH/2) - PADDING]);
+    .range([PADDING, (CHART_WIDTH/1.3) - PADDING]);
 
     svg.selectAll("rect.legend-rect")
     .data(data.labels)
@@ -257,7 +257,8 @@
       // PCA-ified data
       // Right now, it's going to slice out the first element
       var index = selectedDimensions.splice(0, 1);
-      $('button.feature-btn[value=' + index[0] + ']').removeClass('active');
+      $('li.feature-select.multicheck[value=' + index[0] + ']').removeClass('checked');
+      $('li.feature-select.multicheck[value=' + index[0] + ']').find("span").removeClass("icon-ok"); 
     }
     X_DIM_INDEX = selectedDimensions[0];
     Y_DIM_INDEX = selectedDimensions[1];
@@ -323,13 +324,13 @@
     scatterPlot();
 
     // Update selected dimensions when a feature button is selected
-    $('button.feature-btn').on('click', function() {
+    $('li.feature-select.multicheck').on('click', function() {
       var self = this;
       // Because of some weirdness with Bootstrap, the 'active' class
       // is not present when this click handler is fired after a button is selected
       // So, the absence of the 'active' class means it's active.
       var val = $(self).val();
-      if (!$(self).hasClass('active')) {
+      if ($(self).hasClass('checked')) {
         addToSelectedDimensions(val);
       } else {
         removeFromSelectedDimensions(val);

@@ -12,73 +12,91 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dataTables.bootstrap.css">
 {% endblock static %}
 {% block content %}
-<div class="container">
-  <h1 class="page-title center">
-    <a href="#" id="datasetName">{{ dataset.name }}</a>
-  </h1>
 
-  <script>
-  $('#datasetName').editable({
-   type: 'text',
-   pk: {{ dataset.pk }},
-   url: '{% url 'datasets:update_name' dataset.pk %}',
-   title: 'Edit dataset name'
- });
+  <script type="text/javascript">   
+    $(document).ready(function() {
+  /* Multi select - allow multiple selections */
+  /* Allow click without closing menu */
+  /* Toggle checked state and icon */
+  $('.multicheck').click(function(e) {     
+     $(this).toggleClass("checked"); 
+     $(this).find("span").toggleClass("icon-ok"); 
+     return false;
+  });        
+}); 
   </script>
 
-  {# Dataset control buttons #}
-  <div class="row">
-    <div class="span12">
-      <div class="btn-toolbar">
-        <div class="btn-group">
-          <a href="#addSourceForm" class="btn btn-primary"><i class="icon-plus-sign"></i> Add data</a>
-
-          <a href="#datasetHeading" class="btn btn-primary"><i class="icon-table"></i> Table</a>
-          <a data-toggle="collapse" href="#chart" class="btn btn-primary"><i class="icon-bar-chart"></i> Visualize</a>
-        </div>
-        <div class="btn-group pull-right">
-          <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
-
-          <a href="{% url 'datasets:delete' dataset.pk %}" class="btn btn-primary"><i class="icon-remove"></i> Delete</a>
-        </div>
-
-      </div>
-    </div>
-  </div><!-- end row-->
-
-  <div class="row">
-    <div class="block span12">
-      <div class="block-heading" data-toggle="collapse" href="#info">Information</div>
-      <div id="info" class="collapse in">
-        <table>
-          <tbody>
-            <tr>
-              <th>Description</th>
-              <td>  {{ dataset.description }}</td>
-            </tr>
-            <tr>
-              <th>Species</th>
-              <td><em> {{ dataset.species }} </em></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div><!-- end Information row-->
 
 
-  {# Visualization and Control #}
-  <div class="row">
-    {# Visualization panel #}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3">
+      {% include "datasets/sidebar.html" %}
+    </div><!-- end span3 -->
+
     <div class="span9">
-      <div class="block">
-        <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
-          Visualization</div>
-          <div id="chart" class="collapse out"></div>
+
+      <h1 class="page-title">
+        <a href="#" id="datasetName">{{ dataset.name }}</a>
+      </h1>
+
+      <script>
+      $('#datasetName').editable({
+       type: 'text',
+       pk: {{ dataset.pk }},
+       url: '{% url 'datasets:update_name' dataset.pk %}',
+       title: 'Edit dataset name'
+     });
+      </script>
+
+      {# Dataset control buttons #}
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+              <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
+
+              <a href="{% url 'datasets:delete' dataset.pk %}" class="btn btn-primary"><i class="icon-remove"></i> Delete</a>
+            </div>
+          </div><!-- end btn-toolbar -->
+        </div><!-- end span12 -->
+      </div><!-- end row-fluid-->
+
+      <div class="row-fluid">
+        <div class="block span12">
+          <div class="block-heading" data-toggle="collapse" href="#info">Information</div>
+          <div id="info" class="collapse in">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th>Description</th>
+                  <td class="pull-left">{{ dataset.description }}</td>
+                </tr>
+                <tr>
+                  <th>Species</th>
+                  <td><em> {{ dataset.species }} </em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </div>
-      {# Axes control #}
-      <div class="span3">
+      </div><!-- end Information row-fluid-->
+
+
+      {# Visualization and Control #}
+      <div class="row-fluid">
+        {# Visualization panel #}
+        <div class="span12">
+          <div class="block">
+            <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
+              Visualization</div>
+              <div id="chart" class="collapse out"></div>
+            </div>
+          </div>
+          {# Axes control #}
+
+      {% comment %}
+        <div class="span3">
         <div class="span3">
           <center>
             <div class="block block-heading" data-toggle="collapse" href="#control">Axes</div>
@@ -98,19 +116,19 @@
           </center>
         </div>
       </div><!--end span3 -->
-    </div><!-- end row -->
-
+      {% endcomment %}
+    </div><!-- end row-fluid -->
     {% comment %}
-    <div class="row">
+    <div class="row-fluid">
       <div class="span12">
         <div class="btn-toolbar">
           <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn btn-info"><i class="icon-beaker"></i> Add Variable</a>
         </div>
       </div>
-    </div><!-- end row-->
+    </div><!-- end row-fluid-->
     {% endcomment %}
     <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
-      <div class="row">
+      <div class="row-fluid">
         <div class="span12">
          <button type="submit"class="btn">
           <i class="icon-remove"></i> Delete selected instances
@@ -120,17 +138,19 @@
 
 
 
-    <div class="row">
+    <div class="row-fluid">
       {% include "datasets/show_dataset.html" %}
     </div>
   </form>
 
-  <div class="row">
+  <div class="row-fluid">
     <div class="span12">
       {% crispy upload_form %}
     </div>
   </div>
   {% include "datasets/visualization.html" %}
   {% include "datasets/datatable.html" %}
+</div>
+</div>
 </div>
 {% endblock content %}
