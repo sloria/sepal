@@ -23,16 +23,11 @@ class DatasetForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetForm, self).__init__(*args, **kwargs)
 
-    def clean_species(self):
-        species, created = Species.objects.get_or_create(
-            name=self.cleaned_data['species'])
-        return species
 
 class DatasetEditForm(forms.ModelForm):
     '''Form for editing the title, species, and description
     of a dataset.
     '''
-    # TODO: allow creation of new species object
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
     class Meta:
@@ -45,11 +40,6 @@ class DatasetEditForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetEditForm, self).__init__(*args, **kwargs)
-
-    def clean_species(self):
-        species, created = Species.objects.get_or_create(
-            name=self.cleaned_data['species'])
-        return species
 
 class DatasourceForm(forms.Form):
     '''Form for uploading audio or csv files.
@@ -78,7 +68,7 @@ class DatasourceForm(forms.Form):
                 'csv',
             ),
             FormActions(
-                Submit('submit', 'Add')
+                Submit('submit', 'Submit')
             )
         )
         super(DatasourceForm, self).__init__(*args, **kwargs)

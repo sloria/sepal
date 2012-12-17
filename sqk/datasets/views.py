@@ -72,8 +72,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
             instance = Instance.objects.create(
-                dataset=self.object,
-                species=self.object.species)
+                dataset=self.object)
             f = form.cleaned_data['audio']
             handle_uploaded_file(f)
             result = extract_features(instance.pk,
@@ -222,6 +221,36 @@ def update_name(request, dataset_id):
         dataset.save()
         message['name'] = request.POST['value']
 
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+@ensure_csrf_cookie
+def update_description(request, dataset_id):
+    '''View for updating the dataset description using X-editable.
+    '''
+    message = {"description": ''}
+    if request.is_ajax():
+        description = request.POST['value']
+        # Save new Dataset name
+        dataset = get_object_or_404(Dataset, pk=dataset_id)
+        dataset.description = description
+        dataset.save()
+        message['description'] = description
+    json = simplejson.dumps(message)
+    return HttpResponse(json, mimetype='application/json') 
+
+@ensure_csrf_cookie
+def update_species(request, dataset_id):
+    '''View for updating the dataset description using X-editable.
+    '''
+    message = {"species": ''}
+    if request.is_ajax():
+        species = request.POST['value']
+        # Save new Dataset name
+        dataset = get_object_or_404(Dataset, pk=dataset_id)
+        dataset.species = species
+        dataset.save()
+        message['species'] = species
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
 

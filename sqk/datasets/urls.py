@@ -53,6 +53,16 @@ urlpatterns += patterns('',
     # X-editable dataset name
     url(r'^(?P<dataset_id>\d+)/update_name/$', update_name,
         name='update_name'),
+
+    # ex: /datasets/3/update_description
+    # X-editable dataset name
+    url(r'^(?P<dataset_id>\d+)/update_description/$', update_description,
+        name='update_description'),
+
+    # ex: /datasets/3/update_description
+    # X-editable dataset name
+    url(r'^(?P<dataset_id>\d+)/update_species/$', update_species,
+        name='update_species'),
     
     # ex: /datasets/instances/452/update_label/4
     # X-editable instance label

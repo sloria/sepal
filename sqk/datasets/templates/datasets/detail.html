@@ -37,11 +37,11 @@
     <div class="span9">
 
       <h1 class="page-title">
-        <a href="#" id="datasetName">{{ dataset.name }}</a>
+        <a href="#" id="dataset_name">{{ dataset.name }}</a>
       </h1>
 
       <script>
-      $('#datasetName').editable({
+      $('#dataset_name').editable({
        type: 'text',
        pk: {{ dataset.pk }},
        url: '{% url 'datasets:update_name' dataset.pk %}',
@@ -70,17 +70,33 @@
               <tbody>
                 <tr>
                   <th>Description</th>
-                  <td class="pull-left">{{ dataset.description }}</td>
+                  <td><a href="#" id="dataset_description">{{ dataset.description }}</a></td>
                 </tr>
                 <tr>
                   <th>Species</th>
-                  <td><em> {{ dataset.species }} </em></td>
+                  <td><em><a href="#" id="dataset_species">{{ dataset.species }}</a></em></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div><!-- end Information row-fluid-->
+
+      <script>
+      $('#dataset_description').editable({
+       type: 'textarea',
+       pk: {{ dataset.pk }},
+       url: '{% url 'datasets:update_description' dataset.pk %}',
+       title: 'Edit dataset description'
+     });
+
+      $('#dataset_species').editable({
+       type: 'text',
+       pk: {{ dataset.pk }},
+       url: '{% url 'datasets:update_species' dataset.pk %}',
+       title: 'Edit dataset species'
+     });
+      </script>
 
 
       {# Visualization and Control #}

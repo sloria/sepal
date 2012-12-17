@@ -51,8 +51,7 @@ def read_datasource(dataset, source_path, feature_row=0):
             else:
                 # Create instance and add it to dataset
                 inst = Instance.objects.create(
-                    dataset=dataset,
-                    species=dataset.species)
+                    dataset=dataset)
                 for feature in feature_obj_list:
                     inst.features.add(feature)
                 inst.save()

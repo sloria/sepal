@@ -44,13 +44,6 @@ class FeatureAdmin(admin.ModelAdmin):
     list_display = ('name','pk')
     inlines = [FeatureInstanceInline,]
 
-class SpeciesAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields': ['name']})
-    ]
-    list_display = ('name','pk')
-    inlines = [DatasetInline]
-
 class LabelNameAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name']})
@@ -68,6 +61,5 @@ class LabelValueAdmin(admin.ModelAdmin):
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Feature, FeatureAdmin)
-admin.site.register(Species, SpeciesAdmin)
 admin.site.register(LabelName, LabelNameAdmin)
 admin.site.register(LabelValue, LabelValueAdmin)

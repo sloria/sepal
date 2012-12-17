@@ -11,7 +11,7 @@
           <th rowspan="2"></th>
           <th rowspan="2">#</th>
           {% for label_name in label_names %}
-          <th rowspan="2"><a href="#" class="label_name" id="label_name{{ label_name.pk }}">{{ label_name|capfirst }}</a></th>
+          <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
           <script>
             $('#label_name{{ label_name.pk }}').editable({
              type: 'text',

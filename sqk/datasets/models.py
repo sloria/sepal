@@ -23,16 +23,10 @@ class LabelValue(models.Model):
     class Meta:
         order_with_respect_to = 'label_name'
 
-class Species(models.Model):
-    name = models.CharField(max_length=100, default='')
-    def __unicode__(self):
-        return self.name
-
 class Dataset(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, null=True, blank=True)
-    species = models.ForeignKey(Species, null=True, blank=True,
-                                related_name='datasets')
+    species = models.CharField(max_length=75, null=True, blank=True)
     created_at = models.DateTimeField('created at', default=timezone.now())
     def __unicode__(self):
         return self.name
@@ -82,7 +76,6 @@ class Dataset(models.Model):
 
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
-    species = models.ForeignKey(Species, related_name='instances')
     label_values = models.ManyToManyField(LabelValue, null=True, blank=True,
                     related_name='instances')
     created_at = models.DateTimeField('created at', default=timezone.now())
