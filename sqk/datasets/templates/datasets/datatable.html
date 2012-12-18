@@ -4,41 +4,22 @@ var oTable;
 $(document).ready(function() {
   var last_column = {{ feature_names|length }} + {{ label_names|length }} + 2;
   var initial_display_length = 10;
-
-  /* Add a click handler to the rows - this could be used as a callback */
-  // $("#dataset-table tbody tr").click( function( e ) {
-  //   if ( $(this).hasClass('info') ) {
-  //     $(this).removeClass('info');
-  //   }
-  //   else {
-  //     oTable.$('tr.info').removeClass('info');
-  //     $(this).addClass('info');
-  //   }
-  // });
-
-  // /* Add a click handler for the delete row */
-  // $('#delete').click( function() {
-  //   var anSelected = fnGetSelected( oTable );
-  //   if ( anSelected.length !== 0 ) {
-  //     oTable.fnDeleteRow( anSelected[0] );
-  //   }
-  // } );
-
     // Intialize dataset as a DataTable
+    try{
     oTable = $('#dataset-table').dataTable( {
       "iDisplayLength": initial_display_length,
       "iDisplayStart": {{ data|length }} - initial_display_length, // Start on last page
-      "bFilter": false, // Disable search
+      "bFilter": true, // Disable search
       "aoColumnDefs": [
-          // Last column should not be sortable
+          // First column should not be sortable
           { 'bSortable': false, 'aTargets': [ 0 ] }
           ]
         } );
+    }catch(ex){
+      // FIXME: Weird exception is being thrown, but doesn't affect functionality
+      console.log('Caught exception when initializing dataset:');
+      console.log(ex);
+      console.log('but the show must go on...')
+    }
   });
-
-// Returns the selected rows
-function fnGetSelected( oTableLocal )
-{
-  return oTableLocal.$('tr.info');
-}
 </script>

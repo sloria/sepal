@@ -15,6 +15,7 @@
           <script>
             $('#label_name{{ label_name.pk }}').editable({
              type: 'text',
+             showbuttons: false,
              pk: {{ label_name.pk }},
              url: '{% url 'datasets:update_label_name' dataset.pk label_name.pk  %}',
              value: '',
@@ -53,6 +54,7 @@
             <script>
             $('#instance_label_{{ inst.pk }}').editable({
              type: 'text',
+             showbuttons: false,
              pk: {{ inst.pk }},
              url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
              value: '',
@@ -67,7 +69,7 @@
             <td>{{ value|floatformat:3 }}</td>
             {% endfor %}
             <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
-            </tr>
+          </tr>
           {% endfor %}
         </tbody>
       </table>

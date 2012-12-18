@@ -9,3 +9,13 @@ $.ajaxSetup({
               xhr.setRequestHeader("X-CSRFToken", csrftoken);
           }
       });
+$(document).ready(function() {
+  /* Multi select - allow multiple selections */
+  /* Allow click without closing menu */
+  /* Toggle checked state and icon */
+  $('.multicheck').click(function(e) {     
+     $(this).toggleClass("checked"); 
+     $(this).find("span").toggleClass("icon-ok"); 
+     return false;
+  });        
+}); 

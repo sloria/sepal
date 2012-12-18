@@ -4,13 +4,12 @@
         <ul id="dashboard-menu" class="nav nav-list collapse in">
           <li><a href="#addSourceForm"><i class="icon-bullhorn"></i>Extract audio features</a></li>
           <li><a href="#datasetHeading"><i class="icon-table"></i>Table</a></li>
-          <li><a data-toggle="collapse" href="#chart"><i class="icon-bar-chart"></i>Visualize</a></li>
-
         </ul><!-- end Dashboard -->
 
         {# Visualization #}
-        <div class="nav-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-eye-open"></i>Visualization</div>
+        <div class="nav-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-bar-chart"></i>Visualization</div>
         <ul id="visualization-menu" class="nav nav-list collapse in">
+          <li><a data-toggle="collapse" href="#chart"><i class="icon-eye-open"></i>Open/Close plot</a></li>
           <li>Select axes:</li>
           {% for feature in feature_objects %}
           <li class="feature-select multicheck" value="{{ forloop.counter0 }}" ><a href="#">
