@@ -47,6 +47,10 @@ p, div {
   color: #000000;
 }
 
+.species{
+  font-style: italic;
+}
+
 /* footer */
 
 footer {

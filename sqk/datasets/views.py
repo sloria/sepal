@@ -165,7 +165,10 @@ class InstanceRow(DetailView):
         context['inst'] = instance.as_dict()
         return context
 
+
 def delete_instances(request, dataset_id):
+    '''View for deleting selected instances.
+    '''
     # Get the POST keys that contain 'instance_select'
     selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
     for inst_key in selected_instance_keys:
@@ -174,11 +177,12 @@ def delete_instances(request, dataset_id):
         inst_obj.delete()
     return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
+def update_instances_labels(request, dataset_id, label_name_id):
+    '''View for updating the label values for selected instances.
+    '''
+    # TODO
+    return
 
-
-## Feature views
-# Class to manage feature lists for datasets
-# Model     : Feature (datasets/models.py) 
 class LabelNameCreate(FormView):
     form_class = LabelNameForm
     context_object_name = 'label_name'
@@ -191,7 +195,7 @@ class LabelNameCreate(FormView):
         context['upload_form'] = self.get_form(LabelNameForm)
         return context
 
-    def form_valid(self, form): # TODO: getorcreate everything
+    def form_valid(self, form):
         dataset, created = Dataset.objects.get_or_create(pk=self.kwargs['dataset_id'])
         # Save the new label object and associate with dataset
         label, created = LabelName.objects.get_or_create(name=form.cleaned_data['name'])
@@ -205,10 +209,10 @@ class LabelNameCreate(FormView):
         return super(LabelNameCreate, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('datasets:detail', 
+        return reverse_lazy('datasets:detail',
             kwargs={'pk': self.kwargs['dataset_id']})
 
-# X-editable views 
+# X-editable views
 
 @ensure_csrf_cookie
 def update_name(request, dataset_id):
@@ -223,7 +227,7 @@ def update_name(request, dataset_id):
         message['name'] = request.POST['value']
 
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
 
 @ensure_csrf_cookie
 def update_description(request, dataset_id):
@@ -253,7 +257,7 @@ def update_species(request, dataset_id):
         dataset.save()
         message['species'] = species
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
 
 @ensure_csrf_cookie
 def update_instance_label(request, instance_id, label_name_id):
@@ -274,7 +278,7 @@ def update_instance_label(request, instance_id, label_name_id):
         inst.label_values.add(new_label_value_obj)
         message['label'] = new_label_value
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
 
 
 @ensure_csrf_cookie
@@ -290,11 +294,3 @@ def update_label_name(request, dataset_id, label_name_id):
         message['name'] = new_label_name
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
-
-
-
-
-
-
-
-
