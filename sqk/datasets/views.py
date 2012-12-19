@@ -8,7 +8,7 @@ from django.utils import simplejson
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from djcelery.views import is_task_successful
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm, LabelValueForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
@@ -105,11 +105,12 @@ class DatasetEdit(UpdateView):
     context_object_name = 'dataset'
     template_name='datasets/edit.html'
 
-class DatasetDelete(DeleteView):
-    model = Dataset
-    template_name='datasets/delete.html'
-    context_object_name = 'object'
-    success_url = reverse_lazy('datasets:index')
+def delete_dataset(request, pk):
+    '''View for deleting a dataset.
+    '''
+    dataset = Dataset.objects.get(pk=pk)
+    dataset.delete()
+    return HttpResponseRedirect(reverse('datasets:index'))
 
 ## Instance views
 class InstanceDetail(DetailView):
@@ -289,6 +290,8 @@ def update_label_name(request, dataset_id, label_name_id):
         message['name'] = new_label_name
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
+
+
 
 
 

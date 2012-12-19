@@ -38,14 +38,18 @@
       <div class="row-fluid">
         <div class="span12">
           <div class="btn-toolbar">
-            <div class="btn-group pull-right">
+            <div class="pull-right">
               <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
 
-              <a href="{% url 'datasets:delete' dataset.pk %}" class="btn btn-primary"><i class="icon-remove"></i> Delete</a>
+              <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-trash icon-white"></i></a>
             </div>
           </div><!-- end btn-toolbar -->
         </div><!-- end span12 -->
       </div><!-- end row-fluid-->
+
+
+
+
 
       <div class="row-fluid">
         <div class="block span12">
@@ -119,21 +123,10 @@
       </div><!--end span3 -->
       {% endcomment %}
     </div><!-- end row-fluid -->
-    {% comment %}
-    <div class="row-fluid">
-      <div class="span12">
-        <div class="btn-toolbar">
-          <a href="{% url 'datasets:create_label' dataset.pk  %}" class="btn btn-info"><i class="icon-beaker"></i> Add Variable</a>
-        </div>
-      </div>
-    </div><!-- end row-fluid-->
-    {% endcomment %}
     <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
       <div class="row-fluid">
         <div class="span12">
-         <button type="submit"class="btn">
-          <i class="icon-remove"></i> Delete selected instances
-        </button>
+<a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn"><i class="icon-remove"></i> Delete selected instances</a>
       </div>
     </div>
 
@@ -151,6 +144,8 @@
   </div>
   {% include "datasets/visualization.html" %}
   {% include "datasets/datatable.html" %}
+  {% include "datasets/confirm_delete_dataset.html" %}
+  {% include "datasets/confirm_delete_instances.html" %}
 </div>
 </div>
 </div>

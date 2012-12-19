@@ -19,31 +19,31 @@ urlpatterns = patterns('',
         name='edit'),
 
     # ex: /datasets/3/delete/
-    url(r'^(?P<pk>\d+)/delete/$', DatasetDelete.as_view(),
-        name='delete'),
+    url(r'^(?P<pk>\d+)/delete/$', delete_dataset,
+        name='delete_dataset'),
 
     # ex: /datasets/3/delete_instances/
     url(r'^(?P<dataset_id>\d+)/delete_instances/$', delete_instances,
         name='delete_instances'),
 
-    # ex: /datasets/instances/452/ 
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$', 
+    # ex: /datasets/instances/452/
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$',
         InstanceDetail.as_view(),
         name='instance_detail'),
 
     # ex: /datasets/instances/452/ready.json
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/ready.json$', 
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/ready.json$',
         instance_ready,
         name='instance_ready'),
 
     # ex: /datasets/instances/452/row/
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row$', 
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row$',
         InstanceRow.as_view(),
         name='instance_row'),
 
     # ex: /datasets/3/labels/create
         # ex: /datasets/new/
-    url(r'^(?P<dataset_id>\d+)/labels/create/$', 
+    url(r'^(?P<dataset_id>\d+)/labels/create/$',
         LabelNameCreate.as_view(), name='create_label'),
 )
 
@@ -63,17 +63,16 @@ urlpatterns += patterns('',
     # X-editable dataset name
     url(r'^(?P<dataset_id>\d+)/update_species/$', update_species,
         name='update_species'),
-    
+
     # ex: /datasets/instances/452/update_label/4
     # X-editable instance label
-    url(r'^/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$', 
+    url(r'^/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$',
         update_instance_label,
         name='update_instance_label'),
 
     # ex: /datasets/3/update_label/5
     # X-editable label name
-    url(r'^(?P<dataset_id>\d+)/update_label/(?P<label_name_id>\d+)$', 
+    url(r'^(?P<dataset_id>\d+)/update_label/(?P<label_name_id>\d+)$',
         update_label_name,
         name='update_label_name'),
 )
-

@@ -1,0 +1,27 @@
+{% load url from future %}
+<div class="modal fade" id="delete_dataset_{{ dataset.pk }}_confirm">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Delete <em>{{ dataset.name }}</em>?</h3>
+  </div>
+  <div class="modal-body">
+    <p>WARNING: This operation is irreversible.</p>
+  </div>
+  <div class="modal-footer">
+    <a href="{% url 'datasets:delete_dataset' dataset.pk %}" class="btn btn-danger">Delete</a>
+    <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+  </div>
+</div>
+
+<script>
+$('#delete_dataset_{{ dataset.pk }}').on('show', function() {
+  var $submit = $(this).find('.btn-danger'),
+      href = $submit.attr('href');
+  $submit.attr('href', href.replace('pony', $(this).data('id')));
+});
+
+$('#delete_dataset_{{ dataset.pk }}').click(function(e) {
+  e.preventDefault();
+  $('#delete_dataset_{{ dataset.pk }}_confirm').data('id', $(this).data('id')).modal('show');
+});
+</script>

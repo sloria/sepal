@@ -1,0 +1,35 @@
+{% load url from future %}
+<div class="modal fade" id="delete_instances_confirm">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Delete selected instances?</h3>
+  </div>
+  <div class="modal-body">
+    <p>WARNING: This operation is irreversible.</p>
+  </div>
+  <div class="modal-footer">
+    <a id="delete_instances_submit" href="#" class="btn btn-danger">Delete</a>
+    <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+  </div>
+</div>
+
+<script>
+$('#delete_instances').on('show', function() {
+  var $submit = $(this).find('.btn-danger'),
+      href = $submit.attr('href');
+  $submit.attr('href', href.replace('pony', $(this).data('id')));
+});
+    
+$('#delete_instances').click(function(e) {
+  e.preventDefault();
+  $('#delete_instances_confirm').data('id', $(this).data('id')).modal('show');
+});
+
+  $('#delete_instances_submit').on('click', function(e){
+    // We don't want this to act as a link so cancel the link action
+    e.preventDefault();
+
+// Find form and submit it
+$('#select_instances').submit();
+  });
+</script>

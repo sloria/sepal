@@ -78,6 +78,7 @@ class DatasourceForm(forms.Form):
     #         raise forms.ValidationError('No audio file selected.')
     #     return self.cleaned_data['sample_rate']
 
+
 class LabelNameForm(forms.Form):
     '''Form for creating a new independent variable for a
     dataset.
@@ -93,24 +94,7 @@ class LabelNameForm(forms.Form):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Submit'))
         super(LabelNameForm, self).__init__(*args, **kwargs)
-
-class LabelValueForm(forms.Form):
-    '''Form for creating a new label value. Should associate
-    the new label value with the instance upon save.
-    '''
-    # TODO: 
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_id = 'labelValueForm'
-        self.helper.form_method = 'post'
-        super(DatasetForm, self).__init__(*args, **kwargs)
-
-    
-
-
-
-    
+  
 
 
 
