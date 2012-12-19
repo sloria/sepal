@@ -1,4 +1,5 @@
 {% load url from future %}
+<fieldset>
 <div class="block span12">
   <div id="datasetHeading" class="block-heading" data-toggle="collapse" href="#dataset">Data</div>
   <div id="dataset" class="collapse in">
@@ -8,7 +9,7 @@
         <tr>
           {# Only show header if there are instances #}
           {% if dataset.instances.all %}
-          <th rowspan="2"></th>
+          <th rowspan="2"><input type="checkbox" class="checkall"></th>
           <th rowspan="2">#</th>
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
@@ -75,3 +76,6 @@
       </table>
     </div>
   </div>
+</fieldset>
+<script>
+</script>

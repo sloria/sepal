@@ -1,30 +1,29 @@
 import os
-from django.views.generic import View, ListView, DetailView, CreateView, FormView, UpdateView, DeleteView
+from django.views.generic import View, ListView, DetailView, FormView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
-from djcelery.views import is_task_successful
+from django.views.decorators.csrf import ensure_csrf_cookie
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
 ## Dataset views
-
 class DatasetList(ListView):
     model = Dataset
     queryset = Dataset.objects.order_by('-created_at')
     context_object_name = 'all_datasets'
-    template_name='datasets/index.html'
+    template_name = 'datasets/index.html'
+
 
 class DatasetDisplay(DetailView):
     model = Dataset
     context_object_name = 'dataset'
     template_name = 'datasets/detail.html'
-    
+
     def get_query_set(self):
         return Dataset.objects.filter(pk=self.kwargs['pk'])
 
@@ -123,7 +122,7 @@ class InstanceDetail(DetailView):
         # Assume an instance is ready when it has >= 1 feature
         ready = len(instance.features.all()) >= 1
         if self.kwargs['format'] == 'json':
-            return http.HttpResponse(json.dumps({'ready': ready}), # TODO
+            return http.HttpResponse(json.dumps({'ready': ready}),  # TODO
                                      content_type='application/json',
                                      **httpresponse_kwargs)
         else:
@@ -141,6 +140,7 @@ class InstanceDetail(DetailView):
         context['dataset'] = self.get_object().dataset
         return context
 
+
 def instance_ready(request, dataset_id, instance_id):
     '''View for checking if an instance is ready
     '''
@@ -149,6 +149,7 @@ def instance_ready(request, dataset_id, instance_id):
     message['ready'] = inst.as_dict()['ready']
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json') 
+
 
 class InstanceRow(DetailView):
     model = Instance
@@ -165,7 +166,10 @@ class InstanceRow(DetailView):
         context['inst'] = instance.as_dict()
         return context
 
+
 def delete_instances(request, dataset_id):
+    '''View for deleting selected instances.
+    '''
     # Get the POST keys that contain 'instance_select'
     selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
     for inst_key in selected_instance_keys:
@@ -174,11 +178,27 @@ def delete_instances(request, dataset_id):
         inst_obj.delete()
     return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
+def update_instances_labels(request, dataset_id, label_name_id):
+    '''View for updating the label values for selected instances.
+    '''
+    # TODO: Make URL and UI for this
+    selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
+    for inst_key in selected_instance_keys:
+        # Get the instance
+        inst_pk = request.POST[inst_key]
+        inst = Instance.objects.get(pk=inst_pk)
+        # Get the label_name
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name
+        # Replace the old label value with the new one
+        old_label_value_obj = inst.label_values.get(label_name=label_name_obj)
+        inst.label_values.remove(old_label_value_obj)
+        new_label_value_obj, created = LabelValue.objects.get_or_create(
+                                        value=new_label_value,
+                                        label_name=label_name_obj)
+        inst.label_values.add(new_label_value_obj)
+    return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 
-## Feature views
-# Class to manage feature lists for datasets
-# Model     : Feature (datasets/models.py) 
 class LabelNameCreate(FormView):
     form_class = LabelNameForm
     context_object_name = 'label_name'
@@ -191,7 +211,7 @@ class LabelNameCreate(FormView):
         context['upload_form'] = self.get_form(LabelNameForm)
         return context
 
-    def form_valid(self, form): # TODO: getorcreate everything
+    def form_valid(self, form):
         dataset, created = Dataset.objects.get_or_create(pk=self.kwargs['dataset_id'])
         # Save the new label object and associate with dataset
         label, created = LabelName.objects.get_or_create(name=form.cleaned_data['name'])
@@ -205,10 +225,10 @@ class LabelNameCreate(FormView):
         return super(LabelNameCreate, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('datasets:detail', 
+        return reverse_lazy('datasets:detail',
             kwargs={'pk': self.kwargs['dataset_id']})
 
-# X-editable views 
+# X-editable views
 
 @ensure_csrf_cookie
 def update_name(request, dataset_id):
@@ -223,7 +243,8 @@ def update_name(request, dataset_id):
         message['name'] = request.POST['value']
 
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
+
 
 @ensure_csrf_cookie
 def update_description(request, dataset_id):
@@ -238,7 +259,8 @@ def update_description(request, dataset_id):
         dataset.save()
         message['description'] = description
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
+
 
 @ensure_csrf_cookie
 def update_species(request, dataset_id):
@@ -253,7 +275,8 @@ def update_species(request, dataset_id):
         dataset.save()
         message['species'] = species
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
+
 
 @ensure_csrf_cookie
 def update_instance_label(request, instance_id, label_name_id):
@@ -261,8 +284,8 @@ def update_instance_label(request, instance_id, label_name_id):
     '''
     message = {"label": ''}
     if request.is_ajax():
-        new_label_value = request.POST['value'].lower() # e.g. u'bonded'
-        label_name_obj = get_object_or_404(LabelName, pk=label_name_id) # the label name
+        new_label_value = request.POST['value'].lower()  # e.g. u'bonded'
+        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name
         # Get the instance
         inst = get_object_or_404(Instance, pk=instance_id)
         # Replace the old label value with the new one
@@ -274,7 +297,7 @@ def update_instance_label(request, instance_id, label_name_id):
         inst.label_values.add(new_label_value_obj)
         message['label'] = new_label_value
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
 
 
 @ensure_csrf_cookie
@@ -289,12 +312,4 @@ def update_label_name(request, dataset_id, label_name_id):
         label_name_obj.save()
         message['name'] = new_label_name
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
-
-
-
-
-
-
-
-
+    return HttpResponse(json, mimetype='application/json')

@@ -13,9 +13,17 @@ $(document).ready(function() {
   /* Multi select - allow multiple selections */
   /* Allow click without closing menu */
   /* Toggle checked state and icon */
-  $('.multicheck').click(function(e) {     
-     $(this).toggleClass("checked"); 
-     $(this).find("span").toggleClass("icon-ok"); 
+  $('.multicheck').click(function(e) {
+     $(this).toggleClass("checked");
+     $(this).find("span").toggleClass("icon-ok");
      return false;
-  });        
-}); 
+  });
+});
+
+
+$(function () {
+  /* Control check all */
+    $('.checkall').click(function () {
+        $(this).parents('fieldset:eq(0)').find(':checkbox').attr('checked', this.checked);
+    });
+});

@@ -29,7 +29,7 @@
           {{ dataset.name }}</a>
         </td>
         <td>{{ dataset.description }}</td>
-        <td>{{ dataset.species }}</td>
+        <td class="species">{{ dataset.species }}</td>
         <td>{{ dataset.created_at }}</td>
         <td>
           <a href="{% url 'datasets:edit' dataset.pk %}"><i class="icon-pencil"></i></a>

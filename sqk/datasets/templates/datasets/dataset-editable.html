@@ -1,0 +1,23 @@
+{% load url from future %}
+<script>
+  $('#dataset_name').editable({
+   type: 'text',
+   pk: {{ dataset.pk }},
+   url: '{% url 'datasets:update_name' dataset.pk %}',
+   title: 'Edit dataset name'
+  });
+
+  $('#dataset_description').editable({
+   type: 'textarea',
+   pk: {{ dataset.pk }},
+   url: '{% url 'datasets:update_description' dataset.pk %}',
+   title: 'Edit dataset description'
+  });
+
+  $('#dataset_species').editable({
+   type: 'text',
+   pk: {{ dataset.pk }},
+   url: '{% url 'datasets:update_species' dataset.pk %}',
+   title: 'Edit dataset species'
+  });
+</script>

@@ -9,6 +9,7 @@
 
 /* universal */
 
+
 html {
   overflow-y: scroll;
 }
@@ -45,6 +46,10 @@ p, div {
 /* Editable links should be black */
 #dataset_name, #dataset_description, #dataset_species{
   color: #000000;
+}
+
+.species{
+  font-style: italic;
 }
 
 /* footer */
