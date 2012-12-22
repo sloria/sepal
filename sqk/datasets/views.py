@@ -42,6 +42,11 @@ class DatasetDisplay(DetailView):
             context['feature_names'] = list(dataset.last_instance().feature_names())
             # label_names is a list of <LabelName> objects
             context['label_names'] = list(dataset.instances.all()[0].labels().keys())
+            
+            # NOTE: this is assuming only 1 variable per dataset. more in the future
+            # the LabelName id
+            context['label_name_id'] = dataset.last_instance().labels().keys()[0].id
+            context['label_name'] = dataset.last_instance().labels().keys()[0].name
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
@@ -186,39 +191,31 @@ def delete_instances(request, dataset_id):
         # TODO: handle non-AJAX
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
-def ajax_test(request):
-    if request.is_ajax():
-        message = "This is an Ajax message"
-    else:
-        message = "Ajax error"
-    return render_to_response("datasets/ajax.html",
-        context_instance=RequestContext(request,{'message':message}))
 
 def update_instances_labels(request, dataset_id, label_name_id):
     '''View for updating the label values for selected instances.
     '''
     # TODO: Make URL and UI for this
-    selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
-    for inst_key in selected_instance_keys:
-        # Get the instance
-        inst_pk = request.POST[inst_key]
-        inst = Instance.objects.get(pk=inst_pk)
-        # Get the label_name
-        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name
-        # Replace the old label value with the new one
-        old_label_value_obj = inst.label_values.get(label_name=label_name_obj)
-        inst.label_values.remove(old_label_value_obj)
-        new_label_value_obj, created = LabelValue.objects.get_or_create(
-                                        value=new_label_value,
-                                        label_name=label_name_obj)
-        inst.label_values.add(new_label_value_obj)
-    return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
-
-def update_instances_labels(request, dataset_id, label_name_id):
-    '''View for updating the label values for selected instances.
-    '''
-    # TODO
-    return
+    new_label_value = request.POST['new_label'].lower()
+    print new_label_value
+    if request.is_ajax():
+        instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]
+        for id in instance_ids:
+            # Get the instance
+            inst = Instance.objects.get(pk=id)
+            # Get the label_name
+            label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name
+            # Replace the old label value with the new one
+            old_label_value_obj = inst.label_values.get(label_name=label_name_obj)
+            inst.label_values.remove(old_label_value_obj)
+            new_label_value_obj, created = LabelValue.objects.get_or_create(
+                                            value=new_label_value,
+                                            label_name=label_name_obj)
+            inst.label_values.add(new_label_value_obj)
+        return HttpResponse(simplejson.dumps("success"), mimetype='applicationjson')
+    else:
+        # TODO: handle non-AJAX
+        return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 class LabelNameCreate(FormView):
     form_class = LabelNameForm

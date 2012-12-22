@@ -26,6 +26,10 @@ urlpatterns = patterns('',
     url(r'^(?P<dataset_id>\d+)/delete_instances/$', delete_instances,
         name='delete_instances'),
 
+    # ex: /datasets/3/update_instances_labels/
+    url(r'^(?P<dataset_id>\d+)/update_instances_labels/(?P<label_name_id>\d+)$', update_instances_labels,
+        name='update_instances_labels'),
+
     # ex: /datasets/instances/452/
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$',
         InstanceDetail.as_view(),
@@ -44,9 +48,6 @@ urlpatterns = patterns('',
     # ex: /datasets/3/labels/create
     url(r'^(?P<dataset_id>\d+)/labels/create/$',
         LabelNameCreate.as_view(), name='create_label'),
-
-    # ex: /datasets/ajax_test/
-    url(r'^ajax_test/$', ajax_test, name='ajax_test'),
 )
 
 # URLconfs for X-editable updating

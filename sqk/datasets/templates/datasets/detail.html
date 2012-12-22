@@ -75,7 +75,7 @@
             <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
               Visualization
             </div>
-            <div id="chart" class="collapse out"></div>
+            <div id="chart" class="collapse in"></div>
           </div>
         </div>
       </div><!-- end row-fluid -->
@@ -92,12 +92,16 @@
       </div>
     </div>
   </div>
-  {# Include visualization script #}
-  {% include "datasets/visualization.html" %}
-  {# Include script to initialize DataTable #}
-  {% include "datasets/datatable.html" %}
+
+  {% if dataset.instances.all %}
+    {# Include visualization script #}
+    {% include "datasets/visualization.html" %}
+    {# Include script to initialize DataTable #}
+    {% include "datasets/datatable.html" %}
+  {% endif %}
   {# Include modal confirm dialogs #}
   {% include "datasets/confirm_delete_dataset.html" %}
   {# Include script to make fields editable #}
   {% include "datasets/dataset-editable.html" %}
+
   {% endblock content %}
