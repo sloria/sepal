@@ -7,14 +7,15 @@ $(document).ready(function() {
   var last_column = {{ feature_names|length }} + {{ label_names|length }} + 2;
   var initial_display_length = 10;
   /* Add/remove class to a row when clicked on */
-  $('#dataset-table tr').click( function() {
-    $(this).toggleClass('info');
-  } );
+  // $('#dataset-table tr').click( function() {
+  //   $(this).toggleClass('info');
+  // } );
 
   /* Add a click handler for the delete row */
   $('#delete_rows').click( function(e) {
     e.preventDefault();
-    var selected = fnGetSelected( oTable );
+    var oTT = TableTools.fnGetInstance( 'dataset-table' );
+    var selected = oTT.fnGetSelected( oTable );
         // Remove selected from table
         $.ajax({
           url: "{% url 'datasets:delete_instances' dataset.pk %}",
@@ -36,10 +37,19 @@ $(document).ready(function() {
     try{
       oTable = $('#dataset-table').dataTable( {
        "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-        "oTableTools": {
-          "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
-        },
-        "iDisplayLength": initial_display_length,
+       
+       "oTableTools": {
+        "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
+        "sRowSelect": "multi",
+        "aButtons": [
+        "select_all",
+        "select_none",
+        "csv",
+        "pdf",
+        "print",
+        ]
+      },
+      "iDisplayLength": initial_display_length,
       // FIXME: should start on last page
       // "iDisplayStart": {{ data|length }} - initial_display_length-1, // Start on last page
       "bFilter": true, // Disable search
@@ -55,10 +65,10 @@ $(document).ready(function() {
     }
   });
 
-function fnGetSelected( oTableLocal )
-{
-  return oTableLocal.$('tr.info');
-}
+// function fnGetSelected( oTableLocal )
+// {
+//   return oTableLocal.$('tr.active');
+// }
 
 function get_selected_ids( selected )
 {
