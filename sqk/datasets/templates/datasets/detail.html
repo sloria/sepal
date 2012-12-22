@@ -75,31 +75,10 @@
         </div>
       </div><!-- end row-fluid -->
 
-
-      <div class="row-fluid">
-        <div class="span12">
-          <div class="dropdown">
-            <a class="dropdown-toggle btn btn-info" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">
-              Actions
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li>
-                <a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm">
-                  <i class="icon-remove"></i>Delete selected
-                </a>
-              </li>
-            </ul>
-          </div><!-- end dropdown -->
-        </div><!-- end row-fluid -->
-
         {# Data table #}
-        <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
-          <div class="row-fluid">
-            {% include "datasets/show_dataset.html" %}
-          </div><!-- end row-fluid -->
-        </form>
-
+        <div class="row-fluid">
+          {% include "datasets/show_dataset.html" %}
+        </div><!-- end row-fluid -->
         <div class="row-fluid">
           <div class="span12">
             {% crispy upload_form %}
@@ -114,7 +93,6 @@
   {% include "datasets/datatable.html" %}
   {# Include modal confirm dialogs #}
   {% include "datasets/confirm_delete_dataset.html" %}
-  {% include "datasets/confirm_delete_instances.html" %}
   {# Include script to make fields editable #}
   {% include "datasets/dataset-editable.html" %}
   {% endblock content %}
