@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
+from django.core.serializers import serialize
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
@@ -169,14 +170,19 @@ class InstanceRow(DetailView):
 
 def delete_instances(request, dataset_id):
     '''View for deleting selected instances.
+
+    Must be a POST request.
     '''
-    # Get the POST keys that contain 'instance_select'
-    selected_instance_keys = [key for key in request.POST.keys() if 'instance_select' in key]
-    for inst_key in selected_instance_keys:
-        inst_pk = request.POST[inst_key]
-        inst_obj = Instance.objects.get(pk=inst_pk)
+    results = {'success': False}
+    # Get the ids of the selected instances
+    instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]
+    for id in instance_ids:
+        inst_obj = Instance.objects.get(pk=id)
         inst_obj.delete()
-    return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
+    results['success'] = True
+    instances = Instance.objects.filter(dataset__id=dataset_id)
+    json = serialize('json', instances)
+    return HttpResponse(json, mimetype='application/json')
 
 def update_instances_labels(request, dataset_id, label_name_id):
     '''View for updating the label values for selected instances.

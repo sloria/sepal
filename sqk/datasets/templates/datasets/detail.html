@@ -81,36 +81,37 @@
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li><a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm">
-                <i class="icon-remove"></i> 
-                Delete selected instances
+            <li>
+              <a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm">
+                Dynamic delete (not working yet)
               </a>
-            </ul>
-          </div>
-        </div><!-- end row-fluid -->
+            </li>
+          </ul>
+        </div><!-- end dropdown -->
+      </div><!-- end row-fluid -->
 
-        {# Data table #}
-        <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
-          <div class="row-fluid">
-            {% include "datasets/show_dataset.html" %}
-          </div><!-- end row-fluid -->
-        </form>
-
+      {# Data table #}
+      <form action="{% url 'datasets:delete_instances' dataset.pk  %}" id="select_instances" method="post">{% csrf_token %}
         <div class="row-fluid">
-          <div class="span12">
-            {% crispy upload_form %}
-          </div>
+          {% include "datasets/show_dataset.html" %}
+        </div><!-- end row-fluid -->
+      </form>
+
+      <div class="row-fluid">
+        <div class="span12">
+          {% crispy upload_form %}
         </div>
       </div>
     </div>
   </div>
-  {# Include visualization script #}
-  {% include "datasets/visualization.html" %}
-  {# Include script to initialize DataTable #}
-  {% include "datasets/datatable.html" %}
-  {# Include modal confirm dialogs #}
-  {% include "datasets/confirm_delete_dataset.html" %}
-  {% include "datasets/confirm_delete_instances.html" %}
-  {# Include script to make fields editable #}
-  {% include "datasets/dataset-editable.html" %}
-  {% endblock content %}
+</div>
+{# Include visualization script #}
+{% include "datasets/visualization.html" %}
+{# Include script to initialize DataTable #}
+{% include "datasets/datatable.html" %}
+{# Include modal confirm dialogs #}
+{% include "datasets/confirm_delete_dataset.html" %}
+{% include "datasets/confirm_delete_instances.html" %}
+{# Include script to make fields editable #}
+{% include "datasets/dataset-editable.html" %}
+{% endblock content %}

@@ -42,7 +42,7 @@
       {# Data #}
       <tbody>
         {% for inst in data %}
-          <tr>
+          <tr data-id="{{ inst.pk }}">
             <td>
               <input type="checkbox" name="instance_select{{ inst.pk }}" value="{{ inst.pk }}">
             </td>
