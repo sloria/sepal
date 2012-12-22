@@ -37,14 +37,16 @@ urlpatterns = patterns('',
         name='instance_ready'),
 
     # ex: /datasets/instances/452/row/
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row$',
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row/$',
         InstanceRow.as_view(),
         name='instance_row'),
 
     # ex: /datasets/3/labels/create
-        # ex: /datasets/new/
     url(r'^(?P<dataset_id>\d+)/labels/create/$',
         LabelNameCreate.as_view(), name='create_label'),
+
+    # ex: /datasets/ajax_test/
+    url(r'^ajax_test/$', ajax_test, name='ajax_test'),
 )
 
 # URLconfs for X-editable updating
