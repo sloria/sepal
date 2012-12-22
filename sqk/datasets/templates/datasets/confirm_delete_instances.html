@@ -8,7 +8,7 @@
     <p>WARNING: This operation is irreversible.</p>
   </div>
   <div class="modal-footer">
-    <a id="delete_rows" href="#" class="btn btn-danger">Delete</a>
+    <a id="delete_rows" data-dismiss="modal" href="#" class="btn btn-danger">Delete</a>
     <a href="#" data-dismiss="modal" class="btn">Cancel</a>
   </div>
 </div>
@@ -25,11 +25,4 @@ $('#delete_instances').click(function(e) {
   $('#delete_instances_confirm').data('id', $(this).data('id')).modal('show');
 });
 
-  $('#delete_rows').on('click', function(e){
-    // We don't want this to act as a link so cancel the link action
-    e.preventDefault();
-
-// Find form and submit it
-$('#select_instances').submit();
-  });
 </script>
