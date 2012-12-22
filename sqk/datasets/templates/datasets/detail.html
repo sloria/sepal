@@ -3,10 +3,13 @@
 {% load url from future %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% block page_title %}{{ dataset.name }}{% endblock page_title %}
 {% block static %}
 <!-- DataTables.net -->
-<script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}datatables/media/css/jquery.dataTables.css">
+<script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}tabletools/css/TableTools.css">
+<script type="text/javascript" src='{{ STATIC_URL }}tabletools/js/TableTools.min.js'></script>
 <!-- DataTables.net Bootstrap integration -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/dataTables.bootstrap.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dataTables.bootstrap.css">
@@ -81,12 +84,13 @@
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li><a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm">
-                <i class="icon-remove"></i> 
-                Delete selected instances
-              </a>
+              <li>
+                <a id="delete_instances" href="#delete_instances_confirm" data-id="{{ dataset.pk }}" class="delete-confirm">
+                  <i class="icon-remove"></i>Delete selected
+                </a>
+              </li>
             </ul>
-          </div>
+          </div><!-- end dropdown -->
         </div><!-- end row-fluid -->
 
         {# Data table #}

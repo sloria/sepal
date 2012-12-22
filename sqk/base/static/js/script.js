@@ -1,14 +1,18 @@
 /* Author:
 
 */
-// Authenticate AJAX requests
+
+/* Authenticate AJAX requests */
 var csrftoken = $.cookie('csrftoken');
 $.ajaxSetup({
           crossDomain: false, // obviates need for sameOrigin test
           beforeSend: function(xhr, settings) {
               xhr.setRequestHeader("X-CSRFToken", csrftoken);
+              xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
           }
       });
+
+
 $(document).ready(function() {
   /* Multi select - allow multiple selections */
   /* Allow click without closing menu */
@@ -18,12 +22,4 @@ $(document).ready(function() {
      $(this).find("span").toggleClass("icon-ok");
      return false;
   });
-});
-
-
-$(function () {
-  /* Control check all */
-    $('.checkall').click(function () {
-        $(this).parents('fieldset:eq(0)').find(':checkbox').attr('checked', this.checked);
-    });
 });

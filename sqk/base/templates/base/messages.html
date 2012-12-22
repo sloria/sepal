@@ -1,0 +1,18 @@
+{% load verbatim_tag %}
+<script id="message_template" type="text/x-handlebars-template">
+    {% verbatim %}
+    <div class="alert alert-{{tags}} fade in" data-alert="{{tags}}">
+        <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
+        {{{message}}}
+    </div>
+    {% endverbatim%}
+</script>
+
+<script id="message_block_template" type="text/x-handlebars-template">
+    {% verbatim %}
+    <div class="alert alert-block alert-{{level}} fade in">
+        <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
+        {{{body}}}
+    </div>
+    {% endverbatim %}
+</script>
