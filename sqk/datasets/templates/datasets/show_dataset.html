@@ -68,6 +68,26 @@
             </tr>
           {% endfor %}
         </tbody>
+
+        <tfoot>
+        <tr>
+          {# Only show header if there are instances #}
+          {% if dataset.instances.all %}
+          <th rowspan="1">#</th>
+          {% for label_name in label_names %}
+          <th rowspan="1"><i class="icon-beaker"></i>{{ label_name|capfirst }}</th>
+          {% endfor %}
+          {% for feature_name in feature_names %}
+          {% if feature_name == 'zcr' %}
+              <th>{{ feature_name|upper }}</th>
+          {% else %}
+              <th>{{ feature_name|capfirst }}</th>
+          {% endif %}
+          {% endfor %}
+          <th>Date added</th>
+          {% endif %}
+        </tr>
+        </tfoot>
       </table>
     </div>
   </div>
