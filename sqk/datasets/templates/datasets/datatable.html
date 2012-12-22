@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load staticfiles %}
 <script>
 /* Get the rows which are currently selected */
 var oTable;
@@ -34,7 +35,10 @@ $(document).ready(function() {
     // Initialize dataset as a DataTable
     try{
       oTable = $('#dataset-table').dataTable( {
-        "sDom": 'T<"clear">lfrtip',
+       "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+        "oTableTools": {
+          "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
+        },
         "iDisplayLength": initial_display_length,
       // FIXME: should start on last page
       // "iDisplayStart": {{ data|length }} - initial_display_length-1, // Start on last page
