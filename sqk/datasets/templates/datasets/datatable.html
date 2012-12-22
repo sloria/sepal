@@ -54,8 +54,8 @@ $(document).ready(function() {
       // "iDisplayStart": {{ data|length }} - initial_display_length-1, // Start on last page
       "bFilter": true, // Disable search
       "aoColumnDefs": [
-          // First column should not be sortable
-          { 'bSortable': false, 'aTargets': [ 0 ] }
+          // Specifiy columns that aren't sortable
+          // { 'bSortable': false, 'aTargets': [ 0 ] }
           ]
         } );
     }catch(ex){

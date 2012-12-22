@@ -9,7 +9,6 @@
         <tr>
           {# Only show header if there are instances #}
           {% if dataset.instances.all %}
-          <th rowspan="2"><input type="checkbox" class="checkall"></th>
           <th rowspan="2">#</th>
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
@@ -43,9 +42,6 @@
       <tbody>
         {% for inst in data %}
           <tr data-id="{{ inst.pk }}">
-            <td>
-              <input type="checkbox" name="instance_select{{ inst.pk }}" value="{{ inst.pk }}">
-            </td>
             <td>{{ forloop.counter }}</td>
 
             {% if inst.labels %}
