@@ -63,10 +63,11 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         context = {
             'dataset': dataset,
             'data': dataset.get_data(),
+            'is_empty': True,
             'upload_form': self.get_form(DatasourceForm),
         }
         if dataset.instances.exists():
-            print 'made it in'
+            context['is_empty'] = False
             # feature_objects is a list of <Feature> objects
             context['feature_objects'] = list(dataset.last_instance().feature_objects())
             # feature_names is a list of strings

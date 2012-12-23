@@ -88,7 +88,7 @@ $(document).ready(function() {
 
 /* Only include these functions if there is data,
 otherwise, the url tags will cause an error. */
-{% if dataset.instances.all %} 
+{% if not is_empty %} 
 function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
