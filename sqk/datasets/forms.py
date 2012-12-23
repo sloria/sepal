@@ -30,9 +30,10 @@ class DatasetEditForm(forms.ModelForm):
     '''
     description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}))
+
     class Meta:
         model = Dataset
-        fields = ('name','species', 'description')
+        fields = ('name', 'species', 'description')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -40,6 +41,7 @@ class DatasetEditForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Submit'))
         super(DatasetEditForm, self).__init__(*args, **kwargs)
+
 
 class DatasourceForm(forms.Form):
     '''Form for uploading audio or csv files.
@@ -94,7 +96,3 @@ class LabelNameForm(forms.Form):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Submit'))
         super(LabelNameForm, self).__init__(*args, **kwargs)
-  
-
-
-

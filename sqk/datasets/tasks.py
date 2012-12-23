@@ -1,23 +1,24 @@
 import csv
 import os
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 
 import yaafelib as yf
 import wave
 import contextlib
 from celery import task
 
-from models import *        
+from models import *
+
 
 @task()
 def handle_uploaded_file(f):
-    '''Saves an uploaded data source to MEDIA_ROOT/data_sources 
+    '''Saves an uploaded data source to MEDIA_ROOT/data_sources
     '''
-    with open(os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ), 'wb+') as destination:
+    with open(os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
         return destination
+
 
 @task()
 def read_datasource(dataset, source_path, feature_row=0):
@@ -29,13 +30,13 @@ def read_datasource(dataset, source_path, feature_row=0):
     with open(source_path, 'r') as s:
         # TODO: file type handling
         data = csv.reader(s)
-        features = [] # List of feature names
-        feature_obj_list = [] # List of feature objects
+        features = []  # List of feature names
+        feature_obj_list = []  # List of feature objects
         label_name = None
         for i, row in enumerate(data):
             # Parse header
             if i == feature_row:
-                for j in range(len(row)-1):
+                for j in range(len(row) - 1):
                     features.append(row[j].lower())
                     f = None
                     # Create feature if it doesn't exist
@@ -46,7 +47,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                             name=row[j].lower())
                     feature_obj_list.append(f)
 
-                label_name= LabelName.objects.create(
+                label_name = LabelName.objects.create(
                     name=row[-1])
             # Parse data
             else:
@@ -66,7 +67,7 @@ def read_datasource(dataset, source_path, feature_row=0):
                         continue
                     feature = None
                     feature = inst.features.get(name=features[v])
-                    v = FeatureValue.objects.create(value=val, 
+                    v = FeatureValue.objects.create(value=val,
                             feature=feature,
                             instance=inst)
 
@@ -97,7 +98,7 @@ def extract_features(instance_id, audiofile_path):
     # Add features to extract
     feature_plan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
     for feature_definition in features.values():
-        if feature_definition: # Exclude duration and sample rate
+        if feature_definition:  # Exclude duration and sample rate
             feature_plan.addFeature(feature_definition)
     
     # Configure an Engine
@@ -115,17 +116,17 @@ def extract_features(instance_id, audiofile_path):
         if definition:
             # ex: 'loudness'
             output_name = definition.split(':')[0].strip()
-            if output_name == 'sss': # Store separate spec shape stats
+            if output_name == 'sss':  # Store separate spec shape stats
                 spec_shape_stats = engine.readOutput(output_name)
                 outputs['Spectral centroid'] = spec_shape_stats[:, 0]
                 outputs['Spectral spread'] = spec_shape_stats[:, 1]
                 outputs['Spectral skewness'] = spec_shape_stats[:, 2]
                 outputs['Spectral kurtosis'] = spec_shape_stats[:, 3]
-            else: # 1 dimensional data (1 X T array)
-                a = engine.readOutput(output_name) # 2D array
+            else:  # 1 dimensional data (1 X T array)
+                a = engine.readOutput(output_name)  # 2D array
                 outputs[display_name] = a.transpose()[0]
 
-    # Create features 
+    # Create features
     feature_obj_list = []
     for display_name in outputs.keys():
         f, created = Feature.objects.get_or_create(name=display_name.lower())
@@ -152,7 +153,7 @@ def extract_features(instance_id, audiofile_path):
     inst.save()
 
     for display_name, output in outputs.iteritems():
-        if output.size > 0: # Avoid empty data
+        if output.size > 0:  # Avoid empty data
             # Save output data
             for i in range(output[0].size):
                 output_mean = output[i].mean()
@@ -160,7 +161,6 @@ def extract_features(instance_id, audiofile_path):
                 v = FeatureValue.objects.create(value=output_mean,
                     feature=Feature.objects.get(name__iexact=display_name.lower()),
                     instance=inst)
-
 
     # Save sample_rate and duration data
     FeatureValue.objects.create(value=sample_rate,
@@ -170,6 +170,3 @@ def extract_features(instance_id, audiofile_path):
     FeatureValue.objects.create(value=duration,
         feature=Feature.objects.get(name='duration'),
         instance=inst)
-
-
-

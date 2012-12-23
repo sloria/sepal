@@ -3,18 +3,17 @@ from django.views.generic import View, ListView, DetailView, FormView, UpdateVie
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
-from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.core.serializers import serialize
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.core.files.base import ContentFile
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
 
 ############## Dataset views ##################
+
+
 class DatasetList(ListView):
     model = Dataset
     queryset = Dataset.objects.order_by('-created_at')
@@ -51,6 +50,7 @@ class DatasetDisplay(DetailView):
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
+
 class DatasetAddDatasource(FormView, SingleObjectMixin):
     '''View for adding data to a dataset.
     '''
@@ -75,8 +75,8 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             # Save file
             handle_uploaded_file(f)
             # Parse data and save to database
-            read_datasource(self.object, 
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
+            read_datasource(self.object,
+                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))
         if form.cleaned_data['audio'] != None:
             f = form.cleaned_data['audio']
             # Create new Audio object
@@ -88,8 +88,9 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             instance.audio = audio_obj
             instance.save()
             result = extract_features(instance.pk,
-                os.path.join(settings.MEDIA_ROOT, 'audio', f.name ))
+                os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
         return super(DatasetAddDatasource, self).form_valid(form)
+
 
 class DatasetDetail(View):
     
@@ -104,18 +105,20 @@ class DatasetDetail(View):
 
 class DatasetCreate(FormView):
     form_class = DatasetForm
-    template_name='datasets/create.html'
-    success_url= reverse_lazy('datasets:index')
+    template_name = 'datasets/create.html'
+    success_url = reverse_lazy('datasets:index')
 
     def form_valid(self, form):
         d = form.save()
         return super(DatasetCreate, self).form_valid(form)
 
+
 class DatasetEdit(UpdateView):
     model = Dataset
     form_class = DatasetEditForm
     context_object_name = 'dataset'
-    template_name='datasets/edit.html'
+    template_name = 'datasets/edit.html'
+
 
 def delete_dataset(request, pk):
     '''View for deleting a dataset.
@@ -125,6 +128,7 @@ def delete_dataset(request, pk):
     return HttpResponseRedirect(reverse('datasets:index'))
 
 ################ Instance views ####################
+
 
 class InstanceDetail(DetailView):
     model = Instance
@@ -162,7 +166,7 @@ def instance_ready(request, dataset_id, instance_id):
     inst = get_object_or_404(Instance, pk=instance_id)
     message['ready'] = inst.as_dict()['ready']
     json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json') 
+    return HttpResponse(json, mimetype='application/json')
 
 
 class InstanceRow(DetailView):
@@ -225,36 +229,9 @@ def update_instances_labels(request, dataset_id, label_name_id):
         # TODO: handle non-AJAX ?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
-class LabelNameCreate(FormView):
-    form_class = LabelNameForm
-    context_object_name = 'label_name'
-    template_name = 'features/new_label.html'
-
-    def get_context_data(self, **kwargs):
-        # Get context objects that get passed to template
-        context = super(LabelNameCreate, self).get_context_data(**kwargs)
-        context['dataset'] = Dataset.objects.get(pk=self.kwargs['dataset_id'])
-        context['upload_form'] = self.get_form(LabelNameForm)
-        return context
-
-    def form_valid(self, form):
-        dataset, created = Dataset.objects.get_or_create(pk=self.kwargs['dataset_id'])
-        # Save the new label object and associate with dataset
-        label, created = LabelName.objects.get_or_create(name=form.cleaned_data['name'])
-        label.datasets.add(dataset)
-        # Add the associated values
-        value_1_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value1'])
-        value_2_obj, created = LabelValue.objects.get_or_create(value=form.cleaned_data['value2'])
-        label.label_values.add(value_1_obj)
-        label.label_values.add(value_2_obj)
-        label.save()
-        return super(LabelNameCreate, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy('datasets:detail',
-            kwargs={'pk': self.kwargs['dataset_id']})
 
 ###################### X-editable views ##################
+
 
 @ensure_csrf_cookie
 def update_name(request, dataset_id):
@@ -303,6 +280,7 @@ def update_species(request, dataset_id):
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json')
 
+
 @ensure_csrf_cookie
 def update_instance_label(request, instance_id, label_name_id):
     '''View for updating an instance label name using X-editable.
@@ -338,4 +316,3 @@ def update_label_name(request, dataset_id, label_name_id):
         message['name'] = new_label_name
     json = simplejson.dumps(message)
     return HttpResponse(json, mimetype='application/json')
-
