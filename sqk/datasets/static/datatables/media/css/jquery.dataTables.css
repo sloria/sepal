@@ -218,10 +218,3 @@ table.dataTable thead td:active {
 	*margin-top: -1px;
 	-webkit-overflow-scrolling: touch;
 }
-
-/* Author: Steve */
-
-/* DataTable */
-.dataTables_length{
-  float: right;
-}

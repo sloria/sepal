@@ -29,18 +29,6 @@ $(document).ready(function() {
           "sButtonText": '<i class="icon-check-empty"></i> None'
         },
 
-        // Export csv
-        {
-          "sExtends": "csv",
-          "sButtonText": '<i class="icon-file"></i> Export CSV'
-        },
-
-        // Print
-        {
-          "sExtends": "print",
-          "sButtonText": '<i class="icon-print"></i> Print'
-        },
-        
         // Update label values
         {
           "sExtends": "text",
@@ -63,12 +51,23 @@ $(document).ready(function() {
               delete_selected();
             }
           }
+        },
 
+        // Export csv
+        {
+          "sExtends": "csv",
+          "sButtonText": '<i class="icon-file"></i> Export CSV'
+        },
+
+        // Print
+        {
+          "sExtends": "print",
+          "sButtonText": '<i class="icon-print"></i> Print'
         }
         ]
       },
       "iDisplayLength": initial_display_length,
-      "bFilter": false, // Disable search
+      "bFilter": true, // Disable search
       "aoColumnDefs": [
           // Specifiy columns that aren't sortable
           // { 'bSortable': false, 'aTargets': [ 0 ] }
@@ -82,7 +81,8 @@ $(document).ready(function() {
 }
 });
 
-function delete_selected(){
+{% if dataset.instances.all %}
+  function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
@@ -114,7 +114,7 @@ function update_selected_labels(new_label){
     data: {"new_label": new_label, "selected": get_selected_ids(selected)},
     dataType: 'json',
     /* Reloads after success
-    TODO: make this ajax in the future */
+    TODO: make this ajax in the future? */
     success: function(data){
       document.location.reload(true);
     },
@@ -127,4 +127,6 @@ function get_selected_ids( selected )
 {
   return jQuery.map(selected, function(element) { return jQuery(element).data('id'); });
 }
+{% endif %}
+
 </script>
