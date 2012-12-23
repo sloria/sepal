@@ -188,12 +188,14 @@ def delete_instances(request, dataset_id):
             inst_obj.delete()
         return HttpResponse(simplejson.dumps("success"), mimetype='application/json')
     else:
-        # TODO: handle non-AJAX
+        # TODO: handle non-AJAX?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 
 def update_instances_labels(request, dataset_id, label_name_id):
     '''View for updating the label values for selected instances.
+
+    Must be a POST request.
     '''
     # TODO: Make URL and UI for this
     new_label_value = request.POST['new_label'].lower()
@@ -214,7 +216,7 @@ def update_instances_labels(request, dataset_id, label_name_id):
             inst.label_values.add(new_label_value_obj)
         return HttpResponse(simplejson.dumps("success"), mimetype='applicationjson')
     else:
-        # TODO: handle non-AJAX
+        # TODO: handle non-AJAX ?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 class LabelNameCreate(FormView):

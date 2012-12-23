@@ -3,13 +3,13 @@
 {% load url from future %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{% block page_title %}{{ dataset.name }}{% endblock page_title %}
-{# Include DataTables #}
+{% block page_title %}sepal | {{ dataset.name }}{% endblock page_title %}
+{# Include DataTables base css and jss and plugins #}
 {% block static %}
   {% include "datasets/datatables_static.html" %}
 {% endblock static %}
-{% block content %}
 
+{% block content %}
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span3">

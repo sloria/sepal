@@ -81,7 +81,10 @@ $(document).ready(function() {
 }
 });
 
-{% if dataset.instances.all %}
+
+/* Only include these functions if there is data,
+otherwise, the url tags will cause an error. */
+{% if dataset.instances.all %} 
   function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
@@ -97,6 +100,9 @@ $(document).ready(function() {
       $.each(selected, function(index, value){
         oTable.fnDeleteRow( selected[index] );
       });
+      // TODO: update scatterplot to reflect deleted instances
+      // For now, just refresh the page
+      document.location.reload(true);
     },
     crossDomain: false,
     cache: false,
@@ -124,6 +130,7 @@ function update_selected_labels(new_label){
 }
 
 function get_selected_ids( selected )
+  /* Returns an array of ids for the selected instances. */
 {
   return jQuery.map(selected, function(element) { return jQuery(element).data('id'); });
 }
