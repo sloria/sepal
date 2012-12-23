@@ -7,6 +7,17 @@
 {# Include DataTables base css and jss and plugins #}
 {% block static %}
   {% include "datasets/datatables_static.html" %}
+  {# Include Soundmanager #}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}soundmanager/css/mp3-player-button.css">
+  <script type="text/javascript" src="{{ STATIC_URL }}soundmanager/script/soundmanager2-jsmin.js"></script>
+   <script type="text/javascript" src="{{ STATIC_URL }}soundmanager/script/mp3-player-button.js"></script>
+  <script>
+soundManager.setup({
+  // required: path to directory containing SM2 SWF files
+  url: '{{ STATIC_URL }}soundmanager/swf/'
+});
+</script>
+
 {% endblock static %}
 
 {% block content %}

@@ -73,7 +73,6 @@ class Dataset(models.Model):
         get_latest_by = "created_at"
         ordering = ["-created_at"]
 
-
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     label_values = models.ManyToManyField(LabelValue, null=True, blank=True,
@@ -129,6 +128,16 @@ class Instance(models.Model):
     class Meta:
         get_latest_by = 'created_at'
         ordering = ['pk']
+
+class Audio(models.Model):
+    audio_file = models.FileField(upload_to="audio", null=True, blank=True)
+    slug = models.SlugField(max_length=50, null=True, blank=True)
+    instance = models.OneToOneField(Instance)
+    def __unicode__(self):
+        return self.audio_file.name
+    def save(self, *args, **kwargs):
+        self.slug = self.audio_file.name
+        super(Audio, self).save(*args, **kwargs)
 
 # Extract features from the audio files
 # 

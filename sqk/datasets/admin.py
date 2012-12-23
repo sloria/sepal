@@ -37,6 +37,12 @@ class InstanceAdmin(admin.ModelAdmin):
     list_display = ('dataset', 'pk')
     inlines = [FeatureInstanceInline, FeatureValueInline]
 
+class AudioAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['audio_file', 'slug', 'instance']}),
+    ]
+    list_display = ('audio_file', 'slug', 'instance')
+
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name',]})
@@ -60,6 +66,7 @@ class LabelValueAdmin(admin.ModelAdmin):
 
 admin.site.register(Dataset, DatasetAdmin)
 admin.site.register(Instance, InstanceAdmin)
+admin.site.register(Audio, AudioAdmin)
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(LabelName, LabelNameAdmin)
 admin.site.register(LabelValue, LabelValueAdmin)

@@ -8,18 +8,19 @@
         <tr>
           {# Only show header if there are instances #}
           {% if dataset.instances.all %}
+          <th rowspan="2">Play</th>
           <th rowspan="2">#</th>
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
           <script>
-            $('#label_name{{ label_name.pk }}').editable({
-             type: 'text',
-             showbuttons: false,
-             pk: {{ label_name.pk }},
-             url: '{% url 'datasets:update_label_name' dataset.pk label_name.pk  %}',
-             value: '',
-             title: 'Edit label name'
-           });
+          $('#label_name{{ label_name.pk }}').editable({
+           type: 'text',
+           showbuttons: false,
+           pk: {{ label_name.pk }},
+           url: '{% url 'datasets:update_label_name' dataset.pk label_name.pk  %}',
+           value: '',
+           title: 'Edit label name'
+         });
           </script>
           {% endfor %}
           <th colspan="{{ feature_names|length }}" rowspan="1">Audio features</th>
@@ -27,9 +28,9 @@
         <tr>
           {% for feature_name in feature_names %}
           {% if feature_name == 'zcr' %}
-              <th>{{ feature_name|upper }}</th>
+          <th>{{ feature_name|upper }}</th>
           {% else %}
-              <th>{{ feature_name|capfirst }}</th>
+          <th>{{ feature_name|capfirst }}</th>
           {% endif %}
           {% endfor %}
           <th>Date added</th>
@@ -40,39 +41,43 @@
       {# Data #}
       <tbody>
         {% for inst in data %}
-          <tr data-id="{{ inst.pk }}">
-            <td>{{ forloop.counter }}</td>
+        <tr data-id="{{ inst.pk }}">
+          {# TODO: make href point to this instance's audio_file url #}
+          <td><a href="{{ STATIC_URL }}audio/sv.wav" class="sm2_button">{{ inst.pk }}</a></td>
 
-            {% if inst.labels %}
-            {% for label_name, label_value in inst.labels.items %}
-            <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value }}</a></td>
-            {# Initiate editable label value #}
-            <script>
-            $('#instance_label_{{ inst.pk }}').editable({
-             type: 'text',
-             showbuttons: false,
-             pk: {{ inst.pk }},
-             url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
-             value: '',
-             title: 'Edit instance label'
-           });
-            </script>
-            {% endfor %}
-            {% else %}
-            <td>No label</td>
-            {% endif %}
-            {% for value in inst.values %}
-            <td>{{ value|floatformat:3 }}</td>
-            {% endfor %}
-            <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
-            </tr>
+          <td>{{ forloop.counter }}</td>
+
+          {% if inst.labels %}
+          {% for label_name, label_value in inst.labels.items %}
+          <td><a href="#" id="instance_label_{{ inst.pk }}">{{ label_value }}</a></td>
+          {# Initiate editable label value #}
+          <script>
+          $('#instance_label_{{ inst.pk }}').editable({
+           type: 'text',
+           showbuttons: false,
+           pk: {{ inst.pk }},
+           url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
+           value: '',
+           title: 'Edit instance label'
+         });
+          </script>
           {% endfor %}
-        </tbody>
-
+          {% else %}
+          <td>No label</td>
+          {% endif %}
+          {% for value in inst.values %}
+          <td>{{ value|floatformat:3 }}</td>
+          {% endfor %}
+          <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+        {% comment %}
         <tfoot>
         <tr>
           {# Only show header if there are instances #}
           {% if dataset.instances.all %}
+          <th rowspan="1">Play</th>
           <th rowspan="1">#</th>
           {% for label_name in label_names %}
           <th rowspan="1">{{ label_name|capfirst }}</th>
@@ -88,8 +93,9 @@
           {% endif %}
         </tr>
         </tfoot>
+        {% endcomment %}
       </table>
     </div>
   </div>
-<script>
-</script>
+  <script>
+  </script>
