@@ -75,7 +75,7 @@
           {% if dataset.instances.all %}
           <th rowspan="1">#</th>
           {% for label_name in label_names %}
-          <th rowspan="1"><i class="icon-beaker"></i>{{ label_name|capfirst }}</th>
+          <th rowspan="1">{{ label_name|capfirst }}</th>
           {% endfor %}
           {% for feature_name in feature_names %}
           {% if feature_name == 'zcr' %}

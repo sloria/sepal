@@ -3,24 +3,13 @@
 {% load url from future %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{% block page_title %}{{ dataset.name }}{% endblock page_title %}
+{% block page_title %}sepal | {{ dataset.name }}{% endblock page_title %}
+{# Include DataTables base css and jss and plugins #}
 {% block static %}
-<!-- DataTables.net -->
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}datatables/media/css/jquery.dataTables.css">
-<script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
-<!-- TableTools -->
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}datatables/extras/TableTools/media/css/TableTools.css">
-<script type="text/javascript" src='{{ STATIC_URL }}datatables/extras/TableTools/media/js/TableTools.min.js'></script>
-<!-- Column Filter Widgets -->
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}datatables/extras/ColumnFilter/media/css/ColumnFilterWidgets.css">
-<script type="text/javascript" src='{{ STATIC_URL }}datatables/extras/ColumnFilter/media/js/ColumnFilterWidgets.js'></script>
-
-<!-- DataTables.net Bootstrap integration -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/dataTables.bootstrap.js"></script>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dataTables.bootstrap.css">
+  {% include "datasets/datatables_static.html" %}
 {% endblock static %}
-{% block content %}
 
+{% block content %}
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span3">
@@ -29,9 +18,9 @@
 
     <div class="span9">
 
-      <h1 class="page-title">
+      <h2 class="page-title">
         <a href="#" id="dataset_name">{{ dataset.name }}</a>
-      </h1>
+      </h2>
 
       {# Dataset control buttons #}
       <div class="row-fluid">
@@ -93,15 +82,13 @@
     </div>
   </div>
 
-  {% if dataset.instances.all %}
-    {# Include visualization script #}
-    {% include "datasets/visualization.html" %}
-    {# Include script to initialize DataTable #}
-    {% include "datasets/datatable.html" %}
-  {% endif %}
+  {# Include visualization script #}
+  {% include "datasets/visualization.html" %}
+  {# Include script to initialize DataTable #}
+  {% include "datasets/datatable.html" %}
   {# Include modal confirm dialogs #}
   {% include "datasets/confirm_delete_dataset.html" %}
   {# Include script to make fields editable #}
-  {% include "datasets/dataset-editable.html" %}
+  {% include "datasets/dataset_editable.html" %}
 
   {% endblock content %}
