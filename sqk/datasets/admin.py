@@ -32,16 +32,16 @@ class DatasetAdmin(admin.ModelAdmin):
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['dataset',]}),
+        (None, {'fields': ['dataset', 'audio']}),
     ]
-    list_display = ('dataset', 'pk')
+    list_display = ('dataset', 'pk', 'audio')
     inlines = [FeatureInstanceInline, FeatureValueInline]
 
 class AudioAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['audio_file', 'slug', 'instance']}),
+        (None, {'fields': ['audio_file', 'slug',]}),
     ]
-    list_display = ('audio_file', 'slug', 'instance')
+    list_display = ('audio_file', 'slug',)
 
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [

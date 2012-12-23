@@ -60,6 +60,11 @@ p, div {
   font-style: italic;
 }
 
+/* table */
+.table .no-border{
+  border:none;
+}
+
 /* footer */
 
 footer {

@@ -8,7 +8,7 @@
         <tr>
           {# Only show header if there are instances #}
           {% if dataset.instances.all %}
-          <th rowspan="2">Play</th>
+          <th rowspan="2"></th>
           <th rowspan="2">#</th>
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
@@ -33,6 +33,7 @@
           <th>{{ feature_name|capfirst }}</th>
           {% endif %}
           {% endfor %}
+          <th>File</th>
           <th>Date added</th>
           {% endif %}
         </tr>
@@ -43,7 +44,11 @@
         {% for inst in data %}
         <tr data-id="{{ inst.pk }}">
           {# TODO: make href point to this instance's audio_file url #}
-          <td><a href="{{ STATIC_URL }}audio/sv.wav" class="sm2_button">{{ inst.pk }}</a></td>
+          <td>
+            {% if inst.audio_url %}
+            <a href="{{ inst.audio_url }}" class="sm2_button">{{ inst.pk }}</a>
+            {% endif %}
+          </td>
 
           <td>{{ forloop.counter }}</td>
 
@@ -68,6 +73,11 @@
           {% for value in inst.values %}
           <td>{{ value|floatformat:3 }}</td>
           {% endfor %}
+          <td>
+            {% if inst.audio_url %}
+            {{ inst.audio_filename }}
+            {% endif %}
+          </td>
           <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
         </tr>
         {% endfor %}

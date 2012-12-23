@@ -1,15 +1,5 @@
 /**
- * SoundManager 2 Demo: Play MP3 links via button
- * ----------------------------------------------
- *
- * http://schillmania.com/projects/soundmanager2/
- *
- * A simple demo making MP3s playable "inline"
- * and easily styled/customizable via CSS.
- *
- * A variation of the "play mp3 links" demo.
- *
- * Requires SoundManager 2 Javascript API.
+ * SoundManager 2: Play MP3 links via button
  */
 
 /*jslint white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: false, newcap: true, immed: true */

@@ -9,6 +9,7 @@ from django.utils import simplejson
 from django.core.serializers import serialize
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.files.base import ContentFile
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm, LabelNameForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
@@ -77,12 +78,17 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
             read_datasource(self.object, 
                 os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
         if form.cleaned_data['audio'] != None:
-            instance = Instance.objects.create(
-                dataset=self.object)
             f = form.cleaned_data['audio']
-            handle_uploaded_file(f)
+            # Create new Audio object
+            # This uploads the file to media/audio
+            audio_obj = Audio(audio_file=f)
+            audio_obj.save()
+            # Create new instance and associate it with the audio file
+            instance = Instance(dataset=self.object)
+            instance.audio = audio_obj
+            instance.save()
             result = extract_features(instance.pk,
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ))
+                os.path.join(settings.MEDIA_ROOT, 'audio', f.name ))
         return super(DatasetAddDatasource, self).form_valid(form)
 
 class DatasetDetail(View):

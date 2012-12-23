@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
+import os
 
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
@@ -64,7 +65,7 @@ class Dataset(models.Model):
          {'pk': 1426, 'values': [10.34, 2.4], 'labels': {'marital': 'unbonded,}},
          ]
         '''
-        instances = self.instances.prefetch_related('values', 'label_values__label_name')
+        instances = self.instances.prefetch_related('values', 'label_values__label_name', 'audio')
         data = []
         for inst in instances:
             data.append(inst.as_dict())
@@ -73,11 +74,21 @@ class Dataset(models.Model):
         get_latest_by = "created_at"
         ordering = ["-created_at"]
 
+class Audio(models.Model):
+    audio_file = models.FileField(upload_to="audio", null=True, blank=True)
+    slug = models.SlugField(max_length=50, null=True, blank=True)
+    def __unicode__(self):
+        return self.audio_file.name
+    def save(self, *args, **kwargs):
+        self.slug = self.audio_file.name
+        super(Audio, self).save(*args, **kwargs)
+
 class Instance(models.Model):
     dataset = models.ForeignKey(Dataset, related_name='instances')
     label_values = models.ManyToManyField(LabelValue, null=True, blank=True,
                     related_name='instances')
     created_at = models.DateTimeField('created at', default=timezone.now())
+    audio = models.OneToOneField(Audio, null=True, blank=True)
     def __unicode__(self):
         return u'pk %s from dataset %s' %(self.pk, self.dataset.pk)
     def get_cname(self):
@@ -119,25 +130,20 @@ class Instance(models.Model):
     def as_dict(self):
         # Assume instance is ready if it has >= 1 feature
         # ready = len(self.features.all()) >= 1
-        return {'pk': self.pk, 
+        ret = {'pk': self.pk, 
                 'values': self.values_as_list(),
                 'labels': self.labels(),
-                'created_at': self.created_at
+                'created_at': self.created_at,
                 # 'ready': ready
                 }
+        if self.audio:
+            ret['audio_url'] = self.audio.audio_file.url
+            ret['audio_filename'] = os.path.basename(self.audio.audio_file.name)
+        return ret
     class Meta:
         get_latest_by = 'created_at'
         ordering = ['pk']
 
-class Audio(models.Model):
-    audio_file = models.FileField(upload_to="audio", null=True, blank=True)
-    slug = models.SlugField(max_length=50, null=True, blank=True)
-    instance = models.OneToOneField(Instance)
-    def __unicode__(self):
-        return self.audio_file.name
-    def save(self, *args, **kwargs):
-        self.slug = self.audio_file.name
-        super(Audio, self).save(*args, **kwargs)
 
 # Extract features from the audio files
 # 

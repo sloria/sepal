@@ -17,6 +17,7 @@ def handle_uploaded_file(f):
     with open(os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name ), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+        return destination
 
 @task()
 def read_datasource(dataset, source_path, feature_row=0):

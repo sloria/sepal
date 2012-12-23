@@ -9,7 +9,11 @@ $(document).ready(function() {
     try{
       oTable = $('#dataset-table').dataTable( {
        "sDom": 'T<"clear">lfrtip',
-       "sPaginationType": "full_numbers",
+       "sScrollY": "350px",
+       "sScrollX": "100%",
+       "sScrollXInner": "130%",
+       "bScrollCollapse": true,
+       "bPaginate": false,
        "oLanguage": {
         "sLengthMenu": " _MENU_ instances per page"
       },
@@ -70,10 +74,15 @@ $(document).ready(function() {
       "bFilter": true, // Disable search
       "aoColumnDefs": [
           // Specifiy columns that aren't sortable
-          { 'bSortable': false, 'aTargets': [ 0 ] }
+          { 'bSortable': false, 'aTargets': [ 0 ] },
+          // { "sWidth": 1, "aTargets": [ 0 ] }
           ]
         } );
-  oTable.fnPageChange( 'last' ); // Start on last page
+      // Fix left columns
+      new FixedColumns( oTable,{
+        "iLeftColumns": 2,
+        "iLeftWidth": 100
+      } );
 }catch(ex){
   console.log('Caught exception when initializing dataset:');
   console.log(ex);
@@ -85,7 +94,7 @@ $(document).ready(function() {
 /* Only include these functions if there is data,
 otherwise, the url tags will cause an error. */
 {% if dataset.instances.all %} 
-  function delete_selected(){
+function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
@@ -130,7 +139,7 @@ function update_selected_labels(new_label){
 }
 
 function get_selected_ids( selected )
-  /* Returns an array of ids for the selected instances. */
+/* Returns an array of ids for the selected instances. */
 {
   return jQuery.map(selected, function(element) { return jQuery(element).data('id'); });
 }
