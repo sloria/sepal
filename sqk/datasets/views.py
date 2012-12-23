@@ -35,14 +35,13 @@ class DatasetDisplay(DetailView):
             'upload_form': DatasourceForm(),
             'data': dataset.get_data()
         }
-        if self.get_object().instances.exists():
+        if dataset.instances.exists():
             # feature_objects is a list of <Feature> objects
             context['feature_objects'] = list(dataset.last_instance().feature_objects())
             # feature_names is a list of strings
             context['feature_names'] = list(dataset.last_instance().feature_names())
             # label_names is a list of <LabelName> objects
             context['label_names'] = list(dataset.instances.all()[0].labels().keys())
-            
             # NOTE: this is assuming only 1 variable per dataset. more in the future
             # the LabelName id
             context['label_name_id'] = dataset.last_instance().labels().keys()[0].id
@@ -56,13 +55,29 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
     '''
     model = Dataset
     form_class = DatasourceForm
-    template_name = 'datasets/detail.html#visualization'
+    template_name = 'datasets/detail.html'
 
     def get_context_data(self, **kwargs):
+        dataset = self.get_object()
+        print dataset
         context = {
-            'dataset': self.get_object(),
+            'dataset': dataset,
+            'data': dataset.get_data(),
             'upload_form': self.get_form(DatasourceForm),
         }
+        if dataset.instances.exists():
+            print 'made it in'
+            # feature_objects is a list of <Feature> objects
+            context['feature_objects'] = list(dataset.last_instance().feature_objects())
+            # feature_names is a list of strings
+            context['feature_names'] = list(dataset.last_instance().feature_names())
+            # label_names is a list of <LabelName> objects
+            context['label_names'] = list(dataset.instances.all()[0].labels().keys())
+            # NOTE: this is assuming only 1 variable per dataset. more in the future
+            # the LabelName id
+            context['label_name_id'] = dataset.last_instance().labels().keys()[0].id
+            context['label_name'] = dataset.last_instance().labels().keys()[0].name
+        context.update(**kwargs)
         return super(DatasetAddDatasource, self).get_context_data(**context)
 
     def get_success_url(self):
@@ -70,30 +85,34 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
 
     def form_valid(self, form):
         self.object = self.get_object()
-        if form.cleaned_data['csv'] != None:
-            f = form.cleaned_data['csv']
-            # Save file
-            handle_uploaded_file(f)
-            # Parse data and save to database
-            read_datasource(self.object,
-                os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))
-        if form.cleaned_data['audio'] != None:
-            f = form.cleaned_data['audio']
-            # Create new Audio object
-            # This uploads the file to media/audio
-            audio_obj = Audio(audio_file=f)
-            audio_obj.save()
-            # Create new instance and associate it with the audio file
-            instance = Instance(dataset=self.object)
-            instance.audio = audio_obj
-            instance.save()
-            result = extract_features(instance.pk,
-                os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
+        if form.cleaned_data['uploaded_file']:
+            f = form.cleaned_data['uploaded_file']
+            print 'f in form_valid is type %s' % f.content_type
+            # If user uploaded an audio file
+            if f.content_type == 'audio/wav':
+                # Create new Audio object
+                # This uploads the file to media/audio
+                audio_obj = Audio(audio_file=f)
+                audio_obj.save()
+                # Create new instance and associate it with the audio file
+                instance = Instance(dataset=self.object)
+                instance.audio = audio_obj
+                instance.save()
+                result = extract_features(instance.pk,
+                    os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
+            # If user uploaded a csv file
+            elif f.content_type == 'text/csv':
+                # Save file
+                handle_uploaded_file(f)
+                # Parse data and save to database
+                read_datasource(self.object,
+                    os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))
         return super(DatasetAddDatasource, self).form_valid(form)
 
 
 class DatasetDetail(View):
-    
+    '''The base dataset detail view. Handles both GET and POST requests
+    '''
     def get(self, request, *args, **kwargs):
         view = ensure_csrf_cookie(DatasetDisplay.as_view())
         return view(request, *args, **kwargs)
@@ -109,7 +128,7 @@ class DatasetCreate(FormView):
     success_url = reverse_lazy('datasets:index')
 
     def form_valid(self, form):
-        d = form.save()
+        form.save()
         return super(DatasetCreate, self).form_valid(form)
 
 

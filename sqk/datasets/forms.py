@@ -46,13 +46,7 @@ class DatasetEditForm(forms.ModelForm):
 class DatasourceForm(forms.Form):
     '''Form for uploading audio or csv files.
     '''
-    csv = forms.FileField(label='CSV', required=False,
-        help_text='Optional')
-    audio = forms.FileField(label='Audio file (.wav)', required=False,)
-    # sample_rate = forms.IntegerField(label='Sample rate (Hz)',
-    #     required=False,
-    #     initial=44100,
-    #     help_text='NOTE: Files will be resampled if necessary.')
+    uploaded_file = forms.FileField(label='Audio file (.wav) or csv', required=True,)
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -63,7 +57,7 @@ class DatasourceForm(forms.Form):
             Fieldset(
                 'Extract audio features',
                 Div(
-                    'audio',
+                    'uploaded_file',
                     # 'sample_rate',
                     css_class='inline'
                     ),
@@ -74,11 +68,18 @@ class DatasourceForm(forms.Form):
             )
         )
         super(DatasourceForm, self).__init__(*args, **kwargs)
-    
-    # def clean_sample_rate(self):
-    #     if self.cleaned_data['sample_rate'] and not self.cleaned_data['audio']:
-    #         raise forms.ValidationError('No audio file selected.')
-    #     return self.cleaned_data['sample_rate']
+
+    def clean_uploaded_file(self):
+        ufile = self.cleaned_data.get('uploaded_file', True)
+        if ufile:
+            # Check file size
+            if ufile._size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Audio file too large ( > 5mb )")
+            if not ufile.content_type in ["audio/wav", "text/csv"]:
+                raise forms.ValidationError("Content is not wav or csv")
+            return ufile
+        else:
+            raise forms.ValidationError("Could not read uploaded file")
 
 
 class LabelNameForm(forms.Form):

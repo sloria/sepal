@@ -27,7 +27,8 @@ urlpatterns = patterns('',
         name='delete_instances'),
 
     # ex: /datasets/3/update_instances_labels/
-    url(r'^(?P<dataset_id>\d+)/update_instances_labels/(?P<label_name_id>\d+)$', update_instances_labels,
+    url(r'^(?P<dataset_id>\d+)/update_instances_labels/(?P<label_name_id>\d+)$',
+        update_instances_labels,
         name='update_instances_labels'),
 
     # ex: /datasets/instances/452/
@@ -44,10 +45,6 @@ urlpatterns = patterns('',
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row/$',
         InstanceRow.as_view(),
         name='instance_row'),
-
-    # ex: /datasets/3/labels/create
-    url(r'^(?P<dataset_id>\d+)/labels/create/$',
-        LabelNameCreate.as_view(), name='create_label'),
 )
 
 # URLconfs for X-editable updating

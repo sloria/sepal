@@ -10,6 +10,7 @@ $(document).ready(function() {
       oTable = $('#dataset-table').dataTable( {
        "sDom": 'T<"clear">lfrtip',
        "sScrollY": "350px",
+       "aaSorting": [[ 1, 'asc' ]],
        "sScrollX": "100%",
        "sScrollXInner": "130%",
        "bScrollCollapse": true,
@@ -62,12 +63,6 @@ $(document).ready(function() {
           "sExtends": "csv",
           "sButtonText": '<i class="icon-file"></i> Export CSV'
         },
-
-        // Print
-        {
-          "sExtends": "print",
-          "sButtonText": '<i class="icon-print"></i> Print'
-        }
         ]
       },
       "iDisplayLength": initial_display_length,
