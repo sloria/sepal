@@ -148,7 +148,7 @@ class Dataset(models.Model):
         dataset throught its instances.
         '''
         if self.instances.exists():
-            return self.last_instance().feature_names()
+            return self.instances.latest().feature_names()
         else:
             return False
 
@@ -168,14 +168,14 @@ class Dataset(models.Model):
         '''
         context = {
             'data': self.get_data(),
-            'data_as_json': self.get_json_data(),
             'dataset': self,
             'is_empty': True
         }
         if self.instances.exists():
+            context['data_as_json'] = self.get_json_data()
             context['is_empty'] = False
             # feature_objects is a list of <Feature> objects
-            context['feature_objects'] = list(self.last_instance().feature_objects())
+            context['feature_objects'] = list(self.instances.latest().feature_objects())
             # feature_names is a list of strings
             context['feature_names'] = list(self.feature_names())
             # label_names is a list of <LabelName> objects
@@ -253,7 +253,7 @@ class Instance(models.Model):
         >> inst.values_as_list()
         [0.0458984375, 71.7224358880516]
         '''
-        return [v.value for v in self.values.all()]
+        return [v.value for v in self.values.order_by('feature')]
 
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.

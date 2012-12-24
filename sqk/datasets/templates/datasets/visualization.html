@@ -18,8 +18,9 @@
 
   // Global constants
   var LABEL_PROP_NAME = "label";
-  var CHART_WIDTH = 500;
-  var CHART_HEIGHT = 500;
+  var CHART_WIDTH = 600;
+  var CHART_HEIGHT = 350;
+  var PT_RADIUS = 4;
   var PADDING = CHART_WIDTH / 10;
   var selectedDimensions = [];
   var data;
@@ -148,7 +149,7 @@
       return data.labels[i];
     })
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-    .style("font-size", "12px");
+    .style("font-size", "11px");
 
     // test comment
 
@@ -193,7 +194,7 @@
     svg.append("text")
     .attr("class", "y-label")
     .attr("text-anchor", "end")
-    .attr("y", (PADDING - 40))
+    .attr("y", (PADDING - 45))
     .attr("dx", (PADDING * -1.1))
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
@@ -208,6 +209,7 @@
     
     // Call the main update method
     updatePlotPoints(svg, data, xScale, yScale, categoryScale);
+    updateLegend(svg, data, legendXScale, categoryScale);
   }
 
   // Main method which controls the points on the plot as selections
@@ -216,16 +218,21 @@
     var plotPoints = svg.selectAll("circle")
     .data(data.instances);
     // Update
-    plotPoints.transition().duration(1000).delay(500)
+    plotPoints.transition().duration(1000).delay(200)
     .attr("cx", function(d, i) {
       var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
       return xScale(scaleInput);  
     })
-    .transition().duration(1500).delay(500)
+    .transition().duration(1500).delay(200)
     .attr("cy", function(d, i) {
       var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
       return yScale(scaleInput);
+    })
+    .attr("r", PT_RADIUS)
+    .style("fill", function(d) {
+      return categoryScale(d.label);
     });
+    // initialize
     plotPoints.enter().append("circle")
     .attr("cx", function(d, i){
       var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
@@ -238,14 +245,46 @@
       var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
       return yScale(scaleInput);
     })
-    .attr("r", 6)
+    .attr("r", PT_RADIUS)
     .style("fill", function(d) {
       return categoryScale(d.label);
     });
     // If there's less data now, remove those plots points
     plotPoints.exit()
     .remove();
+
   }
+  
+  function updateLegend(svg, data, legendXScale, categoryScale) {
+    // Update legend
+    var legendText = svg.selectAll("text.legend")
+    .data(data.labels);
+    legendText.transition().duration(500).delay(0)
+    .attr("x", function(d,i){
+      return legendXScale(i) + 15;
+    })
+    .attr("y", function(d,i){
+      return (PADDING/3) + 10;
+    })
+    .text(function(d, i){
+      return data.labels[i];
+    });
+    legendText.exit()
+    .remove();
+
+    var legendRectangles = svg.selectAll("rect.legend-rect")
+    .data(data.labels);
+    legendRectangles.transition().duration(500).delay(0)
+    .attr("x", function(d, i){
+      return legendXScale(i);  
+    })
+    .attr("y", function(d, i){
+      return PADDING/3;
+    });
+    legendRectangles.exit()
+    .remove();
+  }
+
 
   // A user has selected a dimension checkbox on the data table
   // This updates the global variable which keeps track of what's

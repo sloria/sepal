@@ -4,15 +4,23 @@
 var oTable;
 $(document).ready(function() {
   var initial_display_length = 10;
+  // index of the last column
+  var i_last_column = {{ feature_names|length }} + {{ label_names|length }} + 3;
+
+  // Remove success highlighting if clicking off of rows
+  $('body').click(function() {
+    $('.success').removeClass('success');
+  });
 
     // Initialize dataset as a DataTable
     try{
       oTable = $('#dataset-table').dataTable( {
        "sDom": 'T<"clear">lfrtip',
+        "aaSorting": [[ 1, 'asc' ]],
        "sScrollY": "350px",
-       "aaSorting": [[ 1, 'asc' ]],
        "sScrollX": "100%",
-       "sScrollXInner": "100%",
+       // Affects the extent of X-scrolling (higher => more scrolling)
+       "sScrollXInner": "150%",
        "bScrollCollapse": true,
        "bPaginate": false,
        "oLanguage": {
@@ -70,7 +78,8 @@ $(document).ready(function() {
       "aoColumnDefs": [
           // Specifiy columns that aren't sortable
           { 'bSortable': false, 'aTargets': [ 0 ] },
-          // { "sWidth": 1, "aTargets": [ 0 ] }
+          // Make the date column wider so that it doesn't create 2 rows
+          { "sWidth": '20%', "aTargets": [ i_last_column ] }
           ]
         } );
       // Fix left columns
@@ -99,14 +108,15 @@ function delete_selected(){
     type: "POST",
     data: {"selected": get_selected_ids(selected)},
     dataType: 'json',
-    success: function(data) {
+    success: function(new_data) {
+      oTT.fnSelectNone();
       // On success, dynamically delete selected rows from table
       $.each(selected, function(index, value){
         oTable.fnDeleteRow( selected[index] );
       });
-      // TODO: update scatterplot to reflect deleted instances
-      // For now, just refresh the page
-      document.location.reload(true);
+      // Update plot
+      data = new_data;
+      scatterPlot();
     },
     crossDomain: false,
     cache: false,
@@ -123,10 +133,17 @@ function update_selected_labels(new_label){
     type: "POST",
     data: {"new_label": new_label, "selected": get_selected_ids(selected)},
     dataType: 'json',
-    /* Reloads after success
-    TODO: make this ajax in the future? */
-    success: function(data){
-      document.location.reload(true);
+    success: function(new_data){
+      oTT.fnSelectNone();
+      // Change each of the label texts to the new label
+      $.each(selected, function(index, value){
+        $(value).find('td .instance-label').text(new_label);
+        $(value).removeClass('active');
+        $(value).addClass('success');
+      });
+      // Update plot
+      data = new_data;
+      scatterPlot();
     },
     crossDomain: false,
     cache: false,

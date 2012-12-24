@@ -187,7 +187,10 @@ def delete_instances(request, dataset_id):
         for id in instance_ids:
             inst_obj = Instance.objects.get(pk=id)
             inst_obj.delete()
-        return HttpResponse(simplejson.dumps("success"), mimetype='application/json')
+        dataset = Dataset.objects.get(pk=dataset_id)
+        dataset.get_data()
+        json_data = dataset.get_json_data()
+        return HttpResponse(json_data, mimetype='applicationjson')
     else:
         # TODO: handle non-AJAX?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
@@ -215,7 +218,10 @@ def update_instances_labels(request, dataset_id, label_name_id):
                                             value=new_label_value,
                                             label_name=label_name_obj)
             inst.label_values.add(new_label_value_obj)
-        return HttpResponse(simplejson.dumps("success"), mimetype='applicationjson')
+        dataset = Dataset.objects.get(pk=dataset_id)
+        dataset.get_data()
+        json_data = dataset.get_json_data()
+        return HttpResponse(json_data, mimetype='applicationjson')
     else:
         # TODO: handle non-AJAX ?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))

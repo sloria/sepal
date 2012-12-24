@@ -56,7 +56,7 @@
           {# Variable value #}
           {% if inst.labels %}
           {% for label_name, label_value in inst.labels.items %}
-          <td><a href="#" class="instance-label" id="instance_label_{{ inst.pk }}" data-id="{{ inst.pk }}">{{ label_value }}</a></td>
+          <td><a href="#" class="instance-label" data-id="{{ inst.pk }}" data-value="{{ label_value }}">{{ label_value }}</a></td>
           {# Initiate editable label value #}
           <script>
           $(".instance-label[data-id={{ inst.pk }}]").editable({
