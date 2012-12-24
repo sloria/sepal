@@ -285,50 +285,20 @@
     }
 
     $(document).ready(function() {
-    // HUGE Hack to get data from server response into JS
-    // TODO: remove this once JSON endpoint is set up
-    data = {"instances": [], "labels": []};
-    {% for inst in data %}
-    var instData = {};
-    {% for value in inst.values %}
-    var index = {{forloop.counter}};
-    {% for feature in feature_names %}
-    var index2 = {{ forloop.counter }};
-    if (index === index2) {
-      {% if feature == "zcr" %}
-        instData["{{feature|upper}}"] = {{value}};
-      {% else %}
-        instData["{{feature|capfirst}}"] = {{value}};
-      {% endif %}
-    }
-    {% endfor %}
-    {% endfor %}
-    {% for label_name, label_value in inst.labels.items %}
-    var label = "{{label_value|upper}}";
-    instData["label"] = label;
-    {% endfor %}
-    data.instances.push(instData);
-    // Add this label to the set of known labels for this data if it's not there
-    if (data.labels.indexOf(label) == -1) {
-      data.labels.push(label);
-    }
-    {% endfor %}
+      data = {{ data_as_json|safe }};
 
-    svg = d3.select("div#chart")
-    .append("svg")
-    .attr("width", CHART_WIDTH)
-    .attr("height", CHART_HEIGHT);
+      svg = d3.select("div#chart")
+      .append("svg")
+      .attr("width", CHART_WIDTH)
+      .attr("height", CHART_HEIGHT);
 
-    // Draw the basic circles even though no dimensions
-    // have been selected yet                    
-    scatterPlot();
+      // Draw the basic circles even though no dimensions
+      // have been selected yet                    
+      scatterPlot();
 
     // Update selected dimensions when a feature button is selected
     $('li.feature-select.multicheck').on('click', function() {
       var self = this;
-      // Because of some weirdness with Bootstrap, the 'active' class
-      // is not present when this click handler is fired after a button is selected
-      // So, the absence of the 'active' class means it's active.
       var val = $(self).val();
       if ($(self).hasClass('checked')) {
         addToSelectedDimensions(val);
@@ -337,4 +307,4 @@
       }
     });
   });
-</script>
+    </script>

@@ -141,10 +141,10 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     for feature in feature_obj_list:
         inst.features.add(feature)
     
-    if dataset.get_labels():
+    if dataset.labels():
         # NOTE: This assumes there's only one label name per dataset.
         # Just indexes the first label name
-        label_name = dataset.get_labels()[0]
+        label_name = dataset.labels()[0]
     else:
         label_name, c = LabelName.objects.get_or_create(name='variable')
 

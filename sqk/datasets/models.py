@@ -1,7 +1,10 @@
+import os
+from collections import OrderedDict
 from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-import os
+from django.utils import simplejson as json
+
 
 
 class LabelName(models.Model):
@@ -35,6 +38,10 @@ class Dataset(models.Model):
     description = models.CharField(max_length=500, null=True, blank=True)
     species = models.CharField(max_length=75, null=True, blank=True)
     created_at = models.DateTimeField('created at', default=timezone.now())
+
+    def __init__(self, *args, **kwargs):
+        super(Dataset, self).__init__(*args, **kwargs)
+        self.data = []
 
     def __unicode__(self):
         return self.name
@@ -81,25 +88,88 @@ class Dataset(models.Model):
         instances = self.instances.prefetch_related('values',
                                                     'label_values__label_name',
                                                     'audio')
-        data = []
         for inst in instances:
-            data.append(inst.as_dict())
-        return data
+            self.data.append(inst.as_dict())
+        return self.data
 
-    def get_labels(self):
-        '''Return a list of the labels associated with this dataset through its
+    # TODO: wasteful to have both get_data and get_json_data. Rethink this
+    def get_json_data(self):
+        '''Returns a json representation of the instance data. Used for the D3 visualization.
+        NOTE: Dataset.get_data() MUST be called before this method can be called.
+
+        Object has the form:
+        {
+            "instances" : [
+                {
+                  "feature_0" : "val_0",
+                  ...
+                  "feature_N" : "val_N",
+                  "label" : "label_val"
+                },
+                ...
+            ],
+            "labels" : [
+                "label_0",
+                ...
+                "label_N"
+            ]
+        }
+        '''
+        data = {'instances': [], 'labels': []}
+        features = list(self.feature_names())  # list of unicode strings
+        for inst in self.data:
+            # Feature-value pairs are ordered
+            data_instance = OrderedDict()
+            for i, value in enumerate(inst['values']):
+                feature = features[i].capitalize()
+                # "feature": "value"
+                data_instance[feature] = value
+            # NOTE: Assumes only 1 label_value per dataset (takes the first one)
+            label_value = inst['labels'].values()[0].value.upper()
+            # Add label to instance data
+            data_instance['label'] = label_value
+            data['instances'].append(data_instance)
+            # Add label to set of known labels if it hasn't yet been added
+            if label_value not in data['labels']:
+                data['labels'].append(label_value)
+        return json.dumps(data)
+
+    def labels(self):
+        '''Return a list of the LabelName objects associated with this dataset through its
         instances.
         '''
         if self.instances.exists():
-            return self.last_instance().labels().keys()
+            return self.instances.all()[0].labels().keys()
+        else:
+            return False
+
+    def feature_names(self):
+        '''Returns a list of the feature names (unicode strings) associated with this
+        dataset throught its instances.
+        '''
+        if self.instances.exists():
+            return self.last_instance().feature_names()
         else:
             return False
 
     def get_context(self, **kwargs):
         '''Get the request context for a dataset detail page.
+        Returns a dict of the form:
+
+        {
+            'data': ... List of instances in dict representation ...
+            'is_empty': False,
+            'feature_objects': [<Feature: u'ZCR'>, ...],
+            'feature_names': ['ZCR'...],
+            'label_names': [<LabelName: u' ],
+            'label_name_id': 34,
+            'label_name': 'Marital status'
+        }
         '''
         context = {
             'data': self.get_data(),
+            'data_as_json': self.get_json_data(),
+            'dataset': self,
             'is_empty': True
         }
         if self.instances.exists():
@@ -107,13 +177,13 @@ class Dataset(models.Model):
             # feature_objects is a list of <Feature> objects
             context['feature_objects'] = list(self.last_instance().feature_objects())
             # feature_names is a list of strings
-            context['feature_names'] = list(self.last_instance().feature_names())
+            context['feature_names'] = list(self.feature_names())
             # label_names is a list of <LabelName> objects
-            context['label_names'] = list(self.instances.all()[0].labels().keys())
+            context['label_names'] = list(self.labels())
             # NOTE: this is assuming only 1 variable per dataset. more in the future
             # the LabelName id
-            context['label_name_id'] = self.get_labels()[0].id
-            context['label_name'] = self.get_labels()[0].name
+            context['label_name_id'] = self.labels()[0].id
+            context['label_name'] = self.labels()[0].name
         return context
 
     class Meta:
@@ -183,7 +253,7 @@ class Instance(models.Model):
         >> inst.values_as_list()
         [0.0458984375, 71.7224358880516]
         '''
-        return [v.value for v in self.values.order_by('feature')]
+        return [v.value for v in self.values.all()]
 
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
@@ -202,10 +272,11 @@ class Instance(models.Model):
         '''Returns a dict representation of the instance. The dict is of the form:
 
         {
-            'pk': 1425, 'values': [10.32, 3.4], 
+            'pk': 1425, 
+            'values': [10.32, 3.4],
             'labels': {<LabelName: Marital status>: <LabelValue: unbonded>},
-            'audio_url': 'media/audio/call.wav', 
-            'audio_filename': 'call.wav' 
+            'audio_url': 'media/audio/call.wav',
+            'audio_filename': 'call.wav'
         }
         '''
         # Assume instance is ready if it has >= 1 feature

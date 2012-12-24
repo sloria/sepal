@@ -48,7 +48,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         dataset = self.get_object()
         print dataset
         context = dataset.get_context()
-        context['DatasourceForm'] = self.get_form(DatasourceForm)
+        context['upload_form'] = self.get_form(DatasourceForm)
         context.update(**kwargs)
         return super(DatasetAddDatasource, self).get_context_data(**context)
 
