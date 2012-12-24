@@ -183,7 +183,7 @@ class Instance(models.Model):
         >> inst.values_as_list()
         [0.0458984375, 71.7224358880516]
         '''
-        return [v.value for v in self.values.all()]
+        return [v.value for v in self.values.order_by('feature')]
 
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
@@ -201,8 +201,12 @@ class Instance(models.Model):
     def as_dict(self):
         '''Returns a dict representation of the instance. The dict is of the form:
 
-        {'pk': 1425, 'values': [10.32, 3.4], 'labels': {'marital': 'bonded,},
-        'audio_url': 'media/audio/call.wav', 'audio_filename': 'call.wav' }
+        {
+            'pk': 1425, 'values': [10.32, 3.4], 
+            'labels': {<LabelName: Marital status>: <LabelValue: unbonded>},
+            'audio_url': 'media/audio/call.wav', 
+            'audio_filename': 'call.wav' 
+        }
         '''
         # Assume instance is ready if it has >= 1 feature
         # ready = len(self.features.all()) >= 1
