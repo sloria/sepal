@@ -12,7 +12,7 @@ $(document).ready(function() {
        "sScrollY": "350px",
        "aaSorting": [[ 1, 'asc' ]],
        "sScrollX": "100%",
-       "sScrollXInner": "130%",
+       "sScrollXInner": "100%",
        "bScrollCollapse": true,
        "bPaginate": false,
        "oLanguage": {
@@ -49,7 +49,7 @@ $(document).ready(function() {
         // Delete selected
         {
           "sExtends":    "text",
-          "sButtonText": '<i class="icon-trash"></i> Delete selected',
+          "sButtonText": '<i class="icon-trash"></i> Delete',
           "fnClick": function ( nButton, oConfig, oFlash ) {
             var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
             if (answer){

@@ -86,6 +86,36 @@ class Dataset(models.Model):
             data.append(inst.as_dict())
         return data
 
+    def get_labels(self):
+        '''Return a list of the labels associated with this dataset through its
+        instances.
+        '''
+        if self.instances.exists():
+            return self.last_instance().labels().keys()
+        else:
+            return False
+
+    def get_context(self, **kwargs):
+        '''Get the request context for a dataset detail page.
+        '''
+        context = {
+            'data': self.get_data(),
+            'is_empty': True
+        }
+        if self.instances.exists():
+            context['is_empty'] = False
+            # feature_objects is a list of <Feature> objects
+            context['feature_objects'] = list(self.last_instance().feature_objects())
+            # feature_names is a list of strings
+            context['feature_names'] = list(self.last_instance().feature_names())
+            # label_names is a list of <LabelName> objects
+            context['label_names'] = list(self.instances.all()[0].labels().keys())
+            # NOTE: this is assuming only 1 variable per dataset. more in the future
+            # the LabelName id
+            context['label_name_id'] = self.get_labels()[0].id
+            context['label_name'] = self.get_labels()[0].name
+        return context
+
     class Meta:
         get_latest_by = "created_at"
         ordering = ["-created_at"]

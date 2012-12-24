@@ -81,7 +81,8 @@ def read_datasource(dataset, source_path, feature_row=0):
 
 
 @task()
-def extract_features(instance_id, audiofile_path):
+def extract_features(dataset_id, instance_id, audiofile_path):
+    dataset = Dataset.objects.get(pk=dataset_id)
     inst = Instance.objects.get(pk=instance_id)
     n_frames, sample_rate, duration = 0, 0, 0
     with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:
@@ -137,18 +138,20 @@ def extract_features(instance_id, audiofile_path):
     duration_obj, created = Feature.objects.get_or_create(name='duration')
     feature_obj_list.append(duration_obj)
 
-    # Create instance
-    # inst = Instance.objects.create(
-    #     dataset=dataset,
-    #     species=dataset.species)
     for feature in feature_obj_list:
         inst.features.add(feature)
     
-    # Add a placeholder label name and label value to instance
+    if dataset.get_labels():
+        # NOTE: This assumes there's only one label name per dataset.
+        # Just indexes the first label name
+        label_name = dataset.get_labels()[0]
+    else:
+        label_name, c = LabelName.objects.get_or_create(name='variable')
+
+    # Add a placeholder label value to instance
     # This is necessary in order for plotting to work
-    no_label_name, c = LabelName.objects.get_or_create(name='variable')
     no_label, c = LabelValue.objects.get_or_create(value="none",
-                                                    label_name=no_label_name)
+                                                    label_name=label_name)
     inst.label_values.add(no_label)
     inst.save()
 
@@ -158,7 +161,7 @@ def extract_features(instance_id, audiofile_path):
             for i in range(output[0].size):
                 output_mean = output[i].mean()
                 print display_name
-                v = FeatureValue.objects.create(value=output_mean,
+                FeatureValue.objects.create(value=output_mean,
                     feature=Feature.objects.get(name__iexact=display_name.lower()),
                     instance=inst)
 

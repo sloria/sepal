@@ -31,23 +31,8 @@ class DatasetDisplay(DetailView):
 
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
-        context = {
-            'upload_form': DatasourceForm(),
-            'data': dataset.get_data(),
-            'is_empty': True
-        }
-        if dataset.instances.exists():
-            context['is_empty'] = False
-            # feature_objects is a list of <Feature> objects
-            context['feature_objects'] = list(dataset.last_instance().feature_objects())
-            # feature_names is a list of strings
-            context['feature_names'] = list(dataset.last_instance().feature_names())
-            # label_names is a list of <LabelName> objects
-            context['label_names'] = list(dataset.instances.all()[0].labels().keys())
-            # NOTE: this is assuming only 1 variable per dataset. more in the future
-            # the LabelName id
-            context['label_name_id'] = dataset.last_instance().labels().keys()[0].id
-            context['label_name'] = dataset.last_instance().labels().keys()[0].name
+        context = dataset.get_context()
+        context['upload_form'] = DatasourceForm()
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
@@ -62,24 +47,8 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
         print dataset
-        context = {
-            'dataset': dataset,
-            'data': dataset.get_data(),
-            'is_empty': True,
-            'upload_form': self.get_form(DatasourceForm),
-        }
-        if dataset.instances.exists():
-            context['is_empty'] = False
-            # feature_objects is a list of <Feature> objects
-            context['feature_objects'] = list(dataset.last_instance().feature_objects())
-            # feature_names is a list of strings
-            context['feature_names'] = list(dataset.last_instance().feature_names())
-            # label_names is a list of <LabelName> objects
-            context['label_names'] = list(dataset.instances.all()[0].labels().keys())
-            # NOTE: this is assuming only 1 variable per dataset. more in the future
-            # the LabelName id
-            context['label_name_id'] = dataset.last_instance().labels().keys()[0].id
-            context['label_name'] = dataset.last_instance().labels().keys()[0].name
+        context = dataset.get_context()
+        context['DatasourceForm'] = self.get_form(DatasourceForm)
         context.update(**kwargs)
         return super(DatasetAddDatasource, self).get_context_data(**context)
 
@@ -101,7 +70,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
                 instance = Instance(dataset=self.object)
                 instance.audio = audio_obj
                 instance.save()
-                result = extract_features(instance.pk,
+                result = extract_features(self.object.pk, instance.pk,
                     os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
             # If user uploaded a csv file
             elif f.content_type == 'text/csv':
