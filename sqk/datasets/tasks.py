@@ -108,7 +108,7 @@ def extract_features(instance_id, audiofile_path):
     # Extract features
     afp = yf.AudioFileProcessor()
     afp.processFile(engine, audiofile_path)
-    # format - {'Spectral centroid': [[2.33], [4.34],...[2.55]]}
+    # outputs dict format - {'Spectral centroid': [[2.33], [4.34],...[2.55]]}
     outputs = {}
     
     # Read and store output arrays to outputs dict

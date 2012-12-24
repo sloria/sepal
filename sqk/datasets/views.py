@@ -33,9 +33,11 @@ class DatasetDisplay(DetailView):
         dataset = self.get_object()
         context = {
             'upload_form': DatasourceForm(),
-            'data': dataset.get_data()
+            'data': dataset.get_data(),
+            'is_empty': True
         }
         if dataset.instances.exists():
+            context['is_empty'] = False
             # feature_objects is a list of <Feature> objects
             context['feature_objects'] = list(dataset.last_instance().feature_objects())
             # feature_names is a list of strings

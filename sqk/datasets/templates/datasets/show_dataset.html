@@ -77,11 +77,15 @@
           {% for value in inst.values %}
           <td>{{ value|floatformat:3 }}</td>
           {% endfor %}
+          
+          {# File #}
           <td>
             {% if inst.audio_url %}
-            {{ inst.audio_filename }}
+            <a href="{{ inst.audio_url }}">{{ inst.audio_filename }}</a>
             {% endif %}
           </td>
+
+          {# Created at #}
           <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
         </tr>
         {% endfor %}
