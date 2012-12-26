@@ -10,6 +10,7 @@
           {% if not is_empty %}
           <th class="fixed-col" rowspan="2"></th>
           <th class="fixed-col" rowspan="2">#</th>
+          
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
           <script>

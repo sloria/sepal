@@ -21,7 +21,9 @@
   var CHART_WIDTH = 400;
   var CHART_HEIGHT = 350;
   var PT_RADIUS = 4;
-  var PADDING = CHART_WIDTH / 7;
+  var X_TICKS = 8;
+  var Y_TICKS = 8;
+  var PADDING = CHART_WIDTH / 6;
   var selectedDimensions = [];
   var data;
   var svg;
@@ -104,12 +106,12 @@
     var xAxis = d3.svg.axis()
     .scale(xScale)
     .orient("bottom")
-    .ticks(4);
+    .ticks(X_TICKS);
 
     var yAxis = d3.svg.axis()
     .scale(yScale)
     .orient("left")
-    .ticks(4);
+    .ticks(Y_TICKS);
 
     // set up legend
     var legendXScale = 
@@ -194,7 +196,7 @@
     svg.append("text")
     .attr("class", "y-label")
     .attr("text-anchor", "end")
-    .attr("y", (PADDING - 45))
+    .attr("y", (PADDING - 60))
     .attr("dx", (PADDING * -1.1))
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")

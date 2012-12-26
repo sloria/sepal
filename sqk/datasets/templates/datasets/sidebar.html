@@ -1,4 +1,4 @@
-<div class="span2 sidebar-nav affix" >
+<div class="sidebar-nav" >
   {# Dashboard #}
   <div class="nav-header" data-toggle="collapse" data-target="#dashboard-menu"><i class="icon-dashboard"></i>Dashboard</div>
   <ul id="dashboard-menu" class="nav nav-list collapse in">
@@ -10,7 +10,7 @@
   <div class="nav-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-bar-chart"></i>Visualization</div>
   <ul id="visualization-menu" class="nav nav-list collapse in">
     <li><a data-toggle="collapse" id="showHidePlot" href="#"><i class="icon-eye-open"></i>Show/Hide plot</a></li>
-    <li>Select axes:</li>
+    <li>Features:</li>
     {% for feature in feature_objects %}
     <li class="feature-select multicheck" value="{{ forloop.counter0 }}" ><a href="#">
       {% if feature.name == 'zcr' %}
@@ -36,12 +36,13 @@ $(document).ready(function() {
     // Expand/compress the table
     dataset.toggleClass('span8');
     // FIXME: Change widths of non-fixed columns
-    if (dataset.hasClass('span8')){
-      oTable.fnSettings().sScrollXInner = "175%";
-    } else{
-      oTable.fnSettings().sScrollXInner = "100%";
-    }
+    // if (dataset.hasClass('span8')){
+    //   oTable.fnSettings().sScrollXInner = "175%";
+    // } else{
+    //   oTable.fnSettings().sScrollXInner = "100%";
+    // }
     oFC.fnRedrawLayout();
+    oTable.fnDraw(false);
     oTable.fnAdjustColumnSizing();
   });
 });

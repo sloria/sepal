@@ -1,32 +1,40 @@
 {% load url from future %}
 {% load staticfiles %}
 <script>
-var oTable;
-    var INITIAL_DISPLAY_LENGTH = 10;
-  // index of the last column
-  var I_LAST_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
 
-  // TODO: these shouldn't be hardcoded
-  var FEATURE_COLUMNS = [3,4,5,6,7,8,9];
+/* GLOBAL CONSTANTS */
+var oTable;
+var INITIAL_DISPLAY_LENGTH = 10;
+// index of the last column
+var I_LAST_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
+var FEATURE_COLUMNS = range(3, {{ feature_names|length }});
 function initializeTable(){
     // Initialize dataset as a DataTable
-      oTable = $('#dataset-table').dataTable( {
-       "sDom": 'T<"clear">lfrtip',
-        "aaSorting": [[ 1, 'asc' ]],
+    oTable = $('#dataset-table').dataTable( {
+     "sDom": 'T<"clear">lfrtip',
+     "aaSorting": [[ 1, 'asc' ]],
        "sScrollY": "400px", // affects the height of the table
        "sScrollX": "100%",
-       // Affects the extent of X-scrolling (higher => more scrolling)
-       "sScrollXInner": "170%",
-       "bScrollCollapse": true,
+       "bScrollCollapse": true, // collapse table when filtering
        "bPaginate": false,
        "oLanguage": {
         "sLengthMenu": " _MENU_ instances per page"
       },
-      "oTableTools": {
-        "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
-        "sRowSelect": "multi",
-        /* Datatable TableTools Buttons */
-        "aButtons": [
+      "iDisplayLength": INITIAL_DISPLAY_LENGTH,
+      "bFilter": true, // Enable/disable search
+      "aoColumnDefs": [
+          // Specifiy columns that aren't sortable
+          { 'bSortable': false, 'aTargets': [ 0 ] },
+          // Make the date column wider so that it doesn't create 2 rows
+          // { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
+          // { "sWidth": '20%', "aTargets": [ 2 ] },
+          // { "sWidth": '10%', "aTargets": [ FEATURE_COLUMNS ] }
+          ],
+          "oTableTools": {
+            "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
+            "sRowSelect": "multi",
+            /* Datatable TableTools Buttons */
+            "aButtons": [
         // Select All
         {
           "sExtends": "select_all",
@@ -68,33 +76,23 @@ function initializeTable(){
           }
         }
         ]
-      },
-      "iDisplayLength": INITIAL_DISPLAY_LENGTH,
-      "bFilter": true, // Enable/disable search
-      "aoColumnDefs": [
-          // Specifiy columns that aren't sortable
-          { 'bSortable': false, 'aTargets': [ 0 ] },
-          // Make the date column wider so that it doesn't create 2 rows
-          { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
-          // { "sWidth": '20%', "aTargets": [ 2 ] },
-          { "sWidth": '10%', "aTargets": [ FEATURE_COLUMNS ] }
-          ]
-        } );
+      }
+    } );
       // Fix left columns
       oFC = new FixedColumns( oTable,{
         "iLeftColumns": 2,
         "iLeftWidth": 75,
       } );
-}
+    }
 
-$(document).ready(function() {
-    initializeTable();
-});
+    $(document).ready(function() {
+      initializeTable();
+    });
 
 
 /* Only include these functions if there is data,
 otherwise, the url tags will cause an error. */
-{% if not is_empty %} 
+{% if not is_empty and label_names %} 
 function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
@@ -146,12 +144,11 @@ function update_selected_labels(new_label){
     cache: false,
   });
 }
+{% endif %}
 
 function get_selected_ids( selected )
 /* Returns an array of ids for the selected instances. */
 {
-  return jQuery.map(selected, function(element) { return jQuery(element).data('id'); });
+  return $.map(selected, function(element) { return $(element).data('id'); });
 }
-{% endif %}
-
 </script>

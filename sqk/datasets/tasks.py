@@ -91,14 +91,20 @@ def extract_features(dataset_id, instance_id, audiofile_path):
         duration = n_frames / float(sample_rate)
 
     # Format - {'Display name': 'name: Definition'}
-    features = {'Spectral Shape Characteristics': 'sss: SpectralShapeStatistics',
+    FEATURES = {'Spectral Shape Characteristics': 'sss: SpectralShapeStatistics',
+                'Temporal Shape Characteristics': 'tss: TemporalShapeStatistics',
                 'ZCR': 'zcr: ZCR',
+                'Energy': 'energy: Energy',
+                'Loudness': 'loudness: Loudness',
+                'Spectral rolloff': 'spectral_rolloff: SpectralRolloff',
+                'Perceptual sharpness': 'perceptual_sharpness: PerceptualSharpness',
+                'Perceptual spread': 'perceptual_spread: PerceptualSpread',
                 'Duration': None,
                 'Sample rate': None}
 
     # Add features to extract
     feature_plan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
-    for feature_definition in features.values():
+    for feature_definition in FEATURES.values():
         if feature_definition:  # Exclude duration and sample rate
             feature_plan.addFeature(feature_definition)
     
@@ -113,9 +119,8 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     outputs = {}
     
     # Read and store output arrays to outputs dict
-    for display_name, definition in features.iteritems():
-        if definition:
-            # ex: 'loudness'
+    for display_name, definition in FEATURES.iteritems():
+        if definition:  # ex: 'loudness'
             output_name = definition.split(':')[0].strip()
             if output_name == 'sss':  # Store separate spec shape stats
                 spec_shape_stats = engine.readOutput(output_name)
@@ -123,21 +128,29 @@ def extract_features(dataset_id, instance_id, audiofile_path):
                 outputs['Spectral spread'] = spec_shape_stats[:, 1]
                 outputs['Spectral skewness'] = spec_shape_stats[:, 2]
                 outputs['Spectral kurtosis'] = spec_shape_stats[:, 3]
+            elif output_name == 'tss':
+                temp_shape_stats = engine.readOutput(output_name)
+                outputs['Temporal centroid'] = temp_shape_stats[:, 0]
+                outputs['Temporal spread'] = temp_shape_stats[:, 1]
+                outputs['Temporal skewness'] = temp_shape_stats[:, 2]
+                outputs['Temporal kurtosis'] = temp_shape_stats[:, 3]
             else:  # 1 dimensional data (1 X T array)
                 a = engine.readOutput(output_name)  # 2D array
                 outputs[display_name] = a.transpose()[0]
 
-    # Create features
+    # Create YAAFE feature objects
     feature_obj_list = []
     for display_name in outputs.keys():
         f, created = Feature.objects.get_or_create(name=display_name.lower())
         feature_obj_list.append(f)
 
+    # Create Sample rate and Duration objects
     rate_obj, created = Feature.objects.get_or_create(name='sample rate')
     feature_obj_list.append(rate_obj)
     duration_obj, created = Feature.objects.get_or_create(name='duration')
     feature_obj_list.append(duration_obj)
 
+    # Associate features with instance
     for feature in feature_obj_list:
         inst.features.add(feature)
     
@@ -155,9 +168,9 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     inst.label_values.add(no_label)
     inst.save()
 
+    # Save output data and associate it with inst
     for display_name, output in outputs.iteritems():
         if output.size > 0:  # Avoid empty data
-            # Save output data
             for i in range(output[0].size):
                 output_mean = output[i].mean()
                 print display_name

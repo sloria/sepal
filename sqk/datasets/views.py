@@ -189,6 +189,7 @@ def delete_instances(request, dataset_id):
             inst_obj = Instance.objects.get(pk=id)
             inst_obj.delete()
         dataset = Dataset.objects.get(pk=dataset_id)
+        # TODO: Shouldn't have to get the data from the DB again. 
         dataset.get_data()
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')

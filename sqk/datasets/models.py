@@ -58,22 +58,6 @@ class Dataset(models.Model):
     def sorted_instances(self):
         return self.instances.order_by('pk')
 
-    def values(self):
-        '''Returns a 2D array of instance values.
-
-        Example:
-        >> dataset.values()
-        {1432: ([0.0458984375, 71.7224358880516], {'Marital status',
-        1433: [0.23984375, 73.7244358880516]}
-        '''
-        instance_ids = self.instances.values_list('pk', flat=True).order_by('pk')
-        data = {}
-        for inst_id in instance_ids:
-            data[inst_id] = FeatureValue.objects.filter(
-                    instance__id=inst_id).values_list(
-                        'value', flat=True).order_by('feature')
-        return data
-
     def get_data(self):
         '''Returns the data as a list of dicts with instance attributes as
         keys and instance values as values.
@@ -85,11 +69,12 @@ class Dataset(models.Model):
          {'pk': 1426, 'values': [10.34, 2.4], 'labels': {'marital': 'unbonded,}},
          ]
         '''
-        instances = self.instances.prefetch_related('values',
-                                                    'label_values__label_name',
-                                                    'audio')
-        for inst in instances:
-            self.data.append(inst.as_dict())
+        if self.instances.exists():
+            instances = self.instances.prefetch_related('values',
+                                                        'label_values__label_name',
+                                                        'audio')
+            for inst in instances:
+                self.data.append(inst.as_dict())
         return self.data
 
     # TODO: wasteful to have both get_data and get_json_data. Find out how to make dataset serializable
@@ -116,22 +101,24 @@ class Dataset(models.Model):
         }
         '''
         data = {'instances': [], 'labels': []}
-        features = list(self.feature_names())  # list of unicode strings
-        for inst in self.data:
-            # Feature-value pairs are ordered
-            data_instance = OrderedDict()
-            for i, value in enumerate(inst['values']):
-                feature = features[i].capitalize()
-                # "feature": "value"
-                data_instance[feature] = value
-            # NOTE: Assumes only 1 label_value per dataset (takes the first one)
-            label_value = inst['labels'].values()[0].value.upper()
-            # Add label to instance data
-            data_instance['label'] = label_value
-            data['instances'].append(data_instance)
-            # Add label to set of known labels if it hasn't yet been added
-            if label_value not in data['labels']:
-                data['labels'].append(label_value)
+        if self.instances.exists():
+            features = list(self.feature_names())  # list of unicode strings
+            for inst in self.data:
+                # Feature-value pairs are ordered
+                data_instance = OrderedDict()
+                for i, value in enumerate(inst['values']):
+                    feature = features[i].capitalize()
+                    # "feature": "value"
+                    data_instance[feature] = value
+                # NOTE: Assumes only 1 label_value per dataset (takes the first one)
+                if inst['labels'].values():
+                    label_value = inst['labels'].values()[0].value.upper()
+                    # Add label to instance data
+                    data_instance['label'] = label_value
+                    # Add label to set of known labels if it hasn't yet been added
+                    if label_value not in data['labels']:
+                        data['labels'].append(label_value)
+                data['instances'].append(data_instance)
         return json.dumps(data)
 
     def labels(self):
@@ -182,8 +169,9 @@ class Dataset(models.Model):
             context['label_names'] = list(self.labels())
             # NOTE: this is assuming only 1 variable per dataset. more in the future
             # the LabelName id
-            context['label_name_id'] = self.labels()[0].id
-            context['label_name'] = self.labels()[0].name
+            if self.labels():
+                context['label_name_id'] = self.labels()[0].id
+                context['label_name'] = self.labels()[0].name
         return context
 
     class Meta:
@@ -238,12 +226,12 @@ class Instance(models.Model):
         >> inst.sorted_features()
         [u'zcr', u'spectral spread',]
         '''
-        return self.features.values_list('name', flat=True).order_by('pk')
+        return self.features.values_list('name', flat=True)
 
     def feature_objects(self):
         '''Returns a list of feature objects associated with this instance.
         '''
-        return self.features.order_by('pk')
+        return self.features.all()
 
     def values_as_list(self):
         '''Returns a list of the values (floats) associated with this
@@ -311,6 +299,9 @@ class Feature(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
         
 
 class FeatureValue(models.Model):
