@@ -35,15 +35,10 @@ $(document).ready(function() {
     viz.toggleClass('span4');
     // Expand/compress the table
     dataset.toggleClass('span8');
-    // FIXME: Change widths of non-fixed columns
-    // if (dataset.hasClass('span8')){
-    //   oTable.fnSettings().sScrollXInner = "175%";
-    // } else{
-    //   oTable.fnSettings().sScrollXInner = "100%";
-    // }
     oFC.fnRedrawLayout();
+    oFC.fnRecalculateHeight();
     oTable.fnDraw(false);
-    oTable.fnAdjustColumnSizing();
+    // oTable.fnAdjustColumnSizing();
   });
 });
 </script>

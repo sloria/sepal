@@ -83,6 +83,95 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
         return super(DatasetAddDatasource, self).form_valid(form)
 
 
+def multiple_uploader(request, pk):
+    '''View for handling file uploads with the jQuery multiple file upload widget.
+
+    NOTE: must be a POST request.
+    '''
+    d = Dataset.objects.get(pk=pk)
+    
+    options = {
+    # the maximum file size
+    "maxfilesize": 2 * 2 ** 20, # 2 Mb
+    # the minimum file size (must be in bytes)
+    "minfilesize": 1 * 2 ** 10, # 1 Kb
+    # the file types which are going to be allowed for upload
+    #   must be a mimetype
+    "acceptedformats": (
+        "audio/wav",
+        )
+    }
+
+    if request.POST:
+        if request.FILES == None:
+            raise Http404("No objects uploaded")
+
+        f = request.FILES[u'files[]']
+        filtered_files = Audio.objects.filter(
+                                        instance__dataset=d).values_list(
+                                                                'audio_file', flat=True)
+        # the paths of files associated with this dataet
+        filtered_paths = [os.path.join(settings.MEDIA_ROOT, file_url) for file_url in filtered_files]
+        # the path where the file would be uploaded to
+        file_path = os.path.join(settings.MEDIA_ROOT, 'audio', f.name)
+
+        # initialize the error
+        # If error occurs, this will have the string error message so
+        # uploader can display the appropriate message
+        error = False
+        # check against options for errors
+        # file size
+        if f.size > options["maxfilesize"]:
+            error = "maxFileSize"
+        if f.size < options["minfilesize"]:
+            error = "minFileSize"
+        # allowed file type
+        if f.content_type not in options["acceptedformats"]:
+            error = "acceptFileTypes"
+        # prevent uploading of duplicate files
+        # TODO: doesn't work if after a file is deleted
+        if file_path in filtered_paths:
+            error = 'fileAlreadyExists'
+
+        result = {'name': f.name,
+               'size': f.size,
+               }
+
+        if error:
+            # append error message
+            result["error"] = error
+            # generate json
+            response_data = simplejson.dumps([result])
+            # return response to uploader with error
+            # so it can display error message
+            print response_data
+            return HttpResponse(response_data, mimetype='application/json')
+
+        if f.content_type == 'audio/wav':
+            # Create new Audio object
+            # This uploads the file to media/audio
+            audio_obj = Audio(audio_file=f)
+            audio_obj.save()
+            if audio_obj:
+                # Create new instance and associate it with the audio file
+                instance = Instance(dataset=d)
+                instance.audio = audio_obj
+                instance.save()
+                extract_features(d.pk, instance.pk,
+                    os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
+                result['url'] = audio_obj.audio_file.url
+
+        response_data = simplejson.dumps([result])
+        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+            mimetype = 'application/json'
+        else:
+            mimetype = 'text/plain'
+        print response_data
+        return HttpResponse(response_data, mimetype='mimetype')
+    else:
+        return HttpResponse('Only POST accepted')
+
+
 class DatasetDetail(View):
     '''The base dataset detail view. Handles both GET and POST requests
     '''

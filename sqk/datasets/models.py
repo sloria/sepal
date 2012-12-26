@@ -156,10 +156,10 @@ class Dataset(models.Model):
         context = {
             'data': self.get_data(),
             'dataset': self,
-            'is_empty': True
+            'is_empty': True,
+            'data_as_json': self.get_json_data()
         }
         if self.instances.exists():
-            context['data_as_json'] = self.get_json_data()
             context['is_empty'] = False
             # feature_objects is a list of <Feature> objects
             context['feature_objects'] = list(self.instances.latest().feature_objects())

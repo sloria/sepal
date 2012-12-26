@@ -18,6 +18,10 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/edit/$', DatasetEdit.as_view(),
         name='edit'),
 
+    # ex: /datasets/3/upload/
+    url(r'^(?P<pk>\d+)/upload/$', multiple_uploader,
+        name='upload'),
+
     # ex: /datasets/3/delete/
     url(r'^(?P<pk>\d+)/delete/$', delete_dataset,
         name='delete_dataset'),

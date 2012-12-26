@@ -8,6 +8,7 @@
 {% block static %}
 {% include "datasets/datatables_static.html" %}
 {% include "base/soundmanager_static.html" %}
+{% include "uploader/multipleuploader_style.html" %}
 {% endblock static %}
 
 {% block content %}
@@ -69,9 +70,13 @@
 
       <div class="row-fluid">
         <div class="span12">
-          {% crispy upload_form %}
+          {# {% crispy upload_form %} #}
         </div>
       </div><!-- end row-fluid -->
+
+      <div class="row-fluid">
+        <div class="span12">{% include "uploader/upload_form.html" %}</div>
+      </div>
     </div>
   </div>
 </div>
@@ -84,5 +89,6 @@
 {% include "datasets/confirm_delete_dataset.html" %}
 {# Include script to make fields editable #}
 {% include "datasets/dataset_editable.html" %}
+{% include "uploader/multipleuploader_js.html" %}
 
 {% endblock content %}

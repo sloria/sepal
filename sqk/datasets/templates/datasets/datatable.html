@@ -4,6 +4,8 @@
 
 /* GLOBAL CONSTANTS */
 var oTable;
+var oTT;
+var oFC;
 var INITIAL_DISPLAY_LENGTH = 10;
 // index of the last column
 var I_LAST_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
@@ -26,7 +28,7 @@ function initializeTable(){
           // Specifiy columns that aren't sortable
           { 'bSortable': false, 'aTargets': [ 0 ] },
           // Make the date column wider so that it doesn't create 2 rows
-          // { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
+          { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
           // { "sWidth": '20%', "aTargets": [ 2 ] },
           // { "sWidth": '10%', "aTargets": [ FEATURE_COLUMNS ] }
           ],
@@ -87,7 +89,9 @@ function initializeTable(){
 
     $(document).ready(function() {
       initializeTable();
-    });
+      oTT = TableTools.fnGetInstance( 'dataset-table' );
+      var lastChecked = true;
+});
 
 
 /* Only include these functions if there is data,
@@ -95,7 +99,7 @@ otherwise, the url tags will cause an error. */
 {% if not is_empty and label_names %} 
 function delete_selected(){
   /* Deletes the selected instances. NOTE: Deletions persist to the db. */
-  var oTT = TableTools.fnGetInstance( 'dataset-table' );
+  // var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
   // Remove selected from table
   $.ajax({
@@ -120,7 +124,7 @@ function delete_selected(){
 
 function update_selected_labels(new_label){
   /* Update the labels of the selected instances. NOTE: Changes persist to the db. */
-  var oTT = TableTools.fnGetInstance( 'dataset-table' );
+  // var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
   // Remove selected from table
   $.ajax({
