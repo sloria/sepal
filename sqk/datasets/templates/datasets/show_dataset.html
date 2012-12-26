@@ -1,7 +1,7 @@
 {% load url from future %}
 <div class="block span12">
-  <div id="datasetHeading" class="block-heading" href="#dataset">Data</div>
-  <div id="dataset" class="collapse in">
+  <div id="dataset-heading" class="block-heading" href="#dataset">Data</div>
+  <div id="dataset-body" class="block-body collapse in">
     <table cellpadding="0" cellspacing="0" border="0" id="dataset-table" class="table table-striped">
       {# Header #}
       <thead>
@@ -63,10 +63,14 @@
            type: 'text',
            showbuttons: false,
            pk: {{ inst.pk }},
-           url: '{% url 'datasets:update_instance_label' inst.pk label_name.pk  %}',
+           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk label_name.pk  %}',
            value: '',
-           title: 'Edit instance label'
-         });
+           title: 'Edit instance label',
+           success: function(new_data, new_label){
+            data = new_data;
+            scatterPlot();
+          }
+        });
           </script>
           {% endfor %}
           {% else %}
@@ -90,31 +94,6 @@
         </tr>
         {% endfor %}
       </tbody>
-        {% comment %}
-        <tfoot>
-        <tr>
-          {# Only show header if there are instances #}
-          {% if not is_empty %}
-          <th rowspan="1">Play</th>
-          <th rowspan="1">#</th>
-          {% for label_name in label_names %}
-          <th rowspan="1">{{ label_name|capfirst }}</th>
-          {% endfor %}
-          {% for feature_name in feature_names %}
-          {% if feature_name == 'zcr' %}
-              <th>{{ feature_name|upper }}</th>
-          {% else %}
-              <th>{{ feature_name|capfirst }}</th>
-          {% endif %}
-          {% endfor %}
-          <th>File</th>
-          <th>Date added</th>
-          {% endif %}
-        </tr>
-        </tfoot>
-        {% endcomment %}
-      </table>
-    </div>
+    </table>
   </div>
-  <script>
-  </script>
+</div>

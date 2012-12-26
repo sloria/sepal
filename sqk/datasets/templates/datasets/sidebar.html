@@ -1,4 +1,4 @@
-<div class="span3 sidebar-nav affix" >
+<div class="span2 sidebar-nav affix" >
   {# Dashboard #}
   <div class="nav-header" data-toggle="collapse" data-target="#dashboard-menu"><i class="icon-dashboard"></i>Dashboard</div>
   <ul id="dashboard-menu" class="nav nav-list collapse in">
@@ -9,7 +9,7 @@
   {# Visualization #}
   <div class="nav-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-bar-chart"></i>Visualization</div>
   <ul id="visualization-menu" class="nav nav-list collapse in">
-    <li><a data-toggle="collapse" href="#chart"><i class="icon-eye-open"></i>Open/Close plot</a></li>
+    <li><a data-toggle="collapse" id="showHidePlot" href="#"><i class="icon-eye-open"></i>Show/Hide plot</a></li>
     <li>Select axes:</li>
     {% for feature in feature_objects %}
     <li class="feature-select multicheck" value="{{ forloop.counter0 }}" ><a href="#">
@@ -22,5 +22,27 @@
     </li>
     {% endfor %}
   </ul><!-- end Visualization -->
-
 </div><!-- end sidebar-nav -->
+
+<script>
+$(document).ready(function() {
+  var viz = $('#visualization');
+  var dataset = $('#dataset');
+  // Add click handler for showing/hiding viz span
+  $('#showHidePlot').on('click', function() {
+    // Toggle visibility of the viz panel
+    viz.toggle();
+    viz.toggleClass('span4');
+    // Expand/compress the table
+    dataset.toggleClass('span8');
+    // FIXME: Change widths of non-fixed columns
+    if (dataset.hasClass('span8')){
+      oTable.fnSettings().sScrollXInner = "175%";
+    } else{
+      oTable.fnSettings().sScrollXInner = "100%";
+    }
+    oFC.fnRedrawLayout();
+    oTable.fnAdjustColumnSizing();
+  });
+});
+</script>

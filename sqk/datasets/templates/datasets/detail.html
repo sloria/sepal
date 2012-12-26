@@ -6,35 +6,28 @@
 {% block page_title %}sepal | {{ dataset.name }}{% endblock page_title %}
 {# Include DataTables base css and jss and plugins #}
 {% block static %}
-  {% include "datasets/datatables_static.html" %}
-  {% include "base/soundmanager_static.html" %}
+{% include "datasets/datatables_static.html" %}
+{% include "base/soundmanager_static.html" %}
 {% endblock static %}
 
 {% block content %}
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span2">
       {% include "datasets/sidebar.html" %}
     </div><!-- end span3 -->
 
-    <div class="span9">
-
+    <div class="span10">
+      {# Dataset control buttons #}
+          <div class="btn-toolbar ">
+            <div class="pull-right">
+              <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-remove icon-white"></i></a>
+            </div>
+          </div><!-- end btn-toolbar -->
       <h2 class="page-title">
         <a href="#" id="dataset_name">{{ dataset.name }}</a>
       </h2>
 
-      {# Dataset control buttons #}
-      <div class="row-fluid">
-        <div class="span12">
-          <div class="btn-toolbar">
-            <div class="pull-right">
-              <a href="{% url 'datasets:edit' dataset.pk %}" class="btn btn-primary"><i class="icon-pencil"></i> Edit</a>
-
-              <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-trash icon-white"></i></a>
-            </div>
-          </div><!-- end btn-toolbar -->
-        </div><!-- end span12 -->
-      </div><!-- end Dataset row-fluid-->
 
       {# Information block #}
       <div class="row-fluid">
@@ -60,36 +53,36 @@
       {# Visualization #}
       <div class="row-fluid">
         {# Visualization panel #}
-        <div class="span12">
+        <div id="visualization" class="span4">
           <div class="block">
-            <div id="visualization" class="block-heading" data-toggle="collapse" href="#chart">
+            <div id="visualization-heading" class="block-heading" data-toggle="collapse" href="#chart">
               Visualization
             </div>
             <div id="chart" class="collapse in"></div>
           </div>
-        </div>
+        </div><!-- end span4 -->
+        {# Data table #}
+        <div id="dataset" class="span8">
+          {% include "datasets/show_dataset.html" %}
+        </div><!-- end span8 -->
       </div><!-- end row-fluid -->
 
-        {# Data table #}
-        <div class="row-fluid">
-          {% include "datasets/show_dataset.html" %}
-        </div><!-- end row-fluid -->
-        <div class="row-fluid">
-          <div class="span12">
-            {% crispy upload_form %}
-          </div>
+      <div class="row-fluid">
+        <div class="span12">
+          {% crispy upload_form %}
         </div>
-      </div>
+      </div><!-- end row-fluid -->
     </div>
   </div>
+</div>
 
-  {# Include visualization script #}
-  {% include "datasets/visualization.html" %}
-  {# Include script to initialize DataTable #}
-  {% include "datasets/datatable.html" %}
-  {# Include modal confirm dialogs #}
-  {% include "datasets/confirm_delete_dataset.html" %}
-  {# Include script to make fields editable #}
-  {% include "datasets/dataset_editable.html" %}
+{# Include visualization script #}
+{% include "datasets/visualization.html" %}
+{# Include script to initialize DataTable #}
+{% include "datasets/datatable.html" %}
+{# Include modal confirm dialogs #}
+{% include "datasets/confirm_delete_dataset.html" %}
+{# Include script to make fields editable #}
+{% include "datasets/dataset_editable.html" %}
 
-  {% endblock content %}
+{% endblock content %}

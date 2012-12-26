@@ -31,17 +31,17 @@ urlpatterns = patterns('',
         update_instances_labels,
         name='update_instances_labels'),
 
-    # ex: /datasets/instances/452/
+    # ex: /datasets/3/instances/452/
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$',
         InstanceDetail.as_view(),
         name='instance_detail'),
 
-    # ex: /datasets/instances/452/ready.json
+    # ex: /datasets/3/instances/452/ready.json
     url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/ready.json$',
         instance_ready,
         name='instance_ready'),
 
-    # ex: /datasets/instances/452/row/
+    # ex: /datasets/3/instances/452/row/
     url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row/$',
         InstanceRow.as_view(),
         name='instance_row'),
@@ -66,7 +66,7 @@ urlpatterns += patterns('',
 
     # ex: /datasets/instances/452/update_label/4
     # X-editable instance label
-    url(r'^/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$',
+    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/update_label/(?P<label_name_id>\d+)$',
         update_instance_label,
         name='update_instance_label'),
 

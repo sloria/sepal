@@ -12,7 +12,6 @@ $.ajaxSetup({
           }
       });
 
-
 $(document).ready(function() {
   /* Multi select - allow multiple selections */
   /* Allow click without closing menu */
@@ -21,5 +20,10 @@ $(document).ready(function() {
      $(this).toggleClass("checked");
      $(this).find("span").toggleClass("icon-ok");
      return false;
+  });
+
+  // Remove success highlighting if clicking off of rows
+  $('body').click(function() {
+    $('.success').removeClass('success');
   });
 });

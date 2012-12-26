@@ -66,12 +66,13 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
                 # This uploads the file to media/audio
                 audio_obj = Audio(audio_file=f)
                 audio_obj.save()
-                # Create new instance and associate it with the audio file
-                instance = Instance(dataset=self.object)
-                instance.audio = audio_obj
-                instance.save()
-                result = extract_features(self.object.pk, instance.pk,
-                    os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
+                if audio_obj:
+                    # Create new instance and associate it with the audio file
+                    instance = Instance(dataset=self.object)
+                    instance.audio = audio_obj
+                    instance.save()
+                    result = extract_features(self.object.pk, instance.pk,
+                        os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
             # If user uploaded a csv file
             elif f.content_type == 'text/csv':
                 # Save file
@@ -190,7 +191,7 @@ def delete_instances(request, dataset_id):
         dataset = Dataset.objects.get(pk=dataset_id)
         dataset.get_data()
         json_data = dataset.get_json_data()
-        return HttpResponse(json_data, mimetype='applicationjson')
+        return HttpResponse(json_data, mimetype='application/json')
     else:
         # TODO: handle non-AJAX?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
@@ -221,7 +222,7 @@ def update_instances_labels(request, dataset_id, label_name_id):
         dataset = Dataset.objects.get(pk=dataset_id)
         dataset.get_data()
         json_data = dataset.get_json_data()
-        return HttpResponse(json_data, mimetype='applicationjson')
+        return HttpResponse(json_data, mimetype='application/json')
     else:
         # TODO: handle non-AJAX ?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
@@ -279,10 +280,9 @@ def update_species(request, dataset_id):
 
 
 @ensure_csrf_cookie
-def update_instance_label(request, instance_id, label_name_id):
+def update_instance_label(request, dataset_id, instance_id, label_name_id):
     '''View for updating an instance label name using X-editable.
     '''
-    message = {"label": ''}
     if request.is_ajax():
         new_label_value = request.POST['value'].lower()  # e.g. u'bonded'
         label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name
@@ -295,9 +295,14 @@ def update_instance_label(request, instance_id, label_name_id):
                                         value=new_label_value,
                                         label_name=label_name_obj)
         inst.label_values.add(new_label_value_obj)
-        message['label'] = new_label_value
-    json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json')
+
+        # Serialize dataset
+        dataset = Dataset.objects.get(pk=dataset_id)
+        dataset.get_data()
+        json_data = dataset.get_json_data()
+        return HttpResponse(json_data, mimetype='application/json')
+    else:
+        return HttpResponse('must be an ajax request')
 
 
 @ensure_csrf_cookie

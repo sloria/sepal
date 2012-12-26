@@ -92,7 +92,7 @@ class Dataset(models.Model):
             self.data.append(inst.as_dict())
         return self.data
 
-    # TODO: wasteful to have both get_data and get_json_data. Rethink this
+    # TODO: wasteful to have both get_data and get_json_data. Find out how to make dataset serializable
     def get_json_data(self):
         '''Returns a json representation of the instance data. Used for the D3 visualization.
         NOTE: Dataset.get_data() MUST be called before this method can be called.
@@ -101,9 +101,9 @@ class Dataset(models.Model):
         {
             "instances" : [
                 {
-                  "feature_0" : "val_0",
+                  "feature_0" : val_0,
                   ...
-                  "feature_N" : "val_N",
+                  "feature_N" : val_N,
                   "label" : "label_val"
                 },
                 ...
@@ -253,7 +253,7 @@ class Instance(models.Model):
         >> inst.values_as_list()
         [0.0458984375, 71.7224358880516]
         '''
-        return [v.value for v in self.values.order_by('feature')]
+        return [v.value for v in self.values.all()]
 
     def labels(self):
         '''Returns a dict with label names as keys and label values as values.
@@ -328,4 +328,4 @@ class FeatureValue(models.Model):
         return unicode(self.value)
 
     class Meta:
-        order_with_respect_to = 'feature'
+        ordering = ['feature']

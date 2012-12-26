@@ -2,25 +2,21 @@
 {% load staticfiles %}
 <script>
 var oTable;
-$(document).ready(function() {
-  var initial_display_length = 10;
+    var INITIAL_DISPLAY_LENGTH = 10;
   // index of the last column
-  var i_last_column = {{ feature_names|length }} + {{ label_names|length }} + 3;
+  var I_LAST_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
 
-  // Remove success highlighting if clicking off of rows
-  $('body').click(function() {
-    $('.success').removeClass('success');
-  });
-
+  // TODO: these shouldn't be hardcoded
+  var FEATURE_COLUMNS = [3,4,5,6,7,8,9];
+function initializeTable(){
     // Initialize dataset as a DataTable
-    try{
       oTable = $('#dataset-table').dataTable( {
        "sDom": 'T<"clear">lfrtip',
         "aaSorting": [[ 1, 'asc' ]],
-       "sScrollY": "350px",
+       "sScrollY": "400px", // affects the height of the table
        "sScrollX": "100%",
        // Affects the extent of X-scrolling (higher => more scrolling)
-       "sScrollXInner": "150%",
+       "sScrollXInner": "170%",
        "bScrollCollapse": true,
        "bPaginate": false,
        "oLanguage": {
@@ -45,7 +41,7 @@ $(document).ready(function() {
         // Update label values
         {
           "sExtends": "text",
-          "sButtonText": '<i class="icon-pencil"></i> Change variable value',
+          "sButtonText": '<i class="icon-beaker"></i> Change value',
           "fnClick": function(nButton, oConfig, oFlash){
             var ret = prompt("Enter the new value  : ", "");
             if (ret){
@@ -54,44 +50,45 @@ $(document).ready(function() {
           }
         },
 
+        // Export csv
+        {
+          "sExtends": "csv",
+          "sButtonText": '<i class="icon-file"></i> Export'
+        },
+
         // Delete selected
         {
           "sExtends":    "text",
-          "sButtonText": '<i class="icon-trash"></i> Delete',
+          "sButtonText": '<i class="icon-trash"></i>',
           "fnClick": function ( nButton, oConfig, oFlash ) {
             var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
             if (answer){
               delete_selected();
             }
           }
-        },
-
-        // Export csv
-        {
-          "sExtends": "csv",
-          "sButtonText": '<i class="icon-file"></i> Export CSV'
-        },
+        }
         ]
       },
-      "iDisplayLength": initial_display_length,
-      "bFilter": true, // Disable search
+      "iDisplayLength": INITIAL_DISPLAY_LENGTH,
+      "bFilter": true, // Enable/disable search
       "aoColumnDefs": [
           // Specifiy columns that aren't sortable
           { 'bSortable': false, 'aTargets': [ 0 ] },
           // Make the date column wider so that it doesn't create 2 rows
-          { "sWidth": '20%', "aTargets": [ i_last_column ] }
+          { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
+          // { "sWidth": '20%', "aTargets": [ 2 ] },
+          { "sWidth": '10%', "aTargets": [ FEATURE_COLUMNS ] }
           ]
         } );
       // Fix left columns
-      new FixedColumns( oTable,{
+      oFC = new FixedColumns( oTable,{
         "iLeftColumns": 2,
-        "iLeftWidth": 100
+        "iLeftWidth": 75,
       } );
-}catch(ex){
-  console.log('Caught exception when initializing dataset:');
-  console.log(ex);
-  console.log('but the show must go on...')
 }
+
+$(document).ready(function() {
+    initializeTable();
 });
 
 
@@ -124,7 +121,7 @@ function delete_selected(){
 }
 
 function update_selected_labels(new_label){
-  /* Deletes the selected instances. NOTE: Deletions persist to the db. */
+  /* Update the labels of the selected instances. NOTE: Changes persist to the db. */
   var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
   // Remove selected from table

@@ -18,10 +18,10 @@
 
   // Global constants
   var LABEL_PROP_NAME = "label";
-  var CHART_WIDTH = 600;
+  var CHART_WIDTH = 400;
   var CHART_HEIGHT = 350;
   var PT_RADIUS = 4;
-  var PADDING = CHART_WIDTH / 10;
+  var PADDING = CHART_WIDTH / 7;
   var selectedDimensions = [];
   var data;
   var svg;
@@ -223,7 +223,7 @@
       var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
       return xScale(scaleInput);  
     })
-    .transition().duration(1500).delay(200)
+    .transition().duration(1000).delay(200)
     .attr("cy", function(d, i) {
       var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
       return yScale(scaleInput);
@@ -240,7 +240,7 @@
     })
     .attr("cy", function(d, i) {
       return CHART_HEIGHT * Math.random();
-    }).transition().duration(3000).delay(400)
+    }).transition().duration(2000).delay(200)
     .attr("cy", function(d, i){
       var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
       return yScale(scaleInput);
