@@ -154,17 +154,30 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     for feature in feature_obj_list:
         inst.features.add(feature)
     
+    # If dataset has labels
     if dataset.labels():
         # NOTE: This assumes there's only one label name per dataset.
         # Just indexes the first label name
         label_name = dataset.labels()[0]
     else:
-        label_name, c = LabelName.objects.get_or_create(name='variable')
+        # attach a placeholder LabelName called 'variable'
+        filtered = LabelName.objects.filter(name='variable')
+        # make sure that 'get' doesn't return an error if there are more than 1 
+        # LabelName called 'variable'
+        if len(filtered) <= 1:
+            label_name, c = LabelName.objects.get_or_create(name='variable')
+        else:
+            label_name = filtered[0]
 
-    # Add a placeholder label value to instance
+    # Add a placeholder label value called "none" to instance
     # This is necessary in order for plotting to work
-    no_label, c = LabelValue.objects.get_or_create(value="none",
+    filtered = LabelValue.objects.filter(value="none", label_name=label_name)
+    if len(filtered) <= 1:
+        no_label, c = LabelValue.objects.get_or_create(value="none",
                                                     label_name=label_name)
+    else:
+        no_label = filtered[0]
+        
     inst.label_values.add(no_label)
     inst.save()
 

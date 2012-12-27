@@ -1,3 +1,4 @@
+{% load url from future %}
 <script>
 //////////////Visualization//////////////////////////
   // Create a namespace for visualization
@@ -326,6 +327,23 @@
       Viz.scatterPlot();
     }
 
+    Viz.reloadData = function() {
+      var datasetId = {{ dataset.pk }};
+      $.ajax({
+        url: "{% url 'datasets:update_visualization' dataset.pk %}",
+        type: "POST",
+        data: {"pk": datasetId},
+        dataType: 'json',
+        success: function(data) {
+          Viz.data = data;
+          Viz.scatterPlot();
+          return true;
+        },
+        crossDomain: false,
+        cache: false,
+      });
+    }
+
     $(document).ready(function() {
       Viz.data = {{ data_as_json|safe }};
 
@@ -334,14 +352,14 @@
       .attr("width", CHART_WIDTH)
       .attr("height", CHART_HEIGHT);
 
-      // Draw the basic circles even though no dimensions
+      // Draw the points and axes even though no dimensions
       // have been selected yet                    
       Viz.scatterPlot();
 
-    // Update selected dimensions when a feature button is selected
+    // Update selected dimensions when a feature is selected
     $('li.feature-select.multicheck').on('click', function() {
       var self = this;
-      var val = $(self).val();
+      var val = $(self).val(); // The index value of the selected dimension
       if ($(self).hasClass('checked')) {
         addToSelectedDimensions(val);
       } else {

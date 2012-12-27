@@ -260,7 +260,7 @@ class Instance(models.Model):
         '''Returns a dict representation of the instance. The dict is of the form:
 
         {
-            'pk': 1425, 
+            'pk': 1425,
             'values': [10.32, 3.4],
             'labels': {<LabelName: Marital status>: <LabelValue: unbonded>},
             'audio_url': 'media/audio/call.wav',
@@ -268,12 +268,10 @@ class Instance(models.Model):
         }
         '''
         # Assume instance is ready if it has >= 1 feature
-        # ready = len(self.features.all()) >= 1
         ret = {'pk': self.pk,
                 'values': self.values_as_list(),
                 'labels': self.labels(),
                 'created_at': self.created_at,
-                # 'ready': ready
                 }
         if self.audio:
             ret['audio_url'] = self.audio.audio_file.url
@@ -283,24 +281,24 @@ class Instance(models.Model):
     def as_table_row(self):
         '''Returns an array containing data to be used for dynamic adding of a
         table row DOM element'''
-        play_audio_button = '<a href="%s" class="sm2_button">%s</a>' % (self.audio.audio_file.url, 
+        play_audio_button = '<a href="%s" class="sm2_button">%s</a>' % (self.audio.audio_file.url,
                                                                             self.pk)
-        # str representation of label value
         # NOTE: assumes only 1 label per dataset
-        # TODO: add editable script
-        label_value = self.labels().values()[0].value
-        data = [play_audio_button,
-                len(self.dataset.instances.all()),  
-                label_value]
+        label_value = self.labels().values()[0].value  # str representation of label value
+        label_value_link = '''<a href="#" class="instance-label"
+                                data-id="%s"
+                                data-value="%s">
+                                %s</a>''' % (self.pk, label_value, label_value)
+        data = ['', play_audio_button,
+                label_value_link]
         # feature values
         for v in self.values_as_list():
             data.append(round(v, 3))
         # link to this instance's audio file
-        file_link = '<a href="%s">%s</a>' % (self.audio.audio_file.url, 
+        file_link = '<a href="%s">%s</a>' % (self.audio.audio_file.url,
                                             os.path.basename(self.audio.audio_file.name))
         data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p')]
         return data
-
 
     class Meta:
         get_latest_by = 'created_at'

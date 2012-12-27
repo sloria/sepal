@@ -1,5 +1,5 @@
 import os
-from django.views.generic import View, ListView, DetailView, FormView, UpdateView
+from django.views.generic import View, ListView, DetailView, FormView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
@@ -162,13 +162,17 @@ def multiple_uploader(request, pk):
                 result['url'] = audio_obj.audio_file.url
                 # data that is dynamically added as a table row after the upload is finished
                 result['instance_data'] = instance.as_table_row()
+                result['instance_id'] = instance.pk
+                # Label name obj. NOTE: assumes one label per dataset
+                label_name = instance.labels().keys()[0]
+                result['edit_label_url'] = reverse('datasets:update_instance_label',
+                                                    args=(instance.dataset.pk, instance.pk, label_name.pk))
         response_data = simplejson.dumps([result])
+        mimetype = 'text/plain'
         if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
             mimetype = 'application/json'
-        else:
-            mimetype = 'text/plain'
         print response_data
-        return HttpResponse(response_data, mimetype='mimetype')
+        return HttpResponse(response_data, mimetype=mimetype)
     else:
         return HttpResponse('Only POST accepted')
 
@@ -200,6 +204,19 @@ class DatasetEdit(UpdateView):
     form_class = DatasetEditForm
     context_object_name = 'dataset'
     template_name = 'datasets/edit.html'
+
+
+def update_visualization(request, pk):
+    if request.POST:
+        d = Dataset.objects.get(pk=pk)
+        d.get_data()
+        if request.is_ajax():
+            mimetype = 'text/plain'
+            if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+                mimetype = 'application/json'
+            return HttpResponse(d.get_json_data(), mimetype=mimetype)
+    else:
+        return HttpResponse('Only POST requests accepted')
 
 
 def delete_dataset(request, pk):
@@ -267,8 +284,20 @@ class InstanceRow(DetailView):
         return context
 
 
+class SingleInstanceDelete(DeleteView):
+    ''' View for deleting a single instance.
+    '''
+    model = Instance
+    template_name = 'instances/delete.html'
+    context_object_name = 'object'
+
+    def get_success_url(self):
+        return reverse_lazy('datasets:detail',
+            kwargs={'pk': self.kwargs['dataset_id']})
+
+
 def delete_instances(request, dataset_id):
-    '''View for deleting selected instances.
+    '''View for deleting selected (multiple) instances.
 
     Must be a POST request.
     '''
@@ -279,12 +308,11 @@ def delete_instances(request, dataset_id):
             inst_obj = Instance.objects.get(pk=id)
             inst_obj.delete()
         dataset = Dataset.objects.get(pk=dataset_id)
-        # TODO: Shouldn't have to get the data from the DB again. 
+        # TODO: Shouldn't have to get all data from the DB again. 
         dataset.get_data()
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
     else:
-        # TODO: handle non-AJAX?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 

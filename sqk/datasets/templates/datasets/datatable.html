@@ -7,8 +7,9 @@ var oTable;
 var oTT;
 var oFC;
 var INITIAL_DISPLAY_LENGTH = 10;
-// index of the last column
-var I_LAST_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
+// index of the date created column
+var DATE_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
+var PLAY_BUTTON_COLUMN = 1
 var FEATURE_COLUMNS = range(3, {{ feature_names|length }});
 function initializeTable(){
     // Initialize dataset as a DataTable
@@ -24,13 +25,23 @@ function initializeTable(){
       },
       "iDisplayLength": INITIAL_DISPLAY_LENGTH,
       "bFilter": true, // Enable/disable search
+      "fnDrawCallback": function ( oSettings ) {
+          /* Need to redo the counters if filtered or sorted */
+          if ( oSettings.bSorted || oSettings.bFiltered ) {
+            for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ ) {
+              var nTr = oSettings.aoData[ oSettings.aiDisplay[i] ].nTr;
+
+              // Update the index column and do so without redrawing the table
+              this.fnUpdate( i+1, nTr, 0, false, false );
+            }
+          }
+        },
       "aoColumnDefs": [
           // Specifiy columns that aren't sortable
-          { 'bSortable': false, 'aTargets': [ 0 ] },
+          {  "bSortable": false, "sClass": "index", "aTargets": [ 0 ]  },
+          { "bSortable": false, "aTargets": [PLAY_BUTTON_COLUMN] },
           // Make the date column wider so that it doesn't create 2 rows
-          { "sWidth": '30%', "aTargets": [ I_LAST_COLUMN ] },
-          // { "sWidth": '20%', "aTargets": [ 2 ] },
-          // { "sWidth": '10%', "aTargets": [ FEATURE_COLUMNS ] }
+          { "sWidth": '30%', "aTargets": [ DATE_COLUMN ] },
           ],
           "oTableTools": {
             "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
@@ -83,7 +94,7 @@ function initializeTable(){
       // Fix left columns
       oFC = new FixedColumns( oTable,{
         "iLeftColumns": 2,
-        "iLeftWidth": 75,
+        "iLeftWidth": 85,
       } );
     }
 

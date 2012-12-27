@@ -8,8 +8,8 @@
         <tr>
           {# Only show header if there are instances #}
           {% if not is_empty %}
-          <th class="fixed-col" rowspan="2"></th>
           <th class="fixed-col" rowspan="2">#</th>
+          <th class="fixed-col" rowspan="2"></th>
           
           {% for label_name in label_names %}
           <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
@@ -44,6 +44,10 @@
       <tbody>
         {% for inst in data %}
         <tr data-id="{{ inst.pk }}">
+          {# Index #}
+          {# This will be dynamically drawn at DataTable initialization #}
+          <td></td>
+
           {# Play button #}
           <td class="fixed-col">
             {% if inst.audio_url %}
@@ -51,8 +55,6 @@
             {% endif %}
           </td>
 
-          {# Index #}
-          <td class="fixed-col">{{ forloop.counter }}</td>
 
           {# Variable value #}
           {% if inst.labels %}
@@ -64,14 +66,14 @@
            type: 'text',
            showbuttons: false,
            pk: {{ inst.pk }},
-           url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk label_name.pk  %}',
+           url: "{% url 'datasets:update_instance_label' dataset.pk inst.pk label_name.pk  %}",
            value: '',
            title: 'Edit instance label',
            success: function(data, new_label){
             Viz.data = data;
             Viz.scatterPlot();
           }
-        });
+          });
           </script>
           {% endfor %}
           {% else %}
@@ -92,6 +94,7 @@
 
           {# Created at #}
           <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
+
         </tr>
         {% endfor %}
       </tbody>
