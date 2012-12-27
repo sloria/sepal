@@ -30,6 +30,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="manage.py" />
+    <Compile Include="sqk\datasets\admin.py" />
+    <Compile Include="sqk\datasets\forms.py" />
+    <Compile Include="sqk\datasets\models.py" />
+    <Compile Include="sqk\datasets\tasks.py" />
+    <Compile Include="sqk\datasets\tests.py" />
+    <Compile Include="sqk\datasets\urls.py" />
+    <Compile Include="sqk\datasets\views.py" />
+    <Compile Include="sqk\datasets\wsgi.py" />
+    <Compile Include="sqk\datasets\__init__.py" />
+    <Compile Include="sqk\settings\base.py" />
+    <Compile Include="sqk\settings\local-dist.py" />
+    <Compile Include="sqk\settings\__init__.py" />
     <Compile Include="sqk\__init__.py" />
     <Compile Include="sqk\settings\local.py" />
     <Compile Include="sqk\urls.py" />
@@ -44,6 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="sqk\" />
+    <Folder Include="sqk\datasets\" />
+    <Folder Include="sqk\settings\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Python Tools\Microsoft.PythonTools.Django.targets" />
   <ProjectExtensions>
