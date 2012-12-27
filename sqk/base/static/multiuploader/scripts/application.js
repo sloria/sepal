@@ -16,7 +16,12 @@ $(function () {
     'use strict';
 
     // Initialize the jQuery File Upload widget:
-    $('#fileupload').fileupload();
+    $('#fileupload').fileupload()
+        .bind('fileuploaddone', function (e, data) {
+            // TODO: ajax update scatterplot and table once json endpoint for
+            // the datatable is ready.
+            // For now, just add button to refresh the page.
+        });
 
     // Load existing files:
     $.getJSON($('#fileupload form').prop('action'), function (files) {
