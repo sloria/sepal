@@ -32,9 +32,9 @@ $(document).ready(function() {
   $('#showHidePlot').on('click', function() {
     // Toggle visibility of the viz panel
     viz.toggle();
-    viz.toggleClass('span4');
+    viz.toggleClass('span5');
     // Expand/compress the table
-    dataset.toggleClass('span8');
+    dataset.toggleClass('span7');
     oFC.fnRedrawLayout();
     oFC.fnRecalculateHeight();
     oTable.fnDraw(false);

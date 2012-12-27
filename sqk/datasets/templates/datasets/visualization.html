@@ -1,6 +1,7 @@
 <script>
 //////////////Visualization//////////////////////////
-
+  // Create a namespace for visualization
+  var Viz = {};
   // The scatter plot requires 2 dimensions to be selected 
   // before points can be plotted. 
   // Selected dimensions are stored in the
@@ -18,14 +19,14 @@
 
   // Global constants
   var LABEL_PROP_NAME = "label";
-  var CHART_WIDTH = 400;
-  var CHART_HEIGHT = 350;
+  var CHART_WIDTH = 475;
+  var CHART_HEIGHT = 450;
   var PT_RADIUS = 4;
   var X_TICKS = 8;
   var Y_TICKS = 8;
   var PADDING = CHART_WIDTH / 6;
   var selectedDimensions = [];
-  var data;
+  Viz.data = {};
   var svg;
 
   // Calculates the min & max values for each feature across all instances
@@ -84,12 +85,12 @@
   //     ]  
   //   }
   // @return - Nothing.
-  function scatterPlot() {
+  Viz.scatterPlot = function() {
     // This gets the min & max values for each feature across all instances
-    var domainRangeObj = getMinAndMaxRangeForFeatures(data.instances);     
+    var domainRangeObj = getMinAndMaxRangeForFeatures(Viz.data.instances);     
 
-    X_DIM = (X_DIM_INDEX) ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {"minVal" : 0, "maxVal" : data.instances.length-1, "name": "dummy"};
-    Y_DIM = (Y_DIM_INDEX) ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {"minVal" : 0, "maxVal" : data.instances.length-1, "name": "dummy"};
+    X_DIM = (X_DIM_INDEX) ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {"minVal" : 0, "maxVal" : Viz.data.instances.length-1, "name": "dummy"};
+    Y_DIM = (Y_DIM_INDEX) ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {"minVal" : 0, "maxVal" : Viz.data.instances.length-1, "name": "dummy"};
 
     // set up scales
     var xScale = d3.scale.linear()
@@ -99,7 +100,7 @@
     .domain([Y_DIM.minVal, Y_DIM.maxVal])
     .range([CHART_HEIGHT - PADDING, PADDING]);
     var categoryScale = d3.scale.ordinal()
-    .domain(data.labels)
+    .domain(Viz.data.labels)
     .range(d3.scale.category10().range());
 
     // set up axes
@@ -116,11 +117,11 @@
     // set up legend
     var legendXScale = 
     d3.scale.linear()
-    .domain([0, data.labels.length-1])
+    .domain([0, Viz.data.labels.length-1])
     .range([PADDING, (CHART_WIDTH/1.3) - PADDING]);
 
     svg.selectAll("rect.legend-rect")
-    .data(data.labels)
+    .data(Viz.data.labels)
     .enter()
     .append("rect")
     .attr("class", "legend-rect")
@@ -133,11 +134,11 @@
     .attr("width", 10)
     .attr("height", 10)
     .style("fill", function(d, i){
-      return categoryScale(data.labels[i]);
+      return categoryScale(Viz.data.labels[i]);
     });
 
     svg.selectAll("text.legend")
-    .data(data.labels)
+    .data(Viz.data.labels)
     .enter()
     .append("text")
     .attr("class", "legend")
@@ -148,7 +149,7 @@
       return (PADDING/3) + 10;
     })
     .text(function(d, i){
-      return data.labels[i];
+      return Viz.data.labels[i];
     })
     .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
     .style("font-size", "11px");
@@ -210,8 +211,8 @@
     });
     
     // Call the main update method
-    updatePlotPoints(svg, data, xScale, yScale, categoryScale);
-    updateLegend(svg, data, legendXScale, categoryScale);
+    updatePlotPoints(svg, Viz.data, xScale, yScale, categoryScale);
+    updateLegend(svg, Viz.data, legendXScale, categoryScale);
   }
 
   // Main method which controls the points on the plot as selections
@@ -303,7 +304,7 @@
     }
     X_DIM_INDEX = selectedDimensions[0];
     Y_DIM_INDEX = selectedDimensions[1];
-    scatterPlot();
+    Viz.scatterPlot();
   }
 
   // A user has de-selected a dimension checkbox on the data table
@@ -322,11 +323,11 @@
         X_DIM_INDEX = selectedDimensions[0];
         Y_DIM_INDEX = selectedDimensions[1];
       }
-      scatterPlot();
+      Viz.scatterPlot();
     }
 
     $(document).ready(function() {
-      data = {{ data_as_json|safe }};
+      Viz.data = {{ data_as_json|safe }};
 
       svg = d3.select("div#chart")
       .append("svg")
@@ -335,7 +336,7 @@
 
       // Draw the basic circles even though no dimensions
       // have been selected yet                    
-      scatterPlot();
+      Viz.scatterPlot();
 
     // Update selected dimensions when a feature button is selected
     $('li.feature-select.multicheck').on('click', function() {

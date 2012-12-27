@@ -160,7 +160,8 @@ def multiple_uploader(request, pk):
                 extract_features(d.pk, instance.pk,
                     os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
                 result['url'] = audio_obj.audio_file.url
-
+                # data that is dynamically added as a table row after the upload is finished
+                result['instance_data'] = instance.as_table_row()
         response_data = simplejson.dumps([result])
         if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
             mimetype = 'application/json'

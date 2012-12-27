@@ -6,7 +6,7 @@ Datasets.refresh_instance_row = function(instance_id){
         row.replaceWith(data);
             alert('Load was performed.');
 });
-}
+};
 
 Datasets.refresh_if_ready = function(instance_id) {
     $.get('instances/' + instance_id + "/ready.json", function(data) {

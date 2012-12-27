@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {
 .tagline{
   font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
 }
-p, div {
+p, div, button {
     font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
 }
 

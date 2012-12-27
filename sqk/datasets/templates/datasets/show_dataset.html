@@ -1,6 +1,6 @@
 {% load url from future %}
 <div class="block span12">
-  <div id="dataset-heading" class="block-heading" href="#dataset">Data</div>
+  <div id="dataset-heading" class="block-heading" href="#dataset">Table</div>
   <div id="dataset-body" class="block-body collapse in">
     <table cellpadding="0" cellspacing="0" border="0" id="dataset-table" class="table table-striped">
       {# Header #}
@@ -67,9 +67,9 @@
            url: '{% url 'datasets:update_instance_label' dataset.pk inst.pk label_name.pk  %}',
            value: '',
            title: 'Edit instance label',
-           success: function(new_data, new_label){
-            data = new_data;
-            scatterPlot();
+           success: function(data, new_label){
+            Viz.data = data;
+            Viz.scatterPlot();
           }
         });
           </script>

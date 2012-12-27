@@ -1,26 +1,23 @@
 /*
  * jQuery File Upload Plugin JS Example 5.0.2
  * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
  */
 
-/*jslint nomen: true */
-/*global $ */
-
 $(function () {
-    'use strict';
-
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload()
-        .bind('fileuploaddone', function (e, data) {
-            // TODO: ajax update scatterplot and table once json endpoint for
-            // the datatable is ready.
-            // For now, just add button to refresh the page.
+        .bind('fileuploaddone', function (e, new_data) {
+            var instance_data = new_data.result[0]['instance_data'];
+            console.log(instance_data);
+            var a = oTable.fnAddData(instance_data);
+            var oSettings = oTable.fnSettings();
+            // Get the added row and add the 'success' class
+            var nTr = oSettings.aoData[ a[0] ].nTr;
+            $(nTr).addClass('success');
+        })
+        .bind('fileuploadstop', function(e) {
+            console.log('finished');
+            // TODO: update plot here
         });
 
     // Load existing files:

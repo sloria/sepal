@@ -280,6 +280,28 @@ class Instance(models.Model):
             ret['audio_filename'] = os.path.basename(self.audio.audio_file.name)
         return ret
 
+    def as_table_row(self):
+        '''Returns an array containing data to be used for dynamic adding of a
+        table row DOM element'''
+        play_audio_button = '<a href="%s" class="sm2_button">%s</a>' % (self.audio.audio_file.url, 
+                                                                            self.pk)
+        # str representation of label value
+        # NOTE: assumes only 1 label per dataset
+        # TODO: add editable script
+        label_value = self.labels().values()[0].value
+        data = [play_audio_button,
+                len(self.dataset.instances.all()),  
+                label_value]
+        # feature values
+        for v in self.values_as_list():
+            data.append(round(v, 3))
+        # link to this instance's audio file
+        file_link = '<a href="%s">%s</a>' % (self.audio.audio_file.url, 
+                                            os.path.basename(self.audio.audio_file.name))
+        data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p')]
+        return data
+
+
     class Meta:
         get_latest_by = 'created_at'
         ordering = ['pk']
