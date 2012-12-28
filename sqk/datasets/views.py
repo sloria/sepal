@@ -71,7 +71,7 @@ class DatasetAddDatasource(FormView, SingleObjectMixin):
                     instance = Instance(dataset=self.object)
                     instance.audio = audio_obj
                     instance.save()
-                    result = extract_features(self.object.pk, instance.pk,
+                    extract_features(self.object.pk, instance.pk,
                         os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
             # If user uploaded a csv file
             elif f.content_type == 'text/csv':
