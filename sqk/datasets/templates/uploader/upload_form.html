@@ -10,10 +10,10 @@
                     <span>Select files: </span>
                     <input type="file" name="files[]" multiple>
                 </label>
-                <button type="submit" class="start btn btn-primary"><i class="icon-leaf"></i> Extract all</button>
-                <button type="reset" class="cancel btn btn-danger"><i class="icon-remove"></i> Cancel</button>
-                <button type="button" class="delete btn btn-info">Clear finished</button>
-                <button type="button" onClick="document.location.reload(true)" class="btn btn-success"><i class="icon-refresh"></i> Refresh</button>
+                <button type="submit" class="start btn btn-primary btn-small"><i class="icon-upload-alt"></i> Extract all</button>
+                <button type="reset" class="cancel btn btn-danger btn-small"><i class="icon-remove"></i> Cancel</button>
+                <button type="button" class="delete btn btn-info btn-small"><i class="icon-ok-circle"></i> Clear finished</button>
+                <button type="button" onClick="document.location.reload(true)" class="btn btn-success btn-small"><i class="icon-refresh"></i> Refresh</button>
             </div>
         </form>
         <div class="fileupload-content">
@@ -36,6 +36,7 @@
         {{else error === 'acceptFileTypes'}}Filetype not allowed
         {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
         {{else error === 'fileAlreadyExists'}}File already exists in dataset
+        {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
         {{else}}${error}
         {{/if}}
         </td>
@@ -65,6 +66,8 @@
         {{else error === 'acceptFileTypes'}}Filetype not allowed
         {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
         {{else error === 'fileAlreadyExists'}}File already exists in dataset
+        // TODO: filename can't contain spaces -- this is a temporary fix
+        {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
         {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
         {{else error === 'emptyResult'}}Empty file upload result
         {{else}}${error}

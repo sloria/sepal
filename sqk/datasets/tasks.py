@@ -186,7 +186,6 @@ def extract_features(dataset_id, instance_id, audiofile_path):
         if output.size > 0:  # Avoid empty data
             for i in range(output[0].size):
                 output_mean = output[i].mean()
-                print display_name
                 FeatureValue.objects.create(value=output_mean,
                     feature=Feature.objects.get(name__iexact=display_name.lower()),
                     instance=inst)

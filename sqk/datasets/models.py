@@ -297,7 +297,10 @@ class Instance(models.Model):
         # link to this instance's audio file
         file_link = '<a href="%s">%s</a>' % (self.audio.audio_file.url,
                                             os.path.basename(self.audio.audio_file.name))
-        data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p')]
+        delete_link = '''<a href="%s"><i class="icon-remove"></i></a>''' % (reverse(
+                                                                        'datasets:single_instance_delete',
+                                                                        args=(self.dataset.pk, self.pk)))
+        data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p'), delete_link]
         return data
 
     class Meta:

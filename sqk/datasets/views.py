@@ -121,6 +121,7 @@ def multiple_uploader(request, pk):
         error = False
         # check against options for errors
         # file size
+        print f.name
         if f.size > options["maxfilesize"]:
             error = "maxFileSize"
         if f.size < options["minfilesize"]:
@@ -132,6 +133,12 @@ def multiple_uploader(request, pk):
         # TODO: doesn't work if after a file is deleted
         if file_path in filtered_paths:
             error = 'fileAlreadyExists'
+        # don't allow filenames with a space because these get
+        # converted to underscores on upload and result in a FileNoteFound error
+        # TODO: this is a temporary fix
+        if ' ' in f.name:
+            print 'made it in'
+            error = 'invalidFileName'
 
         result = {'name': f.name,
                'size': f.size,

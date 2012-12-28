@@ -36,6 +36,7 @@
           {% endfor %}
           <th>File</th>
           <th>Date added</th>
+          <th></th>
           {% endif %}
         </tr>
       </thead>
@@ -94,6 +95,9 @@
 
           {# Created at #}
           <td>{{ inst.created_at|date:"m/d/Y f a" }}</td>
+
+          {# Delete #}
+          <td><a href="{% url 'datasets:single_instance_delete' dataset.pk inst.pk %}"><i class="icon-remove"></i></a></td>
 
         </tr>
         {% endfor %}
