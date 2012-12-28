@@ -3,69 +3,71 @@
 <div id="fileupload">
     <div class="block">
         <div id="upload-heading" class="block-heading">Extract Features</div>
-        <div id="upload-body" class="block-body">
-          <form action="{% url 'datasets:upload' dataset.pk  %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-            <div class="fileupload-buttonbar">
-                <label class="fileinput-button">
-                    <span>Select files: </span>
-                    <input type="file" name="files[]" multiple>
-                </label>
-                <button type="submit" class="start btn btn-primary btn-small"><i class="icon-upload-alt"></i> Extract all</button>
-                <button type="reset" class="cancel btn btn-danger btn-small"><i class="icon-remove"></i> Cancel</button>
-                <button type="button" class="delete btn btn-info btn-small"><i class="icon-ok-circle"></i> Clear finished</button>
-                <button type="button" onClick="document.location.reload(true)" class="btn btn-success btn-small"><i class="icon-refresh"></i> Refresh</button>
+        <div class="block-body">
+            <div id="upload-body">
+              <form action="{% url 'datasets:upload' dataset.pk  %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <div class="fileupload-buttonbar">
+                    <label class="fileinput-button">
+                        <span>Select files: </span>
+                        <input type="file" name="files[]" multiple>
+                    </label>
+                    <button type="submit" class="start btn btn-primary btn-small"><i class="icon-upload-alt"></i> Extract all</button>
+                    <button type="reset" class="cancel btn btn-danger btn-small"><i class="icon-remove"></i> Cancel</button>
+                    <button type="button" class="delete btn btn-info btn-small"><i class="icon-ok-circle"></i> Clear finished</button>
+                    <button type="button" onClick="document.location.reload(true)" class="btn btn-success btn-small"><i class="icon-refresh"></i> Refresh</button>
+                </div>
+            </form>
+            <div class="fileupload-content">
+                <table class="files"></table>
+                <div class="fileupload-progressbar"></div>
             </div>
-        </form>
-        <div class="fileupload-content">
-            <table class="files"></table>
-            <div class="fileupload-progressbar"></div>
         </div>
-    </div>
-    <div id="help" style="color:gray;">
-        <p>You can select multiple files at once using Ctrl (Win) or Command (Mac), or you can drag-and-drop your files on this panel.</p>
-        {% verbatim %}
-        <script id="template-upload" type="text/x-jquery-tmpl">
-        <tr class="template-upload{{if error}} ui-state-error{{/if}}">
-        <td class="preview"></td>
-        <td class="name">${name}</td>
-        <td class="size">${sizef}</td>
-        {{if error}}
-        <td class="error" colspan="2">Error:
-        {{if error === 'maxFileSize'}}File is too big
-        {{else error === 'minFileSize'}}File is too small
-        {{else error === 'acceptFileTypes'}}Filetype not allowed
-        {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
-        {{else error === 'fileAlreadyExists'}}File already exists in dataset
-        {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
-        {{else}}${error}
-        {{/if}}
-        </td>
-        {{else}}
-        <td class="progress"><div></div></td>
-        <td class="start"><button class="btn">Start</button></td>
-        {{/if}}
-        <td class="cancel"><button class="btn">Cancel</button></td>
-        </tr>
-        </script>
-        <script id="template-download" type="text/x-jquery-tmpl">
-        <tr class="template-download{{if error}} ui-state-error{{/if}}">
-        {{if error}}
-        <td></td>
-        <td class="name">${name}</td>
-        <td class="size">${sizef}</td>
-        <td class="error" colspan="2">Error:
-        {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
-        {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
-        {{else error === 3}}File was only partially uploaded
-        {{else error === 4}}No File was uploaded
-        {{else error === 5}}Missing a temporary folder
-        {{else error === 6}}Failed to write file to disk
-        {{else error === 7}}File upload stopped by extension
-        {{else error === 'maxFileSize'}}File is too big
-        {{else error === 'minFileSize'}}File is too small
-        {{else error === 'acceptFileTypes'}}Filetype not allowed
-        {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
-        {{else error === 'fileAlreadyExists'}}File already exists in dataset
+        <div id="help" style="color:gray;">
+            <p>.wav files only.</p>
+            <p>You can select multiple files at once using Ctrl (Win) or Command (Mac), or you can drag-and-drop your files on this panel.</p>
+            {% verbatim %}
+            <script id="template-upload" type="text/x-jquery-tmpl">
+            <tr class="template-upload{{if error}} ui-state-error{{/if}}">
+            <td class="preview"></td>
+            <td class="name">${name}</td>
+            <td class="size">${sizef}</td>
+            {{if error}}
+            <td class="error" colspan="2">Error:
+            {{if error === 'maxFileSize'}}File is too big
+            {{else error === 'minFileSize'}}File is too small
+            {{else error === 'acceptFileTypes'}}Filetype not allowed
+            {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+            {{else error === 'fileAlreadyExists'}}File already exists in dataset
+            {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
+            {{else}}${error}
+            {{/if}}
+            </td>
+            {{else}}
+            <td class="progress"><div></div></td>
+            <td class="start"><button class="btn">Start</button></td>
+            {{/if}}
+            <td class="cancel"><button class="btn">Cancel</button></td>
+            </tr>
+            </script>
+            <script id="template-download" type="text/x-jquery-tmpl">
+            <tr class="template-download{{if error}} ui-state-error{{/if}}">
+            {{if error}}
+            <td></td>
+            <td class="name">${name}</td>
+            <td class="size">${sizef}</td>
+            <td class="error" colspan="2">Error:
+            {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
+            {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
+            {{else error === 3}}File was only partially uploaded
+            {{else error === 4}}No File was uploaded
+            {{else error === 5}}Missing a temporary folder
+            {{else error === 6}}Failed to write file to disk
+            {{else error === 7}}File upload stopped by extension
+            {{else error === 'maxFileSize'}}File is too big
+            {{else error === 'minFileSize'}}File is too small
+            {{else error === 'acceptFileTypes'}}Filetype not allowed
+            {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+            {{else error === 'fileAlreadyExists'}}File already exists in dataset
         // TODO: filename can't contain spaces -- this is a temporary fix
         {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
         {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
@@ -91,6 +93,7 @@
         </tr>
         </script>
     </div>
+</div>
 </div>
 </div>
 

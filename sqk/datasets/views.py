@@ -98,7 +98,7 @@ def multiple_uploader(request, pk):
     # the file types which are going to be allowed for upload
     #   must be a mimetype
     "acceptedformats": (
-        "audio/wav", 'audio/x-wav'
+        "audio/wav", 'audio/x-wav', 'audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'
         )
     }
 
@@ -153,7 +153,7 @@ def multiple_uploader(request, pk):
             print response_data
             return HttpResponse(response_data, mimetype='application/json')
 
-        if f.content_type == 'audio/wav' or f.content_type == 'audio/x-wav':
+        if f.content_type in ('audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'):
             # Create new Audio object
             # This uploads the file to media/audio
             audio_obj = Audio(audio_file=f)
