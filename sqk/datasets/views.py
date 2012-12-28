@@ -37,50 +37,50 @@ class DatasetDisplay(DetailView):
         return super(DatasetDisplay, self).get_context_data(**context)
 
 
-class DatasetAddDatasource(FormView, SingleObjectMixin):
-    '''View for adding data to a dataset.
-    '''
-    model = Dataset
-    form_class = DatasourceForm
-    template_name = 'datasets/detail.html'
+# class DatasetAddDatasource(FormView, SingleObjectMixin):
+#     '''View for adding data to a dataset.
+#     '''
+#     model = Dataset
+#     form_class = DatasourceForm
+#     template_name = 'datasets/detail.html'
 
-    def get_context_data(self, **kwargs):
-        dataset = self.get_object()
-        print dataset
-        context = dataset.get_context()
-        context['upload_form'] = self.get_form(DatasourceForm)
-        context.update(**kwargs)
-        return super(DatasetAddDatasource, self).get_context_data(**context)
+#     def get_context_data(self, **kwargs):
+#         dataset = self.get_object()
+#         print dataset
+#         context = dataset.get_context()
+#         context['upload_form'] = self.get_form(DatasourceForm)
+#         context.update(**kwargs)
+#         return super(DatasetAddDatasource, self).get_context_data(**context)
 
-    def get_success_url(self):
-        return reverse('datasets:detail', kwargs={'pk': self.object.pk})
+#     def get_success_url(self):
+#         return reverse('datasets:detail', kwargs={'pk': self.object.pk})
 
-    def form_valid(self, form):
-        self.object = self.get_object()
-        if form.cleaned_data['uploaded_file']:
-            f = form.cleaned_data['uploaded_file']
-            print 'f in form_valid is type %s' % f.content_type
-            # If user uploaded an audio file
-            if f.content_type == 'audio/wav':
-                # Create new Audio object
-                # This uploads the file to media/audio
-                audio_obj = Audio(audio_file=f)
-                audio_obj.save()
-                if audio_obj:
-                    # Create new instance and associate it with the audio file
-                    instance = Instance(dataset=self.object)
-                    instance.audio = audio_obj
-                    instance.save()
-                    extract_features(self.object.pk, instance.pk,
-                        os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
-            # If user uploaded a csv file
-            elif f.content_type == 'text/csv':
-                # Save file
-                handle_uploaded_file(f)
-                # Parse data and save to database
-                read_datasource(self.object,
-                    os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))
-        return super(DatasetAddDatasource, self).form_valid(form)
+#     def form_valid(self, form):
+#         self.object = self.get_object()
+#         if form.cleaned_data['uploaded_file']:
+#             f = form.cleaned_data['uploaded_file']
+#             print 'f in form_valid is type %s' % f.content_type
+#             # If user uploaded an audio file
+#             if f.content_type == 'audio/wav':
+#                 # Create new Audio object
+#                 # This uploads the file to media/audio
+#                 audio_obj = Audio(audio_file=f)
+#                 audio_obj.save()
+#                 if audio_obj:
+#                     # Create new instance and associate it with the audio file
+#                     instance = Instance(dataset=self.object)
+#                     instance.audio = audio_obj
+#                     instance.save()
+#                     extract_features(self.object.pk, instance.pk,
+#                         os.path.join(settings.MEDIA_ROOT, 'audio', f.name))
+#             # If user uploaded a csv file
+#             elif f.content_type == 'text/csv':
+#                 # Save file
+#                 handle_uploaded_file(f)
+#                 # Parse data and save to database
+#                 read_datasource(self.object,
+#                     os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))
+#         return super(DatasetAddDatasource, self).form_valid(form)
 
 
 def multiple_uploader(request, pk):
@@ -129,7 +129,7 @@ def multiple_uploader(request, pk):
         if f.content_type not in options["acceptedformats"]:
             error = "acceptFileTypes"
         # prevent uploading of duplicate files
-        # TODO: doesn't work if after a file is deleted
+        # FIXME: doesn't work if after a file is deleted
         if file_path in filtered_paths:
             error = 'fileAlreadyExists'
         # don't allow filenames with a space because these get
@@ -190,9 +190,9 @@ class DatasetDetail(View):
         view = ensure_csrf_cookie(DatasetDisplay.as_view())
         return view(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        view = ensure_csrf_cookie(DatasetAddDatasource.as_view())
-        return view(request, *args, **kwargs)
+    # def post(self, request, *args, **kwargs):
+    #     view = ensure_csrf_cookie(DatasetAddDatasource.as_view())
+    #     return view(request, *args, **kwargs)
 
 
 class DatasetCreate(FormView):

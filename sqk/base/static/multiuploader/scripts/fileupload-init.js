@@ -9,7 +9,8 @@ $(function() {
         console.log(data);
         if(!data.result[0]['error']) {
             var instanceData = data.result[0]['instance_data'];
-            var instanceId = data.result[0]['instance_id'];
+            var instanceId = String(data.result[0]['instance_id']);
+            var editUrl = encodeURI(data.result[0]["edit_label_url"]);
             var added = oTable.fnAddData(instanceData);
             var oSettings = oTable.fnSettings();
             // Get the added row and add the 'success' class
@@ -17,19 +18,19 @@ $(function() {
             $(newRow).addClass('success')
             // Attach the data-id attribute
             .data('id', instanceId);
-            // FIXME: make label editable
-            // $(".instance-label[data-id=" + instanceId + "]").editable({
-            //    type: 'text',
-            //    showbuttons: false,
-            //    pk: instanceId,
-            //    url: data.result[0]['edit_label_url'],
-            //    value: '',
-            //    title: 'Edit instance label',
-            //    success: function(data, new_label){
-            //     Viz.data = data;
-            //     Viz.scatterPlot();
-            //     }
-            // });
+            // Make label name editable
+            $(".instance-label[data-id=" + instanceId.toString() + "]").editable({
+                type: 'text',
+                showbuttons: false,
+                pk: instanceId,
+                url: editUrl,
+                value: '',
+                title: 'Edit instance label',
+                success: function(data, new_label) {
+                    Viz.data = data;
+                    Viz.scatterPlot();
+                }
+            });
         }
     }).bind('fileuploadstop', function(e) {
         console.log('finished');

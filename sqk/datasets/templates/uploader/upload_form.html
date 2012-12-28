@@ -68,32 +68,31 @@
             {{else error === 'acceptFileTypes'}}Filetype not allowed
             {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
             {{else error === 'fileAlreadyExists'}}File already exists in dataset
-        // TODO: filename can't contain spaces -- this is a temporary fix
-        {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
-        {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
-        {{else error === 'emptyResult'}}Empty file upload result
-        {{else}}${error}
-        {{/if}}
-        </td>
-        {{else}}
-        <td class="preview">
-        {{if thumbnail_url}}
-        <a href="${url}" target="_blank"><img src="${thumbnail_url}"></a>
-        {{/if}}
-        </td>
-        <td class="name">
-        <a href="${url}"{{if thumbnail_url}} target="_blank"{{/if}}>${name}</a>
-        </td>
-        <td class="size">${sizef}</td>
-        <td colspan="2"></td>
-        {{/if}}
-        <td class="delete">
-        <button class="btn" data-type="${delete_type}" data-url="${delete_url}">Clear</button>
-        </td>
-        </tr>
-        </script>
+            {{else error === 'invalidFileName'}}File name not valid (Cannot contain spaces)
+            {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
+            {{else error === 'emptyResult'}}Empty file upload result
+            {{else}}${error}
+            {{/if}}
+            </td>
+            {{else}}
+            <td class="preview">
+            {{if thumbnail_url}}
+            <a href="${url}" target="_blank"><img src="${thumbnail_url}"></a>
+            {{/if}}
+            </td>
+            <td class="name">
+            <a href="${url}"{{if thumbnail_url}} target="_blank"{{/if}}>${name}</a>
+            </td>
+            <td class="size">${sizef}</td>
+            <td colspan="2"></td>
+            {{/if}}
+            <td class="delete">
+            <button class="btn" data-type="${delete_type}" data-url="${delete_url}">Clear</button>
+            </td>
+            </tr>
+            </script>
+        </div>
     </div>
-</div>
 </div>
 </div>
 

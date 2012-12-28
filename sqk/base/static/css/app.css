@@ -44,11 +44,16 @@ h1, h2, h3, h4, h5, h6, .brand {
   font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
 }
 
+.navbar .brand{
+  font-size: 110%;
+}
+
 .tagline{
   font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
 }
 p, div, button {
     font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
+    font-size: 13px;
 }
 
 /* Editable links should be black */
