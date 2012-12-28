@@ -10,10 +10,10 @@ $(function() {
         if(!data.result[0]['error']) {
             var instanceData = data.result[0]['instance_data'];
             var instanceId = data.result[0]['instance_id'];
-            var a = oTable.fnAddData(instanceData);
+            var added = oTable.fnAddData(instanceData);
             var oSettings = oTable.fnSettings();
             // Get the added row and add the 'success' class
-            var newRow = oSettings.aoData[a[0]].nTr;
+            var newRow = oSettings.aoData[added[0]].nTr;
             $(newRow).addClass('success')
             // Attach the data-id attribute
             .data('id', instanceId);

@@ -98,7 +98,7 @@ def multiple_uploader(request, pk):
     # the file types which are going to be allowed for upload
     #   must be a mimetype
     "acceptedformats": (
-        "audio/wav",
+        "audio/wav", 'audio/x-wav'
         )
     }
 
@@ -121,7 +121,6 @@ def multiple_uploader(request, pk):
         error = False
         # check against options for errors
         # file size
-        print f.name
         if f.size > options["maxfilesize"]:
             error = "maxFileSize"
         if f.size < options["minfilesize"]:
@@ -154,7 +153,7 @@ def multiple_uploader(request, pk):
             print response_data
             return HttpResponse(response_data, mimetype='application/json')
 
-        if f.content_type == 'audio/wav':
+        if f.content_type == 'audio/wav' or f.content_type == 'audio/x-wav':
             # Create new Audio object
             # This uploads the file to media/audio
             audio_obj = Audio(audio_file=f)
