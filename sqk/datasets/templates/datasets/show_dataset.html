@@ -8,11 +8,11 @@
         <tr>
           {# Only show header if there are instances #}
           {% if not is_empty %}
-          <th class="fixed-col" rowspan="2">#</th>
-          <th class="fixed-col" rowspan="2"></th>
+          <th class="fixed-col" rowspan="1">#</th>
+          <th class="fixed-col" rowspan="1"></th>
           
           {% for label_name in label_names %}
-          <th rowspan="2"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
+          <th rowspan="1"><i class="icon-beaker"></i><a href="#" class="label_name" id="label_name{{ label_name.pk }}"> {{ label_name|capfirst }}</a></th>
           <script>
           $('#label_name{{ label_name.pk }}').editable({
            type: 'text',
@@ -24,9 +24,12 @@
          });
           </script>
           {% endfor %}
-          <th colspan="{{ feature_names|length }}" rowspan="1">Audio features</th>
+          {% comment %}
+            
+          <th colspan="{{ feature_names|length }}" rowspan="1">Audio features</th> 
         </tr>
-        <tr>
+        <tr> 
+          {% endcomment %}
           {% for feature_name in feature_names %}
           {% if feature_name == 'zcr' %}
           <th>{{ feature_name|upper }}</th>
@@ -44,7 +47,7 @@
       {# Data #}
       <tbody>
         {% for inst in data %}
-        <tr data-id="{{ inst.pk }}">
+        <tr data-id="{{ inst.pk }}" data-row="{{ forloop.counter }}">
           {# Index #}
           {# This will be dynamically drawn at DataTable initialization #}
           <td></td>

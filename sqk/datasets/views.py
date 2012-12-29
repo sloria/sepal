@@ -314,7 +314,7 @@ def delete_instances(request, dataset_id):
             inst_obj = Instance.objects.get(pk=id)
             inst_obj.delete()
         dataset = Dataset.objects.get(pk=dataset_id)
-        # TODO: Shouldn't have to get all data from the DB again. 
+        # TODO: Shouldn't have to get all data from the DB again.
         dataset.get_data()
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
@@ -349,7 +349,6 @@ def update_instances_labels(request, dataset_id, label_name_id):
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
     else:
-        # TODO: handle non-AJAX ?
         return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
 
 

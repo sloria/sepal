@@ -296,8 +296,7 @@
   function addToSelectedDimensions(dimension) {
     selectedDimensions.push(dimension);
     if (selectedDimensions.length > 2) {
-      // TODO: send asynchronous request for 
-      // PCA-ified data
+      // TODO: send asynchronous request for PCA-ified data
       // Right now, it's going to slice out the first element
       var index = selectedDimensions.splice(0, 1);
       $('li.feature-select.multicheck[value=' + index[0] + ']').removeClass('checked');

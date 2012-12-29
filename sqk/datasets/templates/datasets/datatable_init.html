@@ -9,18 +9,21 @@ var oFC;
 var INITIAL_DISPLAY_LENGTH = 10;
 // index of the date created column
 var DATE_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
+var FILE_COLUMN = DATE_COLUMN - 1;
 var LAST_COLUMN = DATE_COLUMN + 1;
 var PLAY_BUTTON_COLUMN = 1
 var FEATURE_COLUMNS = range(3, {{ feature_names|length }});
 function initializeTable(){
     // Initialize dataset as a DataTable
     oTable = $('#dataset-table').dataTable( {
-     "sDom": 'T<"clear">lfrtip',
+     "sDom": 'T<"clear">lfrtipS',
      "aaSorting": [[ 1, 'asc' ]],
        "sScrollY": "287px", // affects the height of the table
        "sScrollX": "100%",
        "bScrollCollapse": true, // collapse table when filtering
        "bPaginate": false,
+       "bDeferRender": true,
+       "bStateSave": true,
        "oLanguage": {
         "sLengthMenu": " _MENU_ instances per page"
       },
@@ -42,7 +45,8 @@ function initializeTable(){
           {  "bSortable": false, "sClass": "index", "aTargets": [ 0 ]  },
           { "bSortable": false, "aTargets": [PLAY_BUTTON_COLUMN, LAST_COLUMN] },
           // Make the date column wider so that it doesn't create 2 rows
-          { "sWidth": '15%', "aTargets": [ DATE_COLUMN ] },
+          { "sWidth": '30%', "aTargets": [ FILE_COLUMN ] },
+          { "sWidth": '40%', "aTargets": [ DATE_COLUMN ] },
           ],
           "oTableTools": {
             "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
@@ -92,7 +96,7 @@ function initializeTable(){
         ]
       }
     } );
-      // Fix left columns
+     // Fix left columns
       oFC = new FixedColumns( oTable,{
         "iLeftColumns": 2,
         "iLeftWidth": 85,
@@ -110,7 +114,8 @@ function initializeTable(){
 otherwise, the url tags will cause an error. */
 {% if not is_empty and label_names %} 
 function delete_selected(){
-  /* Deletes the selected instances. NOTE: Deletions persist to the db. */
+  /* Deletes the selected instances. 
+  Deletions persist to the db. */
   // var oTT = TableTools.fnGetInstance( 'dataset-table' );
   var selected = oTT.fnGetSelected( oTable );
   // Remove selected from table
@@ -135,8 +140,8 @@ function delete_selected(){
 }
 
 function update_selected_labels(new_label){
-  /* Update the labels of the selected instances. NOTE: Changes persist to the db. */
-  // var oTT = TableTools.fnGetInstance( 'dataset-table' );
+  /* Update the labels of the selected instances.
+  Changes persist to the db. */
   var selected = oTT.fnGetSelected( oTable );
   // Remove selected from table
   $.ajax({

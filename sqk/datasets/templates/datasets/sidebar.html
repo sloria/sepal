@@ -23,22 +23,3 @@
     {% endfor %}
   </ul><!-- end Visualization -->
 </div><!-- end sidebar-nav -->
-
-<script>
-$(document).ready(function() {
-  var viz = $('#visualization');
-  var dataset = $('#dataset');
-  // Add click handler for showing/hiding viz span
-  $('#showHidePlot').on('click', function() {
-    // Toggle visibility of the viz panel
-    viz.toggle();
-    viz.toggleClass('span5');
-    // Expand/compress the table
-    dataset.toggleClass('span7');
-    oFC.fnRedrawLayout();
-    oFC.fnRecalculateHeight();
-    oTable.fnDraw(false);
-    // oTable.fnAdjustColumnSizing();
-  });
-});
-</script>
