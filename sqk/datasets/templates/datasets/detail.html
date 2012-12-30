@@ -88,15 +88,19 @@ var Dataset = {
     </div>
   </div>
 </div>
+{# Include modal confirm dialogs #}
+{% include "datasets/confirm_delete_dataset.html" %}
 
 {# Include visualization script #}
 <script src='{{ STATIC_URL }}js/visualization.js'></script>
+
 {# Include script to initialize DataTable #}
 {% include "datasets/datatable_init.html" %}
-{# Include modal confirm dialogs #}
-{% include "datasets/confirm_delete_dataset.html" %}
+
 {# Include script to make fields editable #}
 {% include "datasets/dataset_editable.html" %}
+
+{# Include uploader libs #}
 {% include "uploader/multipleuploader_js.html" %}
 
 {% endblock content %}

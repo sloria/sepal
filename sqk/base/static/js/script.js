@@ -13,6 +13,7 @@ $.ajaxSetup({
       });
 
 $(document).ready(function() {
+
   /* Multi select - allow multiple selections */
   /* Allow click without closing menu */
   /* Toggle checked state and icon */
@@ -22,9 +23,24 @@ $(document).ready(function() {
      return false;
   });
 
-  // Remove success highlighting if clicking off of rows
+  /* Remove success highlighting if clicking off of rows */
   $('body').click(function() {
     $('.success').removeClass('success');
+  });
+
+  /* Add click handler for showing/hiding viz span */
+  var viz = $('#visualization');
+  var dataset = $('#dataset');
+  $('#showHidePlot').on('click', function() {
+    // Toggle visibility of the viz panel
+    viz.toggle();
+    viz.toggleClass('span5');
+    // Expand/compress the table
+    dataset.toggleClass('span7');
+    oFC.fnRedrawLayout();
+    oFC.fnRecalculateHeight();
+    oTable.fnDraw(false);
+    // oTable.fnAdjustColumnSizing();
   });
 });
 
@@ -42,21 +58,3 @@ function range(start, count)
         foo.push(start + i);
     return foo;
 }
-
-// Click handler for hiding visiualization
-$(document).ready(function() {
-  var viz = $('#visualization');
-  var dataset = $('#dataset');
-  // Add click handler for showing/hiding viz span
-  $('#showHidePlot').on('click', function() {
-    // Toggle visibility of the viz panel
-    viz.toggle();
-    viz.toggleClass('span5');
-    // Expand/compress the table
-    dataset.toggleClass('span7');
-    oFC.fnRedrawLayout();
-    oFC.fnRecalculateHeight();
-    oTable.fnDraw(false);
-    // oTable.fnAdjustColumnSizing();
-  });
-});
