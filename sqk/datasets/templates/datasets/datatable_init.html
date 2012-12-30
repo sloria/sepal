@@ -8,127 +8,146 @@ var oTT;
 var oFC;
 var INITIAL_DISPLAY_LENGTH = 10;
 // index of the date created column
-var DATE_COLUMN = {{ feature_names|length }} + {{ label_names|length }} + 3;
+var DATE_COLUMN = {{feature_names|length }} + {{label_names|length }} + 3;
 var FILE_COLUMN = DATE_COLUMN - 1;
 var LAST_COLUMN = DATE_COLUMN + 1;
 var PLAY_BUTTON_COLUMN = 1
-var FEATURE_COLUMNS = range(3, {{ feature_names|length }});
-function initializeTable(){
-    // Initialize dataset as a DataTable
-    oTable = $('#dataset-table').dataTable( {
-     "sDom": 'T<"clear">lfrtipS',
-     "aaSorting": [[ 1, 'asc' ]],
-       "sScrollY": "287px", // affects the height of the table
-       "sScrollX": "100%",
-       "bScrollCollapse": true, // collapse table when filtering
-       "bPaginate": false,
-       "bDeferRender": true,
-       "bStateSave": true,
-       "oLanguage": {
-        "sLengthMenu": " _MENU_ instances per page"
+var FEATURE_COLUMNS = range(3, {{feature_names|length}});
+
+function initializeTable() {
+  // Initialize dataset as a DataTable
+  oTable = $('#dataset-table').dataTable({
+    "sDom": 'T<"clear">lfrtipS',
+    "aaSorting": [
+      [1, 'asc']
+    ],
+    "sScrollY": "287px",
+    // affects the height of the table
+    "sScrollX": "100%",
+    "bScrollCollapse": true,
+    // collapse table when filtering
+    "bPaginate": false,
+    "bDeferRender": true,
+    "bStateSave": true,
+    "oLanguage": {
+      "sLengthMenu": " _MENU_ instances per page"
+    },
+    "iDisplayLength": INITIAL_DISPLAY_LENGTH,
+    "bFilter": true,
+    // Enable/disable search
+    "fnDrawCallback": function(oSettings) { /* Need to redo the counters if filtered or sorted */
+      if(oSettings.bSorted || oSettings.bFiltered) {
+        for(var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
+          var nTr = oSettings.aoData[oSettings.aiDisplay[i]].nTr;
+
+          // Update the index column and do so without redrawing the table
+          this.fnUpdate(i + 1, nTr, 0, false, false);
+        }
+      }
+    },
+    "aoColumnDefs": [
+    // Specifiy columns that aren't sortable
+    {
+      "bSortable": false,
+      "sClass": "index",
+      "aTargets": [0]
+    }, {
+      "bSortable": false,
+      "aTargets": [PLAY_BUTTON_COLUMN, LAST_COLUMN]
+    },
+    // Make the date column wider so that it doesn't create 2 rows
+    {
+      "sWidth": '30%',
+      "aTargets": [FILE_COLUMN]
+    }, {
+      "sWidth": '40%',
+      "aTargets": [DATE_COLUMN]
+    }, ],
+    "oTableTools": {
+      "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
+      "sRowSelect": "multi",
+      /* Datatable TableTools Buttons */
+      "aButtons": [
+      // Select All
+      {
+        "sExtends": "select_all",
+        "sButtonText": '<i class="icon-check"></i> All'
       },
-      "iDisplayLength": INITIAL_DISPLAY_LENGTH,
-      "bFilter": true, // Enable/disable search
-      "fnDrawCallback": function ( oSettings ) {
-          /* Need to redo the counters if filtered or sorted */
-          if ( oSettings.bSorted || oSettings.bFiltered ) {
-            for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ ) {
-              var nTr = oSettings.aoData[ oSettings.aiDisplay[i] ].nTr;
+      // Select None
+      {
+        "sExtends": "select_none",
+        "sButtonText": '<i class="icon-check-empty"></i> None'
+      },
 
-              // Update the index column and do so without redrawing the table
-              this.fnUpdate( i+1, nTr, 0, false, false );
-            }
-          }
-        },
-      "aoColumnDefs": [
-          // Specifiy columns that aren't sortable
-          {  "bSortable": false, "sClass": "index", "aTargets": [ 0 ]  },
-          { "bSortable": false, "aTargets": [PLAY_BUTTON_COLUMN, LAST_COLUMN] },
-          // Make the date column wider so that it doesn't create 2 rows
-          { "sWidth": '30%', "aTargets": [ FILE_COLUMN ] },
-          { "sWidth": '40%', "aTargets": [ DATE_COLUMN ] },
-          ],
-          "oTableTools": {
-            "sSwfPath": "{{ STATIC_URL }}tabletools/swf/copy_csv_xls_pdf.swf",
-            "sRowSelect": "multi",
-            /* Datatable TableTools Buttons */
-            "aButtons": [
-        // Select All
-        {
-          "sExtends": "select_all",
-          "sButtonText": '<i class="icon-check"></i> All'
-        },
-        // Select None
-        {
-          "sExtends": "select_none",
-          "sButtonText": '<i class="icon-check-empty"></i> None'
-        },
-
-        // Update label values
-        {
-          "sExtends": "text",
-          "sButtonText": '<i class="icon-beaker"></i> Change value',
-          "fnClick": function(nButton, oConfig, oFlash){
-            var ret = prompt("Enter the new value  : ", "");
-            if (ret){
-              update_selected_labels(ret);
-            }
-          }
-        },
-
-        // Export csv
-        {
-          "sExtends": "csv",
-          "sButtonText": '<i class="icon-file"></i> Export'
-        },
-
-        // Delete selected
-        {
-          "sExtends":    "text",
-          "sButtonText": '<i class="icon-trash"></i>',
-          "fnClick": function ( nButton, oConfig, oFlash ) {
-            var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
-            if (answer){
-              delete_selected();
-            }
+      // Update label values
+      {
+        "sExtends": "text",
+        "sButtonText": '<i class="icon-beaker"></i> Change value',
+        "fnClick": function(nButton, oConfig, oFlash) {
+          var ret = prompt("Enter the new value  : ", "");
+          if(ret) {
+            updateSelectedLabels(ret);
           }
         }
-        ]
-      }
-    } );
-     // Fix left columns
-      oFC = new FixedColumns( oTable,{
-        "iLeftColumns": 2,
-        "iLeftWidth": 85,
-      } );
-    }
+      },
 
-    $(document).ready(function() {
-      initializeTable();
-      oTT = TableTools.fnGetInstance( 'dataset-table' );
-      var lastChecked = true;
+      // Export csv
+      {
+        "sExtends": "csv",
+        "sButtonText": '<i class="icon-file"></i> Export'
+      },
+
+      // Delete selected
+      {
+        "sExtends": "text",
+        "sButtonText": '<i class="icon-trash"></i>',
+        "fnClick": function(nButton, oConfig, oFlash) {
+          var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
+          if(answer) {
+            deleteSelected();
+          }
+        }
+      }]
+    }
+  });
+}
+
+/* Initialize the table */
+$(document).ready(function() {
+  initializeTable();
+  oTT = TableTools.fnGetInstance('dataset-table');
+  // Fix left columns
+  oFC = new FixedColumns(oTable, {
+    "iLeftColumns": 2,
+    "iLeftWidth": 85,
+  });
 });
 
 
 /* Only include these functions if there is data,
 otherwise, the url tags will cause an error. */
-{% if not is_empty and label_names %} 
-function delete_selected(){
-  /* Deletes the selected instances. 
-  Deletions persist to the db. */
+{% if not is_empty and label_names %}
+/* 
+function: deleteSelected()
+Deletes the selected instances. 
+Deletions persist to the db. */
+function deleteSelected() {
+
   // var oTT = TableTools.fnGetInstance( 'dataset-table' );
-  var selected = oTT.fnGetSelected( oTable );
+  var selected = oTT.fnGetSelected(oTable);
   // Remove selected from table
   $.ajax({
     url: "{% url 'datasets:delete_instances' dataset.pk %}",
     type: "POST",
-    data: {"selected": get_selected_ids(selected)},
+    data: {
+      "selected": getSelectedIds(selected)
+    },
     dataType: 'json',
     success: function(data) {
       oTT.fnSelectNone();
       // On success, dynamically delete selected rows from table
-      $.each(selected, function(index, value){
-        oTable.fnDeleteRow( selected[index] );
+      $.each(selected, function(index, value) {
+        oTable.fnDeleteRow(selected[index]);
       });
       // Update plot
       Viz.data = data;
@@ -139,20 +158,25 @@ function delete_selected(){
   });
 }
 
-function update_selected_labels(new_label){
-  /* Update the labels of the selected instances.
-  Changes persist to the db. */
-  var selected = oTT.fnGetSelected( oTable );
+/* 
+function: updateSelectedLabels
+Update the labels of the selected instances.
+Changes persist to the db. */
+function updateSelectedLabels(new_label) {
+  var selected = oTT.fnGetSelected(oTable);
   // Remove selected from table
   $.ajax({
     url: "{% url 'datasets:update_instances_labels' dataset.pk label_name_id %}",
     type: "POST",
-    data: {"new_label": new_label, "selected": get_selected_ids(selected)},
+    data: {
+      "new_label": new_label,
+      "selected": getSelectedIds(selected)
+    },
     dataType: 'json',
-    success: function(data){
+    success: function(data) {
       oTT.fnSelectNone();
       // Change each of the label texts to the new label
-      $.each(selected, function(index, value){
+      $.each(selected, function(index, value) {
         $(value).find('td .instance-label').text(new_label);
         $(value).removeClass('active');
         $(value).addClass('success');
@@ -164,12 +188,14 @@ function update_selected_labels(new_label){
     crossDomain: false,
     cache: false,
   });
-}
+}   
 {% endif %}
 
-function get_selected_ids( selected )
-/* Returns an array of ids for the selected instances. */
+function getSelectedIds(selected) /* Returns an array of ids for the selected instances. */
 {
-  return $.map(selected, function(element) { return $(element).data('id'); });
+  return $.map(selected, function(element) {
+    return $(element).data('id');
+  });
 }
+
 </script>
