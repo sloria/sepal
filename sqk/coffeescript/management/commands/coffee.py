@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
-import os
+import subprocess
 
 
 class Command(BaseCommand):
@@ -26,7 +26,5 @@ class Command(BaseCommand):
         else:
             print "Compiling .coffee files in %s to .js files in %s" % (app_name + 'static/coffee', target_path)
             command = "coffee -o %s -c %s" % (target_path, src_path)
-        f = os.popen(command)
-        for i in f.readlines():
-            print i
+        subprocess.call(command, shell=True)
         print 'Done.'
