@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     # Local apps, referenced via sqk.appname
     'sqk.celerytest',
     'sqk.datasets',
+    'sqk.coffeescript',
 ]
 
 # Place bcrypt first in the list, so it will be the default password hashing
