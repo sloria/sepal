@@ -36,6 +36,16 @@ class DatasetDisplay(DetailView):
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
+def get_data(request, pk):
+    dataset = Dataset.objects.get(pk=pk)
+    dataset.get_data()
+    if request.is_ajax():
+        mimetype = 'text/plain'
+        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+            mimetype = 'application/json'
+            return HttpResponse(dataset.get_json_data(), mimetype=mimetype)
+
+
 
 # class DatasetAddDatasource(FormView, SingleObjectMixin):
 #     '''View for adding data to a dataset.
@@ -213,16 +223,12 @@ class DatasetEdit(UpdateView):
 
 
 def update_visualization(request, pk):
-    if request.POST:
-        d = Dataset.objects.get(pk=pk)
-        d.get_data()
-        if request.is_ajax():
-            mimetype = 'text/plain'
-            if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
-                mimetype = 'application/json'
-            return HttpResponse(d.get_json_data(), mimetype=mimetype)
-    else:
-        return HttpResponse('Only POST requests accepted')
+    d = Dataset.objects.get(pk=pk)
+    d.get_data()
+    mimetype = 'text/plain'
+    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+        mimetype = 'application/json'
+    return HttpResponse(d.get_json_data(), mimetype=mimetype)
 
 
 def delete_dataset(request, pk):

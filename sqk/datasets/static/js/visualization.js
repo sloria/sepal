@@ -1,9 +1,8 @@
-<script>
 //////////////Visualization//////////////////////////
 // Create a namespace for visualization
 var Viz = {};
-// The scatter plot requires 2 dimensions to be selected 
-// before points can be plotted. 
+// The scatter plot requires 2 dimensions to be selected
+// before points can be plotted.
 // Selected dimensions are stored in the
 // these two global vars:
 var X_DIM, Y_DIM;
@@ -30,7 +29,7 @@ var svg;
 
 // Calculates the min & max values for each feature across all instances
 // @param - the instances to be visualized
-// @return - Object of the form: 
+// @return - Object of the form:
 //    {
 //      "domainMin": 0
 //      "domainMax": instances.length
@@ -79,18 +78,18 @@ function getMinAndMaxRangeForFeatures(instances) {
 // @param data - Object of the form:
 //   {
 //     "instances" : [
-//       {       
+//       {
 //         "feature_0" : "val_0",
 //         ...
 //         "feature_N" : "val_N",
 //         "label" : "label_val"
 //       }
-//     ], 
+//     ],
 //     "labels" : [
 //       "label_0",
 //       ...
 //       "label_N"
-//     ]  
+//     ]
 //   }
 // @return - Nothing.
 Viz.scatterPlot = function() {
@@ -139,22 +138,10 @@ Viz.scatterPlot = function() {
 
   // Set up x-axis tick marks
   svg.selectAll("g.axis").remove();
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("id", "x-axis")
-    .attr("transform", "translate(0," + (CHART_HEIGHT - PADDING) + ")")
-    .transition()
-    .duration(250)
-    .call(xAxis);
+  svg.append("g").attr("class", "x axis").attr("id", "x-axis").attr("transform", "translate(0," + (CHART_HEIGHT - PADDING) + ")").transition().duration(250).call(xAxis);
 
   // Set up y-axis tick marks
-  svg.append("g")
-    .attr("class", "y axis")
-    .attr("id", "y-axis")
-    .attr("transform", "translate(" + PADDING + ", 0)")
-    .transition()
-    .duration(250)
-    .call(yAxis);
+  svg.append("g").attr("class", "y axis").attr("id", "y-axis").attr("transform", "translate(" + PADDING + ", 0)").transition().duration(250).call(yAxis);
 
   // Label the x-axis
   svg.select("text.x-label").remove();
@@ -187,61 +174,36 @@ Viz.scatterPlot = function() {
 function updatePlotPoints(svg, data, xScale, yScale, xAxis, yAxis, categoryScale) {
   var plotPoints = svg.selectAll("circle").data(data.instances);
   // Update the plot points
-  plotPoints
-    .transition()
-    .duration(1000)
-    .delay(200)
-    .attr("cx", function(d, i) {
-        var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
-        return xScale(scaleInput);
-    })
-    .transition().duration(1000).delay(200)
-    .attr("cy", function(d, i) {
-        var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
-        return yScale(scaleInput);
-    })
-    .attr("r", PT_RADIUS).style("fill", function(d) {
-        return categoryScale(d.label);
-    });
+  plotPoints.transition().duration(1000).delay(200).attr("cx", function(d, i) {
+    var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+    return xScale(scaleInput);
+  }).transition().duration(1000).delay(200).attr("cy", function(d, i) {
+    var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+    return yScale(scaleInput);
+  }).attr("r", PT_RADIUS).style("fill", function(d) {
+    return categoryScale(d.label);
+  });
 
   // Handle new data points
-  plotPoints
-    .enter()
-    .append("circle")
-    .attr("cx", function(d, i) {
-        var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
-        return xScale(scaleInput);
-    })
-    .attr("cy", function(d, i) {
-        return CHART_HEIGHT * Math.random();
-    })
-    .transition()
-    .duration(2000)
-    .delay(200)
-    .attr("cy", function(d, i) {
-        var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
-        return yScale(scaleInput);
-    })
-    .attr("r", PT_RADIUS)
-    .style("fill", function(d) {
-        return categoryScale(d.label);
+  plotPoints.enter().append("circle").attr("cx", function(d, i) {
+    var scaleInput = (X_DIM.name !== "dummy") ? d[X_DIM.name] : i;
+    return xScale(scaleInput);
+  }).attr("cy", function(d, i) {
+    return CHART_HEIGHT * Math.random();
+  }).transition().duration(2000).delay(200).attr("cy", function(d, i) {
+    var scaleInput = (Y_DIM.name !== "dummy") ? d[Y_DIM.name] : 0;
+    return yScale(scaleInput);
+  }).attr("r", PT_RADIUS).style("fill", function(d) {
+    return categoryScale(d.label);
   });
 
   // If there's less data now, remove those plots points
   plotPoints.exit().remove();
 
   // Update X axis
-  svg.select('#x-axis')
-    .transition()
-    .duration(1000)
-    .delay(200)
-    .call(xAxis);
+  svg.select('#x-axis').transition().duration(1000).delay(200).call(xAxis);
 
-  svg.select('#y-axis')
-    .transition()
-    .duration(1000)
-    .delay(200)
-    .call(yAxis);
+  svg.select('#y-axis').transition().duration(1000).delay(200).call(yAxis);
 }
 
 
@@ -320,34 +282,31 @@ Viz.reloadData = function() {
       return true;
     },
     crossDomain: false,
-    cache: false,
+    cache: false
   });
-}
+};
 
 $(document).ready(function() {
-    $.ajax({
-        url: Dataset.updateVisualizationUrl,
-        type: "GET",
-        data: {
-          "pk": Dataset.id,
-        },
-        dataType: 'json',
-        success: function(data){
-            // If AJAX request is successful
-            // Load the data
-            Viz.data = data;
-            // create the svg element
-            svg = d3.select("div#chart")
-                .append("svg")
-                .attr("width", CHART_WIDTH)
-                .attr("height", CHART_HEIGHT);
-            // Draw the points and axes even though no dimensions
-            // have been selected yet                    
-            Viz.scatterPlot();
-        },
-        crossDomain: false,
-        cache: false,
-      });
+  $.ajax({
+    url: Dataset.updateVisualizationUrl,
+    type: "GET",
+    data: {
+      "pk": Dataset.id
+    },
+    dataType: 'json',
+    success: function(data) {
+      // If AJAX request is successful
+      // Load the data
+      Viz.data = data;
+      // create the svg element
+      svg = d3.select("div#chart").append("svg").attr("width", CHART_WIDTH).attr("height", CHART_HEIGHT);
+      // Draw the points and axes even though no dimensions
+      // have been selected yet
+      Viz.scatterPlot();
+    },
+    crossDomain: false,
+    cache: false
+  });
 
   // Update selected dimensions when a feature is selected
   $('li.feature-select.multicheck').on('click', function() {
@@ -360,4 +319,3 @@ $(document).ready(function() {
     }
   });
 });
-</script>
