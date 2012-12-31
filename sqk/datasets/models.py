@@ -77,7 +77,7 @@ class Dataset(models.Model):
                 self.data.append(inst.as_dict())
         return self.data
 
-    # TODO: wasteful to have both get_data and get_json_data. Find out how to make dataset serializable
+    # TODO: wasteful to have both get_data and get_json_data. Rethink
     def get_json_data(self):
         '''Returns a json representation of the instance data. Used for the D3 visualization.
         NOTE: Dataset.get_data() MUST be called before this method can be called.
@@ -118,6 +118,7 @@ class Dataset(models.Model):
                     # Add label to set of known labels if it hasn't yet been added
                     if label_value not in data['labels']:
                         data['labels'].append(label_value)
+                data_instance['pk'] = inst['pk']
                 data['instances'].append(data_instance)
         return json.dumps(data)
 
@@ -157,7 +158,7 @@ class Dataset(models.Model):
             'data': self.get_data(),
             'dataset': self,
             'is_empty': True,
-            'data_as_json': self.get_json_data()
+            # 'data_as_json': self.get_json_data()
         }
         if self.instances.exists():
             context['is_empty'] = False

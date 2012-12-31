@@ -28,11 +28,11 @@ var Dataset = {
 
     <div class="span10">
       {# Dataset control buttons #}
-          <div class="btn-toolbar ">
-            <div class="pull-right">
-              <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-remove icon-white"></i></a>
-            </div>
-          </div><!-- end btn-toolbar -->
+      <div class="btn-toolbar ">
+        <div class="pull-right">
+          <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-remove icon-white"></i></a>
+        </div>
+      </div><!-- end btn-toolbar -->
       <h2 class="page-title">
         <a href="#" id="dataset_name">{{ dataset.name }}</a>
       </h2>
@@ -64,10 +64,10 @@ var Dataset = {
         {# Visualization panel #}
         <div id="visualization" class="span5">
           <div class="block">
-            <div id="visualization-heading" class="block-heading" data-toggle="collapse" href="#chart">
+            <div id="visualization-heading" class="block-heading" href="#chart">
               Figure
             </div>
-            <div id="chart" class="collapse in"></div>
+            <div id="chart"></div>
           </div>
         </div><!-- end span4 -->
         {# Data table #}
@@ -91,6 +91,9 @@ var Dataset = {
 {# Include modal confirm dialogs #}
 {% include "datasets/confirm_delete_dataset.html" %}
 
+{% endblock content %}
+
+{% block scripts %}
 {# Include visualization script #}
 <script src='{{ STATIC_URL }}js/vis.js'></script>
 
@@ -102,5 +105,4 @@ var Dataset = {
 
 {# Include uploader libs #}
 {% include "uploader/multipleuploader_js.html" %}
-
-{% endblock content %}
+{% endblock scripts %}

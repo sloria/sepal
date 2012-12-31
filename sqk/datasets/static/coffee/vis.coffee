@@ -4,6 +4,7 @@ Visualization
 
 # Create a namespace for visualization
 window.Viz = {}
+Viz.dataset = {}
 # The scatter plot requires 2 dimensions to be selected
 # before points can be plotted.
 # Selected dimensions are stored in the
@@ -20,18 +21,264 @@ Y_DIM = {}
 X_DIM_INDEX = false
 Y_DIM_INDEX = false
 
-# Global constants
-LABEL_PROP_NAME = "label"
-CHART_WIDTH = 475
+### Constants ###
+LABEL_PROP_NAME = "label" # The name of the instance object property that is the label key
+ID_PROP_NAME = 'pk'  # The name of the instance object property that is the ID key
+CHART_WIDTH = 475  
 CHART_HEIGHT = 450
-PT_RADIUS = 4
-X_TICKS = 8
-Y_TICKS = 8
-PADDING = CHART_WIDTH / 6
-selectedDimensions = []
-window.Viz.data = {}
-svg = null
+PT_RADIUS = 4  # The radius of each data point
+X_AXIS_LABEL_OFFSET = 35 # More postive moves X-axis label lower
+Y_AXIS_LABEL_OFFSET = -50  # More negative moves Y-axis label to the left
+X_TICKS = 8  # Number of ticks on the x axis
+Y_TICKS = 8  # Number of ticks on the y axis
+TOOLTIP_SIZE = "12px" # The font size of tooltips
 
+selectedDimensions = []
+
+# D3 margin conventions
+margin = {top: 30, right: 50, bottom: 60, left: 70}
+width = CHART_WIDTH - margin.left - margin.right
+height = CHART_HEIGHT - margin.top - margin.bottom
+svg = d3.select("div#chart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", width + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(#{margin.left}, #{margin.top})")
+
+xScale = d3.scale.linear()
+            .rangeRound([0, width - 50])
+yScale = d3.scale.linear()
+            .rangeRound([height, 0])
+
+color = d3.scale.category10()
+
+
+xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .ticks(X_TICKS)
+
+yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("left")
+            .ticks(Y_TICKS)
+
+
+
+# Set up x-axis 
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0, #{ height } )")
+    .call(xAxis)
+    .append("text") # X axis label
+        .attr("class", "label")
+        .attr('x', width)
+        .attr('y', X_AXIS_LABEL_OFFSET)
+        .style("text-anchor", "end")
+        .text( () -> return "Select X" )
+
+
+# Set up y-axis 
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+    .append("text") # Y axis label
+        .attr('class', 'label')
+        .attr("transform", "rotate(-90)")
+        .attr('y', Y_AXIS_LABEL_OFFSET)
+        .attr('dy', ".71em")
+        .style("text-anchor", "end")
+        .text( () -> return "Select Y" )
+
+jQuery ->
+    ###
+    When the document is ready, send an AJAX request for the data
+    ### 
+
+    d3.json(Dataset.updateVisualizationUrl, (data) ->
+        Viz.dataset = data
+        drawScatterplot()
+    )
+
+    # Add click handler for selecting features
+    $('li.feature-select.multicheck').on('click', () ->
+        self = this
+        val = $(self).val() # The index value of the selected dimension
+        if $(self).hasClass('checked') 
+            addToSelectedDimensions(val)
+        else
+            removeFromSelectedDimensions(val)
+    )
+
+
+
+drawScatterplot = () ->
+    ###
+    The main method that draws the scatterPlot and handles updates (enters, transitions,
+    exits, etc.). This is called when first loading the plot as well as when there
+    are any changes.
+    ###
+
+    # This gets the min & max values for each feature across all instances
+    domainRangeObj = getMinAndMaxRangeForFeatures(Viz.dataset.instances)
+
+    X_DIM = if X_DIM_INDEX then domainRangeObj.features[parseInt(X_DIM_INDEX)] else {
+        "minVal": 0,
+        "maxVal": Viz.dataset.instances.length - 1,
+        "name": "dummy"
+    }
+
+    Y_DIM = if Y_DIM_INDEX then domainRangeObj.features[parseInt(Y_DIM_INDEX)] else {
+        "minVal": 0,
+        "maxVal": Viz.dataset.instances.length - 1,
+        "name": "dummy"
+    }
+
+    tooltip = d3.select("body").data(Viz.dataset.instances)
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .text( (d, i) ->
+            format = d3.format(".2f")
+            x = if X_DIM.name isnt "dummy" then format(d[X_DIM.name]) else i
+            xLabel = if X_DIM.name isnt "dummy" then X_DIM.name else "None"
+            y = if Y_DIM.name isnt "dummy" then format(d[Y_DIM.name]) else 0
+            yLabel = if Y_DIM.name isnt "dummy" then Y_DIM.name else "None"
+            return "#{xLabel}: #{x},\r\n #{yLabel}: #{y}"
+        )
+        .attr("class", "d3-tooltip")
+
+    # Update domains
+    xScale.domain([X_DIM.minVal, X_DIM.maxVal])
+
+    yScale.domain([Y_DIM.minVal, Y_DIM.maxVal])
+    color.domain(Viz.dataset.labels)
+
+    dots = svg.selectAll(".dot")
+        .data(Viz.dataset.instances)
+    # Handle new points
+    dots.enter().append("circle")
+        .attr('class', 'dot')
+        .attr('data-id', (d) -> return d['pk'] )
+        .attr('r', PT_RADIUS)
+        .on("mouseover", (d,i) -> mouseover(d,i))
+        .on("mousemove", () -> 
+            return tooltip.style("top", (event.pageY-10)+"px")
+                    .style("left",(event.pageX+10)+"px")
+        )
+        .on("mouseout", () -> 
+            return tooltip.style("visibility", "hidden") 
+        )
+        .attr("cx", (d, i) ->
+            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
+            d['x'] = scaleInput
+            return xScale(scaleInput)
+        )
+        .attr("cy", (d, i) -> return height * Math.random() )
+        .transition().duration(2000).delay(200)
+        .attr("cy", (d, i) ->
+            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
+            d['y'] = xScale(scaleInput)
+            return yScale(scaleInput)
+        )
+        .style("fill", (d) -> return color(d.label) )
+
+    # Remove points if instances are deleted
+    dots.exit()
+        .remove()
+
+    # Redraw legend
+    svg.selectAll(".legend").remove();
+    legend = svg.selectAll(".legend")
+        .data(color.domain())
+        .enter().append('g')
+        .attr('class', "legend")
+        .attr("transform", (d, i) -> return "translate(0, #{i * 20})" )
+
+    legend.append("rect")
+        .attr('x', width - 18)
+        .attr('width', 10)
+        .attr('height', 10)
+        .style('fill', color)
+
+    legend.append("text")
+        .attr("x", width - 24)
+        .attr('y', 5)
+        .attr('dy', 5)
+        .style('text-anchor', 'end')
+        .text( (d) -> return d )
+        
+
+    # Transition 1: Update axes
+    transition1 = svg.transition().duration(1000)
+    transition1.select('.x.axis')
+        .call(xAxis)
+    transition1.select('.y.axis')
+        .call(yAxis)
+    # Update axes labels
+    transition1.select('.x.axis .label')
+        .text( () -> return if X_DIM_INDEX then X_DIM.name else "Select X" )
+    transition1.select('.y.axis .label')
+        .text( () -> return if Y_DIM_INDEX then Y_DIM.name else "Select Y" )
+
+    # Update dot positions
+    transition1.selectAll('.dot')
+        .attr("cx", (d, i) -> 
+            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
+            d['x'] = scaleInput
+            return xScale(scaleInput)
+        )
+        .attr("cy", (d, i) ->
+            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
+            d['y'] = scaleInput
+            return yScale(scaleInput)
+        )
+        .style("fill", (d) -> return color(d.label) )
+
+    mouseover = (d,i) ->
+        ###
+        On mouseover, show tooltip (coordinates) and scroll to thed
+        datapoints corresponding table row using the oScroller API.
+        ###
+        # The selected instance object
+        inst = d3.select(d)[0][0]
+        instId = d['pk']
+        instRow = $("tr[data-id=#{instId}]")
+        # The table row number of the corresponding instance
+        # FIXME: table row of newly added intances will not be defined
+        window.instRowNumber = parseInt($("tr[data-id=#{instId}] .index").text() ) 
+        
+        format = d3.format(".2f")
+        # The tooltip text
+        content = "#{inst.label}: (#{format(inst.x)}, #{format(inst.y)})"
+        # Only include the row number if it is defined
+        content += " Row #{instRowNumber}" if not isNaN(instRowNumber)
+        tooltip.style("visibility", "visible")
+                .text( (d, i) ->
+                    return content
+                )
+                .style("font-size", TOOLTIP_SIZE)
+                
+        $('tr.success').removeClass('success');
+        # Scroll to the table row of the moused-over datapoint
+        setTimeout(() ->
+            oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber)
+            instRow.toggleClass("success")
+        , 600)
+
+
+
+Viz.reloadData = () ->
+    ###
+    Global method for updating the plot when data is added, changed, or removed.
+    Sends an AJAX request for the new data then
+    ###
+    d3.json(Dataset.updateVisualizationUrl, (data) -> 
+        Viz.dataset = data
+        drawScatterplot()
+    )
 
 getMinAndMaxRangeForFeatures = (instances) ->
     ###
@@ -57,7 +304,7 @@ getMinAndMaxRangeForFeatures = (instances) ->
     # First get property names
     propNames = []
     for prop, value of instances[0]
-        if prop isnt LABEL_PROP_NAME and instances[0].hasOwnProperty(prop)
+        if prop not in [LABEL_PROP_NAME, ID_PROP_NAME, 'x', 'y'] and instances[0].hasOwnProperty(prop)
             propNames.push(prop)
 
     # Now go through each instance and find the max and min values for each feature
@@ -76,216 +323,6 @@ getMinAndMaxRangeForFeatures = (instances) ->
         })
     return returnObj
 
-Viz.scatterPlot = () -> 
-    ###
-    Draws a new scatter plot based on supplied list of data
-    @param data - Object of the form:
-      {
-        "instances" : [
-          {
-            "feature_0" : "val_0",
-            ...
-            "feature_N" : "val_N",
-            "label" : "label_val"
-          }
-        ],
-        "labels" : [
-          "label_0",
-          ...
-          "label_N"
-        ]
-      }
-    @return - Nothing.
-    ###
-  
-    # This gets the min & max values for each feature across all instances
-    domainRangeObj = getMinAndMaxRangeForFeatures(window.Viz.data.instances)
-
-    X_DIM = if X_DIM_INDEX then domainRangeObj.features[parseInt(X_DIM_INDEX)] else {
-        "minVal": 0,
-        "maxVal": window.Viz.data.instances.length - 1,
-        "name": "dummy"
-    }
-    console.log "X_DIM_INDEX:"
-    console.log X_DIM_INDEX
-    console.log "X_DIM:"
-    console.log X_DIM
-
-
-    Y_DIM = if Y_DIM_INDEX then domainRangeObj.features[parseInt(Y_DIM_INDEX)] else {
-        "minVal": 0,
-        "maxVal": window.Viz.data.instances.length - 1,
-        "name": "dummy"
-    }
-    console.log "Y_DIM_INDEX:"
-    console.log Y_DIM_INDEX
-    console.log "Y_DIM:"
-    console.log Y_DIM
-
-    # set up scales
-    xScale = d3.scale.linear()
-                    .domain([X_DIM.minVal, X_DIM.maxVal])
-                    .range([PADDING, CHART_WIDTH - PADDING])
-
-    yScale = d3.scale.linear()
-                    .domain([Y_DIM.minVal, Y_DIM.maxVal])
-                    .range([CHART_HEIGHT - PADDING, PADDING])
-
-    categoryScale = d3.scale.ordinal()
-                    .domain(window.Viz.data.labels)
-                    .range(d3.scale.category10().range())
-
-    # set up axes
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(X_TICKS)
-
-    yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(Y_TICKS)
-
-    # Set up legend
-    legendXScale = d3.scale.linear().domain([0, window.Viz.data.labels.length - 1]).range([PADDING, (CHART_WIDTH / 1.3) - PADDING])
-
-    svg.selectAll("rect.legend-rect")
-        .data(Viz.data.labels).enter()
-        .append("rect")
-        .attr("class", "legend-rect")
-        .attr("x", (d, i) -> return legendXScale(i) )
-        .attr("y", (d, i) -> return PADDING / 3)
-        .attr("width", 10)
-        .attr("height", 10)
-        .style("fill", (d, i) -> return categoryScale(window.Viz.data.labels[i]) )
-
-    svg.selectAll("text.legend")
-        .data(Viz.data.labels)
-        .enter()
-        .append("text")
-        .attr("class", "legend")
-        .attr("x", (d, i) -> return legendXScale(i) + 15)
-        .attr("y", (d, i) -> return(PADDING / 3) + 10)
-        .text((d, i) -> return Viz.data.labels[i])
-        .style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif")
-        .style("font-size", "11px")
-
-    # Set up x-axis tick marks
-    svg.selectAll("g.axis")
-        .remove()
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("id", "x-axis")
-        .attr("transform", "translate(0, #{ CHART_HEIGHT - PADDING } )")
-        .transition().duration(250)
-        .call(xAxis)
-
-    # Set up y-axis tick marks
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("id", "y-axis")
-        .attr("transform", "translate( #{ PADDING }, 0)")
-        .transition().duration(250)
-        .call(yAxis)
-
-    # Label the x-axis
-    svg.select("text.x-label")
-        .remove()
-    svg.append("text")
-        .attr("class", "x-label")
-        .attr("text-anchor", "end")
-        .attr("x", CHART_WIDTH - PADDING)
-        .attr("y", CHART_HEIGHT - (PADDING - 35))
-        .style("fill", "#000000")
-        .text( () -> return if X_DIM_INDEX then X_DIM.name else "Select X" )
-
-    # Label the y-axis
-    svg.select("text.y-label")
-        .remove()
-    svg.append("text")
-        .attr("class", "y-label")
-        .attr("text-anchor", "end")
-        .attr("y", (PADDING - 60))
-        .attr("dx", (PADDING * -1.1))
-        .attr("dy", ".75em")
-        .attr("transform", "rotate(-90)")
-        .style("fill", "#000000")
-        .text( () -> return if Y_DIM_INDEX then Y_DIM.name else "Select Y" )
-
-    # Call the main update method
-    updatePlotPoints(svg, window.Viz.data, xScale, yScale, xAxis, yAxis, categoryScale)
-    updateLegend(svg, window.Viz.data, legendXScale, categoryScale)
-
-updatePlotPoints = (svg, data, xScale, yScale, xAxis, yAxis, categoryScale) ->
-    ###
-    Main method which controls the points on the plot as selections
-    are made on the data table
-    ###
-    plotPoints = svg.selectAll("circle")
-                    .data(data.instances)
-
-
-    t0 = svg.transition().duration(1000).delay(250)
-    t0.selectAll('circle')
-        .attr("cx", (d, i) -> 
-            console.log "X_DIM.name: #{d[X_DIM.name]}"
-            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
-            return xScale(scaleInput)
-        )
-        .attr("cy", (d, i) ->
-            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
-            return yScale(scaleInput)
-        )
-        .attr("r", PT_RADIUS)
-        .style("fill", (d) -> return categoryScale(d.label) )
-
-
-    # Handle new data points
-    plotPoints
-        .enter()
-        .append("circle")
-        .attr("cx", (d, i) ->
-            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
-            return xScale(scaleInput)
-        )
-        .attr("cy", (d, i) -> return CHART_HEIGHT * Math.random() )
-        .transition().duration(2000).delay(200)
-        .attr("cy", (d, i) ->
-            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
-            return yScale(scaleInput)
-        )
-        .attr("r", PT_RADIUS)
-        .style("fill", (d) -> return categoryScale(d.label) )
-
-    # If there's less data now, remove those plots points
-    plotPoints.exit().remove()
-
-    # Update axes
-    svg.select('#x-axis')
-        .transition().duration(1000).delay(200)
-        .call(xAxis)
-
-    svg.select('#y-axis')
-        .transition().duration(1000).delay(200)
-        .call(yAxis)
-
-updateLegend = (svg, data, legendXScale, categoryScale) ->
-    ###
-    Updates the legend.
-    ###
-    legendText = svg.selectAll("text.legend").data(data.labels)
-        
-    legendText.transition().duration(500).delay(0)
-        .attr("x", (d, i) -> return legendXScale(i) + 15 )
-        .attr("y", (d, i) -> return (PADDING / 3) + 10 )
-        .text( (d, i) -> return data.labels[i] )
-        
-    legendText.exit()
-        .remove()
-
-    legendRectangles = svg.selectAll("rect.legend-rect").data(data.labels)
-        
-    legendRectangles.transition().duration(500).delay(0)
-        .attr("x", (d, i) -> return legendXScale(i) )
-        .attr("y", (d, i) -> return PADDING / 3 )
-        
-    legendRectangles.exit()
-        .remove()
-
 addToSelectedDimensions = (dimension) ->
     ###
     A user has selected a dimension checkbox on the data table
@@ -302,7 +339,7 @@ addToSelectedDimensions = (dimension) ->
         $("li.feature-select.multicheck[value=#{ index[0] }]").find("span").removeClass("icon-ok")
     X_DIM_INDEX = selectedDimensions[0]
     Y_DIM_INDEX = selectedDimensions[1]
-    Viz.scatterPlot()
+    drawScatterplot()
 
 removeFromSelectedDimensions = (dimension) ->
     ###
@@ -321,54 +358,7 @@ removeFromSelectedDimensions = (dimension) ->
         # TODO: this code is replicated, re-think this
         X_DIM_INDEX = selectedDimensions[0]
         Y_DIM_INDEX = selectedDimensions[1]
-    Viz.scatterPlot()
+    drawScatterplot()
 
 
-Viz.reloadData = () ->
-    $.ajax({
-    url: Dataset.updateVisualizationUrl,
-    type: "POST",
-    data: {"pk": Dataset.id},
-    dataType: 'json',
-    success: (data) ->
-        Viz.data = data
-        Viz.scatterPlot()
-        return true
-    ,
-    crossDomain: false,
-    cache: false
-    })
-
-jQuery ->
-    $.ajax({
-    url: Dataset.updateVisualizationUrl,
-    type: "GET",
-    data: {"pk": Dataset.id},
-    dataType: 'json',
-    success: (data) ->
-        # If AJAX request is successful
-        # Load the data
-        window.Viz.data = data
-        # create the svg element
-        svg = d3.select("div#chart")
-                .append("svg")
-                .attr("width", CHART_WIDTH)
-                .attr("height", CHART_HEIGHT)
-        # Draw the points and axes even though no dimensions
-        # have been selected yet
-        Viz.scatterPlot()
-    ,
-    crossDomain: false,
-    cache: false
-    })
-
-    # Update selected dimensions when a feature is selected
-    $('li.feature-select.multicheck').on('click', () ->
-        self = this
-        val = $(self).val() # The index value of the selected dimension
-        if $(self).hasClass('checked') 
-            addToSelectedDimensions(val)
-        else
-            removeFromSelectedDimensions(val)
-    )
 

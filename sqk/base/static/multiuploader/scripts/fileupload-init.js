@@ -6,7 +6,7 @@
 $(function() {
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload().bind('fileuploaddone', function(e, data) {
-        console.log(data);
+        // If the upload is successful
         if(!data.result[0]['error']) {
             var instanceData = data.result[0]['instance_data'];
             var instanceId = String(data.result[0]['instance_id']);
@@ -15,9 +15,10 @@ $(function() {
             var oSettings = oTable.fnSettings();
             // Get the added row and add the 'success' class
             var newRow = oSettings.aoData[added[0]].nTr;
-            $(newRow).addClass('success')
+            $(newRow).addClass('success');
             // Attach the data-id attribute
-            .data('id', instanceId);
+            $(newRow).data('id', instanceId);
+            
             // Make label name editable
             $(".instance-label[data-id=" + instanceId.toString() + "]").editable({
                 type: 'text',
@@ -27,8 +28,7 @@ $(function() {
                 value: '',
                 title: 'Edit instance label',
                 success: function(data, new_label) {
-                    Viz.data = data;
-                    Viz.scatterPlot();
+                    Viz.reloadData();
                 }
             });
         }

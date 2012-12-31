@@ -27,7 +27,7 @@ function initializeTable() {
     "bScrollCollapse": true,
     // collapse table when filtering
     "bPaginate": false,
-    "bDeferRender": true,
+    "bDeferRender": false,
     "bStateSave": true,
     "oLanguage": {
       "sLengthMenu": " _MENU_ instances per page"
@@ -40,7 +40,7 @@ function initializeTable() {
         for(var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
           var nTr = oSettings.aoData[oSettings.aiDisplay[i]].nTr;
 
-          // Update the index column and do so without redrawing the table
+          // Update the index column without redrawing the table
           this.fnUpdate(i + 1, nTr, 0, false, false);
         }
       }
@@ -150,8 +150,7 @@ function deleteSelected() {
         oTable.fnDeleteRow(selected[index]);
       });
       // Update plot
-      Viz.data = data;
-      Viz.scatterPlot();
+      Viz.reloadData();
     },
     crossDomain: false,
     cache: false,
@@ -182,8 +181,7 @@ function updateSelectedLabels(new_label) {
         $(value).addClass('success');
       });
       // Update plot
-      Viz.data = data;
-      Viz.scatterPlot();
+      Viz.reloadData();
     },
     crossDomain: false,
     cache: false,

@@ -6,9 +6,11 @@ Visualization
 
 
 (function() {
-  var CHART_HEIGHT, CHART_WIDTH, LABEL_PROP_NAME, PADDING, PT_RADIUS, X_DIM, X_DIM_INDEX, X_TICKS, Y_DIM, Y_DIM_INDEX, Y_TICKS, addToSelectedDimensions, getMinAndMaxRangeForFeatures, removeFromSelectedDimensions, selectedDimensions, svg, updateLegend, updatePlotPoints;
+  var CHART_HEIGHT, CHART_WIDTH, ID_PROP_NAME, LABEL_PROP_NAME, PT_RADIUS, TOOLTIP_SIZE, X_AXIS_LABEL_OFFSET, X_DIM, X_DIM_INDEX, X_TICKS, Y_AXIS_LABEL_OFFSET, Y_DIM, Y_DIM_INDEX, Y_TICKS, addToSelectedDimensions, color, drawScatterplot, getMinAndMaxRangeForFeatures, height, margin, removeFromSelectedDimensions, selectedDimensions, svg, width, xAxis, xScale, yAxis, yScale;
 
   window.Viz = {};
+
+  Viz.dataset = {};
 
   X_DIM = {};
 
@@ -18,7 +20,13 @@ Visualization
 
   Y_DIM_INDEX = false;
 
+  /* Constants
+  */
+
+
   LABEL_PROP_NAME = "label";
+
+  ID_PROP_NAME = 'pk';
 
   CHART_WIDTH = 475;
 
@@ -26,17 +34,200 @@ Visualization
 
   PT_RADIUS = 4;
 
+  X_AXIS_LABEL_OFFSET = 35;
+
+  Y_AXIS_LABEL_OFFSET = -50;
+
   X_TICKS = 8;
 
   Y_TICKS = 8;
 
-  PADDING = CHART_WIDTH / 6;
+  TOOLTIP_SIZE = "12px";
 
   selectedDimensions = [];
 
-  window.Viz.data = {};
+  margin = {
+    top: 30,
+    right: 50,
+    bottom: 60,
+    left: 70
+  };
 
-  svg = null;
+  width = CHART_WIDTH - margin.left - margin.right;
+
+  height = CHART_HEIGHT - margin.top - margin.bottom;
+
+  svg = d3.select("div#chart").append("svg").attr("width", width + margin.left + margin.right).attr("height", width + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+
+  xScale = d3.scale.linear().rangeRound([0, width - 50]);
+
+  yScale = d3.scale.linear().rangeRound([height, 0]);
+
+  color = d3.scale.category10();
+
+  xAxis = d3.svg.axis().scale(xScale).orient('bottom').ticks(X_TICKS);
+
+  yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(Y_TICKS);
+
+  svg.append("g").attr("class", "x axis").attr("transform", "translate(0, " + height + " )").call(xAxis).append("text").attr("class", "label").attr('x', width).attr('y', X_AXIS_LABEL_OFFSET).style("text-anchor", "end").text(function() {
+    return "Select X";
+  });
+
+  svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr('class', 'label').attr("transform", "rotate(-90)").attr('y', Y_AXIS_LABEL_OFFSET).attr('dy', ".71em").style("text-anchor", "end").text(function() {
+    return "Select Y";
+  });
+
+  jQuery(function() {
+    /*
+        When the document is ready, send an AJAX request for the data
+    */
+    d3.json(Dataset.updateVisualizationUrl, function(data) {
+      Viz.dataset = data;
+      return drawScatterplot();
+    });
+    return $('li.feature-select.multicheck').on('click', function() {
+      var self, val;
+      self = this;
+      val = $(self).val();
+      if ($(self).hasClass('checked')) {
+        return addToSelectedDimensions(val);
+      } else {
+        return removeFromSelectedDimensions(val);
+      }
+    });
+  });
+
+  drawScatterplot = function() {
+    /*
+        The main method that draws the scatterPlot and handles updates (enters, transitions,
+        exits, etc.). This is called when first loading the plot as well as when there
+        are any changes.
+    */
+
+    var domainRangeObj, dots, legend, mouseover, tooltip, transition1;
+    domainRangeObj = getMinAndMaxRangeForFeatures(Viz.dataset.instances);
+    X_DIM = X_DIM_INDEX ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {
+      "minVal": 0,
+      "maxVal": Viz.dataset.instances.length - 1,
+      "name": "dummy"
+    };
+    Y_DIM = Y_DIM_INDEX ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {
+      "minVal": 0,
+      "maxVal": Viz.dataset.instances.length - 1,
+      "name": "dummy"
+    };
+    tooltip = d3.select("body").data(Viz.dataset.instances).append("div").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").text(function(d, i) {
+      var format, x, xLabel, y, yLabel;
+      format = d3.format(".2f");
+      x = X_DIM.name !== "dummy" ? format(d[X_DIM.name]) : i;
+      xLabel = X_DIM.name !== "dummy" ? X_DIM.name : "None";
+      y = Y_DIM.name !== "dummy" ? format(d[Y_DIM.name]) : 0;
+      yLabel = Y_DIM.name !== "dummy" ? Y_DIM.name : "None";
+      return "" + xLabel + ": " + x + ",\r\n " + yLabel + ": " + y;
+    }).attr("class", "d3-tooltip");
+    xScale.domain([X_DIM.minVal, X_DIM.maxVal]);
+    yScale.domain([Y_DIM.minVal, Y_DIM.maxVal]);
+    color.domain(Viz.dataset.labels);
+    dots = svg.selectAll(".dot").data(Viz.dataset.instances);
+    dots.enter().append("circle").attr('class', 'dot').attr('data-id', function(d) {
+      return d['pk'];
+    }).attr('r', PT_RADIUS).on("mouseover", function(d, i) {
+      return mouseover(d, i);
+    }).on("mousemove", function() {
+      return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
+    }).on("mouseout", function() {
+      return tooltip.style("visibility", "hidden");
+    }).attr("cx", function(d, i) {
+      var scaleInput;
+      scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
+      d['x'] = scaleInput;
+      return xScale(scaleInput);
+    }).attr("cy", function(d, i) {
+      return height * Math.random();
+    }).transition().duration(2000).delay(200).attr("cy", function(d, i) {
+      var scaleInput;
+      scaleInput = Y_DIM.name !== "dummy" ? d[Y_DIM.name] : 0;
+      d['y'] = xScale(scaleInput);
+      return yScale(scaleInput);
+    }).style("fill", function(d) {
+      return color(d.label);
+    });
+    dots.exit().remove();
+    svg.selectAll(".legend").remove();
+    legend = svg.selectAll(".legend").data(color.domain()).enter().append('g').attr('class', "legend").attr("transform", function(d, i) {
+      return "translate(0, " + (i * 20) + ")";
+    });
+    legend.append("rect").attr('x', width - 18).attr('width', 10).attr('height', 10).style('fill', color);
+    legend.append("text").attr("x", width - 24).attr('y', 5).attr('dy', 5).style('text-anchor', 'end').text(function(d) {
+      return d;
+    });
+    transition1 = svg.transition().duration(1000);
+    transition1.select('.x.axis').call(xAxis);
+    transition1.select('.y.axis').call(yAxis);
+    transition1.select('.x.axis .label').text(function() {
+      if (X_DIM_INDEX) {
+        return X_DIM.name;
+      } else {
+        return "Select X";
+      }
+    });
+    transition1.select('.y.axis .label').text(function() {
+      if (Y_DIM_INDEX) {
+        return Y_DIM.name;
+      } else {
+        return "Select Y";
+      }
+    });
+    transition1.selectAll('.dot').attr("cx", function(d, i) {
+      var scaleInput;
+      scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
+      d['x'] = scaleInput;
+      return xScale(scaleInput);
+    }).attr("cy", function(d, i) {
+      var scaleInput;
+      scaleInput = Y_DIM.name !== "dummy" ? d[Y_DIM.name] : 0;
+      d['y'] = scaleInput;
+      return yScale(scaleInput);
+    }).style("fill", function(d) {
+      return color(d.label);
+    });
+    return mouseover = function(d, i) {
+      /*
+              On mouseover, show tooltip (coordinates) and scroll to thed
+              datapoints corresponding table row using the oScroller API.
+      */
+
+      var content, format, inst, instId, instRow;
+      inst = d3.select(d)[0][0];
+      instId = d['pk'];
+      instRow = $("tr[data-id=" + instId + "]");
+      window.instRowNumber = parseInt($("tr[data-id=" + instId + "] .index").text());
+      format = d3.format(".2f");
+      content = "" + inst.label + ": (" + (format(inst.x)) + ", " + (format(inst.y)) + ")";
+      if (!isNaN(instRowNumber)) {
+        content += " Row " + instRowNumber;
+      }
+      tooltip.style("visibility", "visible").text(function(d, i) {
+        return content;
+      }).style("font-size", TOOLTIP_SIZE);
+      $('tr.success').removeClass('success');
+      return setTimeout(function() {
+        oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber);
+        return instRow.toggleClass("success");
+      }, 600);
+    };
+  };
+
+  Viz.reloadData = function() {
+    /*
+        Global method for updating the plot when data is added, changed, or removed.
+        Sends an AJAX request for the new data then
+    */
+    return d3.json(Dataset.updateVisualizationUrl, function(data) {
+      Viz.dataset = data;
+      return drawScatterplot();
+    });
+  };
 
   getMinAndMaxRangeForFeatures = function(instances) {
     /*
@@ -65,7 +256,7 @@ Visualization
     _ref = instances[0];
     for (prop in _ref) {
       value = _ref[prop];
-      if (prop !== LABEL_PROP_NAME && instances[0].hasOwnProperty(prop)) {
+      if ((prop !== LABEL_PROP_NAME && prop !== ID_PROP_NAME && prop !== 'x' && prop !== 'y') && instances[0].hasOwnProperty(prop)) {
         propNames.push(prop);
       }
     }
@@ -88,154 +279,6 @@ Visualization
     return returnObj;
   };
 
-  Viz.scatterPlot = function() {
-    /*
-        Draws a new scatter plot based on supplied list of data
-        @param data - Object of the form:
-          {
-            "instances" : [
-              {
-                "feature_0" : "val_0",
-                ...
-                "feature_N" : "val_N",
-                "label" : "label_val"
-              }
-            ],
-            "labels" : [
-              "label_0",
-              ...
-              "label_N"
-            ]
-          }
-        @return - Nothing.
-    */
-
-    var categoryScale, domainRangeObj, legendXScale, xAxis, xScale, yAxis, yScale;
-    domainRangeObj = getMinAndMaxRangeForFeatures(window.Viz.data.instances);
-    X_DIM = X_DIM_INDEX ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {
-      "minVal": 0,
-      "maxVal": window.Viz.data.instances.length - 1,
-      "name": "dummy"
-    };
-    console.log("X_DIM_INDEX:");
-    console.log(X_DIM_INDEX);
-    console.log("X_DIM:");
-    console.log(X_DIM);
-    Y_DIM = Y_DIM_INDEX ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {
-      "minVal": 0,
-      "maxVal": window.Viz.data.instances.length - 1,
-      "name": "dummy"
-    };
-    console.log("Y_DIM_INDEX:");
-    console.log(Y_DIM_INDEX);
-    console.log("Y_DIM:");
-    console.log(Y_DIM);
-    xScale = d3.scale.linear().domain([X_DIM.minVal, X_DIM.maxVal]).range([PADDING, CHART_WIDTH - PADDING]);
-    yScale = d3.scale.linear().domain([Y_DIM.minVal, Y_DIM.maxVal]).range([CHART_HEIGHT - PADDING, PADDING]);
-    categoryScale = d3.scale.ordinal().domain(window.Viz.data.labels).range(d3.scale.category10().range());
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(X_TICKS);
-    yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(Y_TICKS);
-    legendXScale = d3.scale.linear().domain([0, window.Viz.data.labels.length - 1]).range([PADDING, (CHART_WIDTH / 1.3) - PADDING]);
-    svg.selectAll("rect.legend-rect").data(Viz.data.labels).enter().append("rect").attr("class", "legend-rect").attr("x", function(d, i) {
-      return legendXScale(i);
-    }).attr("y", function(d, i) {
-      return PADDING / 3;
-    }).attr("width", 10).attr("height", 10).style("fill", function(d, i) {
-      return categoryScale(window.Viz.data.labels[i]);
-    });
-    svg.selectAll("text.legend").data(Viz.data.labels).enter().append("text").attr("class", "legend").attr("x", function(d, i) {
-      return legendXScale(i) + 15;
-    }).attr("y", function(d, i) {
-      return (PADDING / 3) + 10;
-    }).text(function(d, i) {
-      return Viz.data.labels[i];
-    }).style("font-family", "Helvetica Neue, Helvetica, Arial, sans-serif").style("font-size", "11px");
-    svg.selectAll("g.axis").remove();
-    svg.append("g").attr("class", "x axis").attr("id", "x-axis").attr("transform", "translate(0, " + (CHART_HEIGHT - PADDING) + " )").transition().duration(250).call(xAxis);
-    svg.append("g").attr("class", "y axis").attr("id", "y-axis").attr("transform", "translate( " + PADDING + ", 0)").transition().duration(250).call(yAxis);
-    svg.select("text.x-label").remove();
-    svg.append("text").attr("class", "x-label").attr("text-anchor", "end").attr("x", CHART_WIDTH - PADDING).attr("y", CHART_HEIGHT - (PADDING - 35)).style("fill", "#000000").text(function() {
-      if (X_DIM_INDEX) {
-        return X_DIM.name;
-      } else {
-        return "Select X";
-      }
-    });
-    svg.select("text.y-label").remove();
-    svg.append("text").attr("class", "y-label").attr("text-anchor", "end").attr("y", PADDING - 60).attr("dx", PADDING * -1.1).attr("dy", ".75em").attr("transform", "rotate(-90)").style("fill", "#000000").text(function() {
-      if (Y_DIM_INDEX) {
-        return Y_DIM.name;
-      } else {
-        return "Select Y";
-      }
-    });
-    updatePlotPoints(svg, window.Viz.data, xScale, yScale, xAxis, yAxis, categoryScale);
-    return updateLegend(svg, window.Viz.data, legendXScale, categoryScale);
-  };
-
-  updatePlotPoints = function(svg, data, xScale, yScale, xAxis, yAxis, categoryScale) {
-    /*
-        Main method which controls the points on the plot as selections
-        are made on the data table
-    */
-
-    var plotPoints, t0;
-    plotPoints = svg.selectAll("circle").data(data.instances);
-    t0 = svg.transition().duration(1000).delay(250);
-    t0.selectAll('circle').attr("cx", function(d, i) {
-      var scaleInput;
-      console.log("X_DIM.name: " + d[X_DIM.name]);
-      scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
-      return xScale(scaleInput);
-    }).attr("cy", function(d, i) {
-      var scaleInput;
-      scaleInput = Y_DIM.name !== "dummy" ? d[Y_DIM.name] : 0;
-      return yScale(scaleInput);
-    }).attr("r", PT_RADIUS).style("fill", function(d) {
-      return categoryScale(d.label);
-    });
-    plotPoints.enter().append("circle").attr("cx", function(d, i) {
-      var scaleInput;
-      scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
-      return xScale(scaleInput);
-    }).attr("cy", function(d, i) {
-      return CHART_HEIGHT * Math.random();
-    }).transition().duration(2000).delay(200).attr("cy", function(d, i) {
-      var scaleInput;
-      scaleInput = Y_DIM.name !== "dummy" ? d[Y_DIM.name] : 0;
-      return yScale(scaleInput);
-    }).attr("r", PT_RADIUS).style("fill", function(d) {
-      return categoryScale(d.label);
-    });
-    plotPoints.exit().remove();
-    svg.select('#x-axis').transition().duration(1000).delay(200).call(xAxis);
-    return svg.select('#y-axis').transition().duration(1000).delay(200).call(yAxis);
-  };
-
-  updateLegend = function(svg, data, legendXScale, categoryScale) {
-    /*
-        Updates the legend.
-    */
-
-    var legendRectangles, legendText;
-    legendText = svg.selectAll("text.legend").data(data.labels);
-    legendText.transition().duration(500).delay(0).attr("x", function(d, i) {
-      return legendXScale(i) + 15;
-    }).attr("y", function(d, i) {
-      return (PADDING / 3) + 10;
-    }).text(function(d, i) {
-      return data.labels[i];
-    });
-    legendText.exit().remove();
-    legendRectangles = svg.selectAll("rect.legend-rect").data(data.labels);
-    legendRectangles.transition().duration(500).delay(0).attr("x", function(d, i) {
-      return legendXScale(i);
-    }).attr("y", function(d, i) {
-      return PADDING / 3;
-    });
-    return legendRectangles.exit().remove();
-  };
-
   addToSelectedDimensions = function(dimension) {
     /*
         A user has selected a dimension checkbox on the data table
@@ -252,7 +295,7 @@ Visualization
     }
     X_DIM_INDEX = selectedDimensions[0];
     Y_DIM_INDEX = selectedDimensions[1];
-    return Viz.scatterPlot();
+    return drawScatterplot();
   };
 
   removeFromSelectedDimensions = function(dimension) {
@@ -272,53 +315,7 @@ Visualization
       X_DIM_INDEX = selectedDimensions[0];
       Y_DIM_INDEX = selectedDimensions[1];
     }
-    return Viz.scatterPlot();
+    return drawScatterplot();
   };
-
-  Viz.reloadData = function() {
-    return $.ajax({
-      url: Dataset.updateVisualizationUrl,
-      type: "POST",
-      data: {
-        "pk": Dataset.id
-      },
-      dataType: 'json',
-      success: function(data) {
-        Viz.data = data;
-        Viz.scatterPlot();
-        return true;
-      },
-      crossDomain: false,
-      cache: false
-    });
-  };
-
-  jQuery(function() {
-    $.ajax({
-      url: Dataset.updateVisualizationUrl,
-      type: "GET",
-      data: {
-        "pk": Dataset.id
-      },
-      dataType: 'json',
-      success: function(data) {
-        window.Viz.data = data;
-        svg = d3.select("div#chart").append("svg").attr("width", CHART_WIDTH).attr("height", CHART_HEIGHT);
-        return Viz.scatterPlot();
-      },
-      crossDomain: false,
-      cache: false
-    });
-    return $('li.feature-select.multicheck').on('click', function() {
-      var self, val;
-      self = this;
-      val = $(self).val();
-      if ($(self).hasClass('checked')) {
-        return addToSelectedDimensions(val);
-      } else {
-        return removeFromSelectedDimensions(val);
-      }
-    });
-  });
 
 }).call(this);

@@ -1,30 +1,7 @@
 #chart {
-	width: 320;
-	font-family: 'Asap'; sans-serif;
-	height: 65;
-}
-
-
-.geom_bar {
-	stroke-opacity: 1;
-	fill-opacity: 0.7;
-	stroke: black;
-	stroke-width: 1px;
-	fill: blue;
-}
-
-.xaxis line {
-	stroke: #000;
-	fill: none;
-}
-
-.xaxis path {
-	stroke: #000;
-	fill: none;
-}
-
-#bar_apple_type_count {
-	fill: MediumAquamarine;
+	font-family: Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    width: 475px;
 }
 
 .axis path,
@@ -34,13 +11,31 @@
   shape-rendering: crispEdges;
 }
 
-.axis text {
+/*.axis text {
   font-family: "Helvetica Neue, Helvetica, Arial, sans-serif";
-  font-size: 11px;
+  font-size: 13px;
+}*/
+
+.axis .label {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
 }
 
-.point-label {
-  "font-family", "sans-serif";
-  "font-size", "11px";
-  "fill", "red";
+.legend rect {
+  fill:white;
+  opacity:0.7;
+}
+
+.legend text{
+    font-size: 11px;
+}
+
+.dot {
+    opacity: 0.7;
+}
+
+.d3-tooltip {
+  font-size: 12px;
+  opacity: 0.8;
 }

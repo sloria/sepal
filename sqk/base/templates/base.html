@@ -74,7 +74,7 @@
 
 
   <!-- Other JavaScript at the bottom for fast page loading -->
-
+  {% block scripts %}{% endblock scripts %}
   <!-- scripts concatenated and minified via build script -->
   <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/plugins.js"></script>
