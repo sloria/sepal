@@ -100,14 +100,14 @@ table.DTTT_selectable tbody tr {
 	*cursor: hand;
 }
 
-div.DTTT .btn {
+/*div.DTTT .btn {
 	color: #333 !important;
 	font-size: 12px;
 }
 
 div.DTTT .btn:hover {
 	text-decoration: none !important;
-}
+}*/
 
 
 ul.DTTT_dropdown.dropdown-menu a {

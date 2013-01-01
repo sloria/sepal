@@ -71,17 +71,20 @@ function initializeTable() {
       // Select All
       {
         "sExtends": "select_all",
+        "sButtonClass": "btn",
         "sButtonText": '<i class="icon-check"></i> All'
       },
       // Select None
       {
         "sExtends": "select_none",
+        "sButtonClass": "btn",
         "sButtonText": '<i class="icon-check-empty"></i> None'
       },
 
       // Update label values
       {
         "sExtends": "text",
+        "sButtonClass": "btn",
         "sButtonText": '<i class="icon-beaker"></i> Change value',
         "fnClick": function(nButton, oConfig, oFlash) {
           var ret = prompt("Enter the new value  : ", "");
@@ -94,6 +97,7 @@ function initializeTable() {
       // Export csv
       {
         "sExtends": "csv",
+        "sButtonClass": "btn",
         "sButtonText": '<i class="icon-file"></i> Export'
       },
 
@@ -101,6 +105,7 @@ function initializeTable() {
       {
         "sExtends": "text",
         "sButtonText": '<i class="icon-trash"></i>',
+        "sButtonClass": "btn",
         "fnClick": function(nButton, oConfig, oFlash) {
           var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
           if(answer) {

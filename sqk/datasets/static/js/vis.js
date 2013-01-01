@@ -83,8 +83,7 @@ Visualization
     */
     d3.json(Dataset.updateVisualizationUrl, function(data) {
       Viz.dataset = data;
-      addToSelectedDimensions(Math.round(Math.random() * Object.keys(Viz.dataset.instances[0]).length - 4));
-      return addToSelectedDimensions(Math.round(Math.random() * Object.keys(Viz.dataset.instances[0]).length - 4));
+      return drawScatterplot();
     });
     return $('li.feature-select.multicheck').on('click', function() {
       var self, val;
@@ -137,7 +136,6 @@ Visualization
     }).on("mousemove", function() {
       return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
     }).on("mouseout", function() {
-      clearTimeout(myTimeout);
       return tooltip.style("visibility", "hidden");
     }).attr("cx", function(d, i) {
       var scaleInput;
