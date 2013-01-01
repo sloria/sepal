@@ -26,6 +26,7 @@ $(document).ready(function() {
   /* Remove success highlighting if clicking off of rows */
   $('body').click(function() {
     $('.success').removeClass('success');
+    $('.selected').removeClass('selected');
   });
 
   /* Add click handler for showing/hiding viz span */

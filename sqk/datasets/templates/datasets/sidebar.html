@@ -1,14 +1,22 @@
 <div class="sidebar-nav" >
   {# Dashboard #}
-  <div class="nav-header" data-toggle="collapse" data-target="#dashboard-menu"><i class="icon-dashboard"></i>Dashboard</div>
-  <ul id="dashboard-menu" class="nav nav-list collapse in">
+  <div class="row-fluid m-fluid">
+  <div class="m-widget">  
+  <div class="nav-header m-widget-header" data-toggle="collapse" data-target="#dashboard-menu"><i class="icon-dashboard"></i> Dashboard</div>
+  <ul id="dashboard-menu" class="m-widget-body nav nav-list collapse in">
     <li><a data-target="#fileupload" href="#fileupload"><i class="icon-upload-alt"></i>Extract audio features</a></li>
     <li><a href="#" onClick="document.location.reload(true)"><i class="icon-refresh"></i> Refresh</a></li>
   </ul><!-- end Dashboard -->
+  </div>
+    
+  </div>
 
   {# Visualization #}
-  <div class="nav-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-bar-chart"></i>Visualization</div>
-  <ul id="visualization-menu" class="nav nav-list collapse in">
+
+  <div class="row-fluid m-fluid">
+  <div class="m-widget">
+  <div class="nav-header m-widget-header" data-toggle="collapse" data-target="#visualization-menu"><i class="icon-bar-chart"></i> Visualization</div>
+  <ul id="visualization-menu" class="m-widget-body nav nav-list collapse in">
     <li><a data-toggle="collapse" id="showHidePlot" href="#"><i class="icon-eye-open"></i>Show/Hide plot</a></li>
     <li>Features:</li>
     {% for feature in feature_objects %}
@@ -22,4 +30,7 @@
     </li>
     {% endfor %}
   </ul><!-- end Visualization -->
+  </div><!-- end m-widget -->
+    
+  </div>
 </div><!-- end sidebar-nav -->

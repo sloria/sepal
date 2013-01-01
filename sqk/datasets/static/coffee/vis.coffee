@@ -98,7 +98,9 @@ jQuery ->
 
     d3.json(Dataset.updateVisualizationUrl, (data) ->
         Viz.dataset = data
-        drawScatterplot()
+        addToSelectedDimensions Math.round Math.random() * Object.keys(Viz.dataset.instances[0]).length - 4
+        addToSelectedDimensions Math.round Math.random() * Object.keys(Viz.dataset.instances[0]).length - 4
+        # drawScatterplot()
     )
 
     # Add click handler for selecting features
@@ -168,7 +170,8 @@ drawScatterplot = () ->
             return tooltip.style("top", (event.pageY-10)+"px")
                     .style("left",(event.pageX+10)+"px")
         )
-        .on("mouseout", () -> 
+        .on("mouseout", () ->
+            clearTimeout(myTimeout); 
             return tooltip.style("visibility", "hidden") 
         )
         .attr("cx", (d, i) ->
@@ -266,7 +269,7 @@ drawScatterplot = () ->
         setTimeout(() ->
             oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber)
             instRow.toggleClass("selected")
-        , 600)
+        , 750)
 
 
 

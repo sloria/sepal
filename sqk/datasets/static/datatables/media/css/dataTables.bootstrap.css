@@ -82,17 +82,17 @@ div.dataTables_scrollFoot table {
  */
 .table tbody tr.active td,
 .table tbody tr.active th {
-	background-color: #c4e3f3;
+	background-color: #ff9900;
 }
 
 .table tbody tr.active:hover td,
 .table tbody tr.active:hover th {
-	background-color: #c4e3f3 !important;
+	background-color: #ff9900 !important;
 }
 
 .table-striped tbody tr.active:nth-child(odd) td,
 .table-striped tbody tr.active:nth-child(odd) th {
-	background-color: #c4e3f3;
+	background-color: #ff9900;
 }
 
 table.DTTT_selectable tbody tr {

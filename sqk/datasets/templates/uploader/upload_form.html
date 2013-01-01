@@ -1,9 +1,9 @@
 {% load url from future %}
 {% load verbatim %}
 <div id="fileupload">
-    <div class="block">
-        <div id="upload-heading" class="block-heading">Extract Features</div>
-        <div class="block-body">
+    <div class="m-widget">
+        <div id="upload-heading" class="m-widget-header"><h3>Extract Features</h3></div>
+        <div class="m-widget-body">
             <div id="upload-body">
               <form action="{% url 'datasets:upload' dataset.pk  %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
                 <div class="fileupload-buttonbar">

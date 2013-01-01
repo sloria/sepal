@@ -24,7 +24,7 @@ var Dataset = {
   <div class="row-fluid">
     <div class="span2">
       {% include "datasets/sidebar.html" %}
-    </div><!-- end span3 -->
+    </div><!-- end span2 -->
 
     <div class="span10">
       {# Dataset control buttons #}
@@ -33,24 +33,24 @@ var Dataset = {
           <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-remove icon-white"></i></a>
         </div>
       </div><!-- end btn-toolbar -->
+      
       <h2 class="page-title">
         <a href="#" id="dataset_name">{{ dataset.name }}</a>
       </h2>
 
 
       {# Information block #}
-      <div class="row-fluid">
-        <div class="block span12">
-          <div class="block-heading" data-toggle="collapse" href="#info">Information</div>
-          <div id="info" class="collapse in">
-            <table class="table">
+      <div class="row-fluid m-fluid">
+        <div class="m-widget span12">
+          <div id="info" class="m-widget-body collapse in">
+            <table class="table table-bordered">
               <tbody>
                 <tr>
-                  <th>Description</th>
+                  <th width="20">Description</th>
                   <td><a href="#" id="dataset_description">{{ dataset.description }}</a></td>
                 </tr>
                 <tr>
-                  <th>Species</th>
+                  <th width="20">Species</th>
                   <td class="species"><a href="#" id="dataset_species">{{ dataset.species }}</a></td>
                 </tr>
               </tbody>
@@ -60,14 +60,17 @@ var Dataset = {
       </div><!-- end Information row-fluid-->
 
       {# Visualization #}
-      <div class="row-fluid">
+      <div class="row-fluid m-fluid">
         {# Visualization panel #}
         <div id="visualization" class="span5">
-          <div class="block">
-            <div id="visualization-heading" class="block-heading" href="#chart">
-              Figure
+          <div class="m-widget">
+            <div id="visualization-heading" class="m-widget-header" href="#chart">
+              <h3>Figure</h3>
             </div>
-            <div id="chart"></div>
+            <div class="m-widget-body">
+              <div id="chart"></div>
+            </div>
+
           </div>
         </div><!-- end span4 -->
         {# Data table #}
@@ -82,7 +85,7 @@ var Dataset = {
         </div>
       </div><!-- end row-fluid -->
 
-      <div class="row-fluid">
+      <div class="row-fluid m-fluid">
         <div class="span12">{% include "uploader/upload_form.html" %}</div>
       </div>
     </div>
