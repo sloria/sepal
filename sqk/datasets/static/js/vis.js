@@ -210,10 +210,10 @@ Visualization
       tooltip.style("visibility", "visible").text(function(d, i) {
         return content;
       }).style("font-size", TOOLTIP_SIZE);
-      $('tr.success').removeClass('success');
+      $('tr.selected').removeClass('selected');
       return setTimeout(function() {
         oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber);
-        return instRow.toggleClass("success");
+        return instRow.toggleClass("selected");
       }, 600);
     };
   };

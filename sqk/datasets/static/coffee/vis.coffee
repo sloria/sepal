@@ -261,11 +261,11 @@ drawScatterplot = () ->
                 )
                 .style("font-size", TOOLTIP_SIZE)
                 
-        $('tr.success').removeClass('success');
+        $('tr.selected').removeClass('selected');
         # Scroll to the table row of the moused-over datapoint
         setTimeout(() ->
             oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber)
-            instRow.toggleClass("success")
+            instRow.toggleClass("selected")
         , 600)
 
 
