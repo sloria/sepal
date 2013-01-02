@@ -146,7 +146,6 @@ def multiple_uploader(request, pk):
         # converted to underscores on upload and result in a FileNoteFound error
         # TODO: this is a temporary fix
         if ' ' in f.name:
-            print 'made it in'
             error = 'invalidFileName'
 
         result = {'name': f.name,
@@ -160,7 +159,6 @@ def multiple_uploader(request, pk):
             response_data = simplejson.dumps([result])
             # return response to uploader with error
             # so it can display error message
-            print response_data
             return HttpResponse(response_data, mimetype='application/json')
 
         if f.content_type in ('audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'):
@@ -187,7 +185,6 @@ def multiple_uploader(request, pk):
         mimetype = 'text/plain'
         if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
             mimetype = 'application/json'
-        print response_data
         return HttpResponse(response_data, mimetype=mimetype)
     else:
         return HttpResponse('Only POST accepted')
@@ -335,7 +332,6 @@ def update_instances_labels(request, dataset_id, label_name_id):
     '''
     # TODO: Make URL and UI for this
     new_label_value = request.POST['new_label'].lower()
-    print new_label_value
     if request.is_ajax():
         instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]
         for id in instance_ids:

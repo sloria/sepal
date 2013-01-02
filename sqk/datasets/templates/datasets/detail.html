@@ -6,17 +6,8 @@
 {% block page_title %}sepal | {{ dataset.name }}{% endblock page_title %}
 {# Include DataTables base css and jss and plugins #}
 {% block static %}
-{% include "datasets/datatables_static.html" %}
+{% include "datasets/datatables_css.html" %}
 {% include "base/soundmanager_static.html" %}
-{% include "uploader/multipleuploader_style.html" %}
-<script>
-// create a JS Dataset object so that the Django context variables can
-// be accessed from external JS files
-var Dataset = {
-  'id': {{ dataset.pk }},
-  'updateVisualizationUrl': "{% url 'datasets:update_visualization' dataset.pk %}"
-}
-</script>
 {% endblock static %}
 
 {% block content %}
@@ -91,15 +82,24 @@ var Dataset = {
 {% endblock content %}
 
 {% block scripts %}
-{# Include visualization script #}
-<script src='{{ STATIC_URL }}js/vis.js'></script>
-
-{# Include script to initialize DataTable #}
-{% include "datasets/datatable_init.html" %}
+<script>
+// create a JS Dataset object so that the Django context variables can
+// be accessed from external JS files
+var Dataset = {
+  'id': {{ dataset.pk }},
+  'updateVisualizationUrl': "{% url 'datasets:update_visualization' dataset.pk %}"
+}
+</script>
 
 {# Include script to make fields editable #}
 {% include "datasets/dataset_editable.html" %}
 
-{# Include uploader libs #}
-{% include "uploader/multipleuploader_js.html" %}
+{# Datatables scripts #}
+{% include "datasets/datatables_js.html" %}
+
+{# Include script to initialize DataTable #}
+{% include "datasets/datatable_init.html" %}
+
+{# Include visualization script #}
+<script src='{{ STATIC_URL }}js/vis.js'></script>
 {% endblock scripts %}

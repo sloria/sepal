@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
   {# Datasets app styling #}
   <link rel="stylesheet" href="{{ STATIC_URL }}css/datasets.css">
+  {# Fileupload UI styling #}
+  <link rel="stylesheet" href="{{ STATIC_URL  }}multiuploader/css/jquery.fileupload-ui.css">
 
   {# Fonts #}
   <link href='http://fonts.googleapis.com/css?family=Droid+Serif|Droid+Sans' rel='stylesheet' type='text/css'>
@@ -42,9 +44,6 @@
   {# Include X-editable #}
   <link href="{{ STATIC_URL }}bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
   <script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.js"></script>
-
-  {# D3 #}
-  <script src="{{ STATIC_URL }}d3/d3.v3.min.js"></script>
 
   {# App-specific scripts #}
   <script src="{{ STATIC_URL }}js/script.js"></script>
@@ -74,10 +73,12 @@
 
 
   <!-- Other JavaScript at the bottom for fast page loading -->
-  {% block scripts %}{% endblock scripts %}
+  {# D3 #}
+  <script src="{{ STATIC_URL }}d3/d3.v3.min.js"></script>
   <!-- scripts concatenated and minified via build script -->
   <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/plugins.js"></script>
+  {% block scripts %}{% endblock scripts %}
   <!-- end scripts -->
 
   {# {% endblock %} #}
