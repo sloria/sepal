@@ -1,5 +1,21 @@
 {% load url from future %}
 {% load staticfiles %}
+
+{# DataTables #}
+<script type="text/javascript" src='{{ STATIC_URL }}datatables/media/js/jquery.dataTables.min.js'></script>
+
+{# TableTools #}
+<script type="text/javascript" src='{{ STATIC_URL }}datatables/extras/TableTools/media/js/TableTools.min.js'></script>
+
+<!-- FixedColumns -->
+<script type="text/javascript" src='{{ STATIC_URL }}datatables/extras/FixedColumns/media/js/FixedColumns.min.js.gz'></script>
+
+{# Scroller #}
+<script type="text/javascript" src='{{ STATIC_URL }}datatables/extras/Scroller/media/js/dataTables.scroller.min.js'></script>
+
+{# DataTables.net Bootstrap integration #}
+<script type="text/javascript" src="{{ STATIC_URL }}datatables/media/js/dataTables.bootstrap.js"></script>
+
 <script>
 
 /* GLOBAL CONSTANTS */
@@ -81,10 +97,10 @@ function initializeTable() {
         "sButtonText": '<i class="icon-check-empty"></i> None'
       },
 
-      // Update label values
+      // Change value
       {
         "sExtends": "text",
-        "sButtonClass": "btn",
+        "sButtonClass": "btn btn-yellow",
         "sButtonText": '<i class="icon-beaker"></i> Change value',
         "fnClick": function(nButton, oConfig, oFlash) {
           var ret = prompt("Enter the new value  : ", "");
@@ -97,7 +113,7 @@ function initializeTable() {
       // Export csv
       {
         "sExtends": "csv",
-        "sButtonClass": "btn",
+        "sButtonClass": "btn btn-yellow",
         "sButtonText": '<i class="icon-file"></i> Export'
       },
 
@@ -105,7 +121,7 @@ function initializeTable() {
       {
         "sExtends": "text",
         "sButtonText": '<i class="icon-trash"></i>',
-        "sButtonClass": "btn",
+        "sButtonClass": "btn btn-yellow",
         "fnClick": function(nButton, oConfig, oFlash) {
           var answer = confirm("Delete selected instances?\nWARNING: This operation is irreversible.")
           if(answer) {

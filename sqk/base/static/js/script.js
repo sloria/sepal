@@ -23,7 +23,7 @@ $(document).ready(function() {
      return false;
   });
 
-  /* Remove success highlighting if clicking off of rows */
+  /* Remove selected and highlighted rows when clicking off of table. */
   $('body').click(function() {
     $('.success').removeClass('success');
     $('.selected').removeClass('selected');

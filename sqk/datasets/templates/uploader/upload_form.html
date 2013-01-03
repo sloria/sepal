@@ -8,20 +8,19 @@
             <form action="{% url 'datasets:upload' dataset.pk  %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
                 <div class="row-fluid m-fluid fileupload-buttonbar">
                     <div class="span7">
-                        <span class="btn btn-primary btn-small fileinput-button">
+                        <span class="btn btn-blue btn-small fileinput-button">
                             <i class="icon-plus icon-white"></i>
-                            <span>Add files...</span>
                             <input type="file" name="files[]" multiple>
                         </span>
-                        <button type="submit" class="btn btn-success btn-small start">
+                        <button type="submit" class="btn btn-green btn-small start">
                             <i class="icon-upload icon-white"></i>
                             <span>Extract all</span>
                         </button>
-                        <button type="reset" class="btn btn-warning btn-small cancel">
+                        <button type="reset" class="btn btn-yellow btn-small cancel">
                             <i class="icon-ban-circle icon-white"></i>
                             <span>Cancel</span>
                         </button>
-                        <button type="button" class="btn btn-info btn-small delete">
+                        <button type="button" class="btn btn-yellow btn-small delete">
                             <i class="icon-remove icon-white"></i>
                             <span>Clear</span>
                         </button>

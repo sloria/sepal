@@ -81,18 +81,24 @@ div.dataTables_scrollFoot table {
  * TableTools styles
  */
 .table tbody tr.active td,
-.table tbody tr.active th {
-	background-color: #ff9900;
+.table tbody tr.active th,
+.table tbody tr.active a {
+	background-color: #006dcc;
+	color: white;
 }
 
 .table tbody tr.active:hover td,
-.table tbody tr.active:hover th {
-	background-color: #ff9900 !important;
+.table tbody tr.active:hover th,
+.table tbody tr.active:hover a {
+	background-color: #006dcc !important;
+	color: white;
 }
 
 .table-striped tbody tr.active:nth-child(odd) td,
-.table-striped tbody tr.active:nth-child(odd) th {
-	background-color: #ff9900;
+.table-striped tbody tr.active:nth-child(odd) th,
+.table-striped tbody tr.active:nth-child(odd) a {
+	background-color: #006dcc;
+	color: white;
 }
 
 table.DTTT_selectable tbody tr {

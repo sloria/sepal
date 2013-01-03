@@ -28,7 +28,7 @@ CHART_WIDTH = 475
 CHART_HEIGHT = 450
 PT_RADIUS = 4  # The radius of each data point
 X_AXIS_LABEL_OFFSET = 35 # More postive moves X-axis label lower
-Y_AXIS_LABEL_OFFSET = -50  # More negative moves Y-axis label to the left
+Y_AXIS_LABEL_OFFSET = -60  # More negative moves Y-axis label to the left
 X_TICKS = 8  # Number of ticks on the x axis
 Y_TICKS = 8  # Number of ticks on the y axis
 TOOLTIP_SIZE = "12px" # The font size of tooltips
@@ -53,7 +53,6 @@ yScale = d3.scale.linear()
 
 color = d3.scale.category10()
 
-
 xAxis = d3.svg.axis()
             .scale(xScale)
             .orient('bottom')
@@ -63,9 +62,6 @@ yAxis = d3.svg.axis()
             .scale(yScale)
             .orient("left")
             .ticks(Y_TICKS)
-
-
-
 # Set up x-axis 
 svg.append("g")
     .attr("class", "x axis")
@@ -135,20 +131,13 @@ drawScatterplot = () ->
         "name": "dummy"
     }
 
+    # Set up the tooltip
     tooltip = d3.select("body").data(Viz.dataset.instances)
         .append("div")
         .style("position", "absolute")
         .style("z-index", "10")
         .style("visibility", "hidden")
-        .text( (d, i) ->
-            format = d3.format(".2f")
-            x = if X_DIM.name isnt "dummy" then format(d[X_DIM.name]) else i
-            xLabel = if X_DIM.name isnt "dummy" then X_DIM.name else "None"
-            y = if Y_DIM.name isnt "dummy" then format(d[Y_DIM.name]) else 0
-            yLabel = if Y_DIM.name isnt "dummy" then Y_DIM.name else "None"
-            return "#{xLabel}: #{x},\r\n #{yLabel}: #{y}"
-        )
-        .attr("class", "d3-tooltip")
+        .attr("class", "nvtooltip")
 
     # Update domains
     xScale.domain([X_DIM.minVal, X_DIM.maxVal])
@@ -169,7 +158,7 @@ drawScatterplot = () ->
                     .style("left",(event.pageX+10)+"px")
         )
         .on("mouseout", () -> 
-            return tooltip.style("visibility", "hidden") 
+            return tooltip.style("visibility", "hidden")
         )
         .attr("cx", (d, i) ->
             scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
@@ -252,15 +241,16 @@ drawScatterplot = () ->
         
         format = d3.format(".2f")
         # The tooltip text
-        content = "#{inst.label}: (#{format(inst.x)}, #{format(inst.y)})"
+        content = "<p class=\"coordinates\"><span class=\"value\">" + 
+                    "[#{format(inst.x)}, #{format(inst.y)}]" + 
+                    "</span></p>" 
+        content += "<p>#{inst.label}"
+        content += " (Row #{instRowNumber})" if not isNaN(instRowNumber)
+        content += "</p>"           
         # Only include the row number if it is defined
-        content += " Row #{instRowNumber}" if not isNaN(instRowNumber)
-        tooltip.style("visibility", "visible")
-                .text( (d, i) ->
-                    return content
-                )
-                .style("font-size", TOOLTIP_SIZE)
-                
+        tooltip.style('visibility', "visible")
+                .html( () -> return content)
+
         $('tr.selected').removeClass('selected');
         # Scroll to the table row of the moused-over datapoint
         setTimeout(() ->

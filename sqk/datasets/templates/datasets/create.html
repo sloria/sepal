@@ -2,11 +2,13 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-    <div class="block">
-        <div class="block-heading">New Dataset</div>
-        {# TODO: form styling #}
-        <div class="center">
-            {% crispy form %}
+    <div class="m-widget">
+        <div class="m-widget-header"><h3>New Dataset<h3></div>
+        <div class="m-widget-body">
+            {# TODO: form styling #}
+            <div class="center">
+                {% crispy form %}
+            </div> 
         </div>
     </div>
 </div>

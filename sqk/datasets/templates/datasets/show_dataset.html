@@ -24,12 +24,6 @@
          });
           </script>
           {% endfor %}
-          {% comment %}
-            
-          <th colspan="{{ feature_names|length }}" rowspan="1">Audio features</th> 
-        </tr>
-        <tr> 
-          {% endcomment %}
           {% for feature_name in feature_names %}
           {% if feature_name == 'zcr' %}
           <th>{{ feature_name|upper }}</th>

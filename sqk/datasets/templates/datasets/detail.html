@@ -6,7 +6,6 @@
 {% block page_title %}sepal | {{ dataset.name }}{% endblock page_title %}
 {# Include DataTables base css and jss and plugins #}
 {% block static %}
-{% include "datasets/datatables_css.html" %}
 {% include "base/soundmanager_static.html" %}
 {% endblock static %}
 
@@ -21,7 +20,7 @@
       {# Dataset control buttons #}
       <div class="btn-toolbar ">
         <div class="pull-right">
-          <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-remove icon-white"></i></a>
+          <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-trash icon-white"></i></a>
         </div>
       </div><!-- end btn-toolbar -->
       
@@ -82,24 +81,21 @@
 {% endblock content %}
 
 {% block scripts %}
+
+{# create a JS Dataset object so that the Django context variables can
+be accessed from external JS files #}
 <script>
-// create a JS Dataset object so that the Django context variables can
-// be accessed from external JS files
 var Dataset = {
   'id': {{ dataset.pk }},
   'updateVisualizationUrl': "{% url 'datasets:update_visualization' dataset.pk %}"
 }
 </script>
+{# Include visualization script #}
+<script src='{{ STATIC_URL }}js/vis.js'></script>
+
+{# Include DataTables scripts #}
+{% include "datasets/datatable_init.html" %}
 
 {# Include script to make fields editable #}
 {% include "datasets/dataset_editable.html" %}
-
-{# Datatables scripts #}
-{% include "datasets/datatables_js.html" %}
-
-{# Include script to initialize DataTable #}
-{% include "datasets/datatable_init.html" %}
-
-{# Include visualization script #}
-<script src='{{ STATIC_URL }}js/vis.js'></script>
 {% endblock scripts %}

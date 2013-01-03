@@ -19,7 +19,9 @@ window.locale = {
             "acceptFileTypes": "Filetype not allowed",
             "maxNumberOfFiles": "Max number of files exceeded",
             "uploadedBytes": "Uploaded bytes exceed file size",
-            "emptyResult": "Empty file upload result"
+            "emptyResult": "Empty file upload result",
+            "fileAlreadyExists": "The file already exists in the dataset",
+            "invalidFileName": "Invalid file name. (NOTE: cannot contain spaces)"
         },
         "error": "Error",
         "start": "Start",

@@ -36,7 +36,7 @@ Visualization
 
   X_AXIS_LABEL_OFFSET = 35;
 
-  Y_AXIS_LABEL_OFFSET = -50;
+  Y_AXIS_LABEL_OFFSET = -60;
 
   X_TICKS = 8;
 
@@ -116,15 +116,7 @@ Visualization
       "maxVal": Viz.dataset.instances.length - 1,
       "name": "dummy"
     };
-    tooltip = d3.select("body").data(Viz.dataset.instances).append("div").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").text(function(d, i) {
-      var format, x, xLabel, y, yLabel;
-      format = d3.format(".2f");
-      x = X_DIM.name !== "dummy" ? format(d[X_DIM.name]) : i;
-      xLabel = X_DIM.name !== "dummy" ? X_DIM.name : "None";
-      y = Y_DIM.name !== "dummy" ? format(d[Y_DIM.name]) : 0;
-      yLabel = Y_DIM.name !== "dummy" ? Y_DIM.name : "None";
-      return "" + xLabel + ": " + x + ",\r\n " + yLabel + ": " + y;
-    }).attr("class", "d3-tooltip");
+    tooltip = d3.select("body").data(Viz.dataset.instances).append("div").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").attr("class", "nvtooltip");
     xScale.domain([X_DIM.minVal, X_DIM.maxVal]);
     yScale.domain([Y_DIM.minVal, Y_DIM.maxVal]);
     color.domain(Viz.dataset.labels);
@@ -203,13 +195,15 @@ Visualization
       instRow = $("tr[data-id=" + instId + "]");
       window.instRowNumber = parseInt($("tr[data-id=" + instId + "] .index").text());
       format = d3.format(".2f");
-      content = "" + inst.label + ": (" + (format(inst.x)) + ", " + (format(inst.y)) + ")";
+      content = "<p class=\"coordinates\"><span class=\"value\">" + ("[" + (format(inst.x)) + ", " + (format(inst.y)) + "]") + "</span></p>";
+      content += "<p>" + inst.label;
       if (!isNaN(instRowNumber)) {
-        content += " Row " + instRowNumber;
+        content += " (Row " + instRowNumber + ")";
       }
-      tooltip.style("visibility", "visible").text(function(d, i) {
+      content += "</p>";
+      tooltip.style('visibility', "visible").html(function() {
         return content;
-      }).style("font-size", TOOLTIP_SIZE);
+      });
       $('tr.selected').removeClass('selected');
       return setTimeout(function() {
         oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber);

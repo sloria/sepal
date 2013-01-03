@@ -13,6 +13,8 @@
 
    ========================================================================== */
 
-/*@import url('theme.css');*/
 @import url('figure.css');
-
+@import url('../datatables/media/css/jquery.dataTables.css');
+@import url('../datatables/extras/TableTools/media/css/TableTools.css');
+@import url('../datatables/extras/Scroller/media/css/dataTables.scroller.css');
+@import url('../datatables/media/css/dataTables.bootstrap.css');

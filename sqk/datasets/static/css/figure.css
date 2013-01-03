@@ -39,3 +39,39 @@
   font-size: 13px;
   opacity: 0.9;
 }
+
+/********************
+ * TOOLTIP CSS
+ */
+
+.nvtooltip {
+  position: absolute;
+  background-color: rgba(255,255,255,1);
+  padding: 10px;
+  border: 1px solid #ddd;
+
+  font-family: Arial;
+  font-size: 11px;
+
+  -moz-box-shadow: 4px 4px 12px rgba(0,0,0,.5);
+  -webkit-box-shadow: 4px 4px 12px rgba(0,0,0,.5);
+  box-shadow: 4px 4px 12px rgba(0,0,0,.5);
+
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+
+.nvtooltip .coordinates {
+  font-weight: bold;
+}
+
+.nvtooltip p {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.nvtooltip span {
+  display: inline-block;
+  margin: 2px 0;
+}
