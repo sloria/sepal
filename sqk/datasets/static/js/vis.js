@@ -104,7 +104,7 @@ Visualization
         are any changes.
     */
 
-    var domainRangeObj, dots, legend, mouseover, tooltip, transition1;
+    var click, domainRangeObj, dots, legend, mouseover, tooltip;
     domainRangeObj = getMinAndMaxRangeForFeatures(Viz.dataset.instances);
     X_DIM = X_DIM_INDEX ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {
       "minVal": 0,
@@ -120,7 +120,9 @@ Visualization
     xScale.domain([X_DIM.minVal, X_DIM.maxVal]);
     yScale.domain([Y_DIM.minVal, Y_DIM.maxVal]);
     color.domain(Viz.dataset.labels);
-    dots = svg.selectAll(".dot").data(Viz.dataset.instances);
+    dots = svg.selectAll(".dot").data(Viz.dataset.instances, function(d) {
+      return d['pk'];
+    });
     dots.enter().append("circle").attr('class', 'dot').attr('data-id', function(d) {
       return d['pk'];
     }).attr('r', PT_RADIUS).on("mouseover", function(d, i) {
@@ -129,6 +131,8 @@ Visualization
       return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
     }).on("mouseout", function() {
       return tooltip.style("visibility", "hidden");
+    }).on("click", function(d, i) {
+      return click(d, i);
     }).attr("cx", function(d, i) {
       var scaleInput;
       scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
@@ -144,33 +148,7 @@ Visualization
     }).style("fill", function(d) {
       return color(d.label);
     });
-    dots.exit().remove();
-    svg.selectAll(".legend").remove();
-    legend = svg.selectAll(".legend").data(color.domain()).enter().append('g').attr('class', "legend").attr("transform", function(d, i) {
-      return "translate(0, " + (i * 20) + ")";
-    });
-    legend.append("rect").attr('x', width - 18).attr('width', 10).attr('height', 10).style('fill', color);
-    legend.append("text").attr("x", width - 24).attr('y', 5).attr('dy', 5).style('text-anchor', 'end').text(function(d) {
-      return d;
-    });
-    transition1 = svg.transition().duration(1000);
-    transition1.select('.x.axis').call(xAxis);
-    transition1.select('.y.axis').call(yAxis);
-    transition1.select('.x.axis .label').text(function() {
-      if (X_DIM_INDEX) {
-        return X_DIM.name;
-      } else {
-        return "Select X";
-      }
-    });
-    transition1.select('.y.axis .label').text(function() {
-      if (Y_DIM_INDEX) {
-        return Y_DIM.name;
-      } else {
-        return "Select Y";
-      }
-    });
-    transition1.selectAll('.dot').attr("cx", function(d, i) {
+    dots.transition().duration(1000).attr("cx", function(d, i) {
       var scaleInput;
       scaleInput = X_DIM.name !== "dummy" ? d[X_DIM.name] : i;
       d['x'] = scaleInput;
@@ -183,17 +161,42 @@ Visualization
     }).style("fill", function(d) {
       return color(d.label);
     });
-    return mouseover = function(d, i) {
+    dots.exit().transition().duration(1000).attr("r", 0).remove();
+    svg.selectAll(".legend").remove();
+    legend = svg.selectAll(".legend").data(color.domain()).enter().append('g').attr('class', "legend").attr("transform", function(d, i) {
+      return "translate(0, " + (i * 20) + ")";
+    });
+    legend.append("rect").attr('x', width - 18).attr('width', 10).attr('height', 10).style('fill', color);
+    legend.append("text").attr("x", width - 24).attr('y', 5).attr('dy', 5).style('text-anchor', 'end').text(function(d) {
+      return d;
+    });
+    svg.select('.x.axis').transition().duration(1000).call(xAxis);
+    svg.select('.y.axis').transition().duration(1000).call(yAxis);
+    svg.select('.x.axis .label').transition().duration(1000).text(function() {
+      if (X_DIM_INDEX) {
+        return X_DIM.name;
+      } else {
+        return "Select X";
+      }
+    });
+    svg.select('.y.axis .label').transition().duration(1000).text(function() {
+      if (Y_DIM_INDEX) {
+        return Y_DIM.name;
+      } else {
+        return "Select Y";
+      }
+    });
+    mouseover = function(d, i) {
       /*
               On mouseover, show tooltip (coordinates) and scroll to thed
               datapoints corresponding table row using the oScroller API.
       */
 
-      var content, format, inst, instId, instRow;
+      var content, format, inst, instId, instRow, instRowNumber;
       inst = d3.select(d)[0][0];
       instId = d['pk'];
       instRow = $("tr[data-id=" + instId + "]");
-      window.instRowNumber = parseInt($("tr[data-id=" + instId + "] .index").text());
+      instRowNumber = parseInt($("tr[data-id=" + instId + "] .index").text());
       format = d3.format(".2f");
       content = "<p class=\"coordinates\"><span class=\"value\">" + ("[" + (format(inst.x)) + ", " + (format(inst.y)) + "]") + "</span></p>";
       content += "<p>" + inst.label;
@@ -209,6 +212,17 @@ Visualization
         oTable.fnSettings().oScroller.fnScrollToRow(instRowNumber);
         return instRow.toggleClass("selected");
       }, 750);
+    };
+    return click = function(d, i) {
+      /* On click, select the instance's table row using the oTable API.
+      */
+
+      var inst, instId, instRow;
+      inst = d3.select(d)[0][0];
+      instId = d['pk'];
+      instRow = $("tr[data-id=" + instId + "]")[1];
+      console.log(instRow);
+      return oTT.fnSelect(instRow);
     };
   };
 

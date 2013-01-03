@@ -20,7 +20,7 @@
       {# Dataset control buttons #}
       <div class="btn-toolbar ">
         <div class="pull-right">
-          <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-danger"><i class="icon-trash icon-white"></i></a>
+          <a id="delete_dataset_{{ dataset.pk }}" href="#delete_dataset_{{ dataset.pk }}_confirm" data-id="{{ dataset.pk }}" class="delete-confirm btn btn-red"><i class="icon-trash icon-white"></i></a>
         </div>
       </div><!-- end btn-toolbar -->
       
@@ -82,8 +82,7 @@
 
 {% block scripts %}
 
-{# create a JS Dataset object so that the Django context variables can
-be accessed from external JS files #}
+{# create a JS Dataset object so that the Django context variables can be accessed from external JS files #}
 <script>
 var Dataset = {
   'id': {{ dataset.pk }},

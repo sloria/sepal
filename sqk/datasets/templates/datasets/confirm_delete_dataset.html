@@ -8,14 +8,14 @@
     <p>WARNING: This operation is irreversible.</p>
   </div>
   <div class="modal-footer">
-    <a href="{% url 'datasets:delete_dataset' dataset.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'datasets:delete_dataset' dataset.pk %}" class="btn btn-red">Delete</a>
     <a href="#" data-dismiss="modal" class="btn">Cancel</a>
   </div>
 </div>
 
 <script>
 $('#delete_dataset_{{ dataset.pk }}').on('show', function() {
-  var $submit = $(this).find('.btn-danger'),
+  var $submit = $(this).find('.btn-red'),
       href = $submit.attr('href');
   $submit.attr('href', href.replace('pony', $(this).data('id')));
 });

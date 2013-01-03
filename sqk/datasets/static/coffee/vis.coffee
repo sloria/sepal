@@ -62,6 +62,7 @@ yAxis = d3.svg.axis()
             .scale(yScale)
             .orient("left")
             .ticks(Y_TICKS)
+
 # Set up x-axis 
 svg.append("g")
     .attr("class", "x axis")
@@ -132,7 +133,8 @@ drawScatterplot = () ->
     }
 
     # Set up the tooltip
-    tooltip = d3.select("body").data(Viz.dataset.instances)
+    tooltip = d3.select("body")
+        .data(Viz.dataset.instances)
         .append("div")
         .style("position", "absolute")
         .style("z-index", "10")
@@ -145,8 +147,10 @@ drawScatterplot = () ->
     yScale.domain([Y_DIM.minVal, Y_DIM.maxVal])
     color.domain(Viz.dataset.labels)
 
+    # Update selection of dots
     dots = svg.selectAll(".dot")
-        .data(Viz.dataset.instances)
+        .data(Viz.dataset.instances, (d) -> return d['pk'] )
+    
     # Handle new points
     dots.enter().append("circle")
         .attr('class', 'dot')
@@ -160,6 +164,7 @@ drawScatterplot = () ->
         .on("mouseout", () -> 
             return tooltip.style("visibility", "hidden")
         )
+        .on("click", (d, i) -> click(d,i) )
         .attr("cx", (d, i) ->
             scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
             d['x'] = scaleInput
@@ -174,8 +179,24 @@ drawScatterplot = () ->
         )
         .style("fill", (d) -> return color(d.label) )
 
+    dots.transition().duration(1000)
+        .attr("cx", (d, i) -> 
+            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
+            d['x'] = scaleInput
+            return xScale(scaleInput)
+        )
+        .attr("cy", (d, i) ->
+            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
+            d['y'] = scaleInput
+            return yScale(scaleInput)
+        )
+        .style("fill", (d) -> return color(d.label) )
+
+
     # Remove points if instances are deleted
     dots.exit()
+        .transition().duration(1000)
+        .attr("r", 0)
         .remove()
 
     # Redraw legend
@@ -199,32 +220,20 @@ drawScatterplot = () ->
         .style('text-anchor', 'end')
         .text( (d) -> return d )
         
-
-    # Transition 1: Update axes
-    transition1 = svg.transition().duration(1000)
-    transition1.select('.x.axis')
+    # Update axes
+    svg.select('.x.axis')
+        .transition().duration(1000)
         .call(xAxis)
-    transition1.select('.y.axis')
+    svg.select('.y.axis')
+        .transition().duration(1000)
         .call(yAxis)
     # Update axes labels
-    transition1.select('.x.axis .label')
+    svg.select('.x.axis .label')
+        .transition().duration(1000)
         .text( () -> return if X_DIM_INDEX then X_DIM.name else "Select X" )
-    transition1.select('.y.axis .label')
+    svg.select('.y.axis .label')
+        .transition().duration(1000)
         .text( () -> return if Y_DIM_INDEX then Y_DIM.name else "Select Y" )
-
-    # Update dot positions
-    transition1.selectAll('.dot')
-        .attr("cx", (d, i) -> 
-            scaleInput = if X_DIM.name isnt "dummy" then d[X_DIM.name] else i
-            d['x'] = scaleInput
-            return xScale(scaleInput)
-        )
-        .attr("cy", (d, i) ->
-            scaleInput = if Y_DIM.name isnt "dummy" then d[Y_DIM.name] else 0
-            d['y'] = scaleInput
-            return yScale(scaleInput)
-        )
-        .style("fill", (d) -> return color(d.label) )
 
     mouseover = (d,i) ->
         ###
@@ -237,7 +246,7 @@ drawScatterplot = () ->
         instRow = $("tr[data-id=#{instId}]")
         # The table row number of the corresponding instance
         # FIXME: table row of newly added intances will not be defined
-        window.instRowNumber = parseInt($("tr[data-id=#{instId}] .index").text() ) 
+        instRowNumber = parseInt($("tr[data-id=#{instId}] .index").text() ) 
         
         format = d3.format(".2f")
         # The tooltip text
@@ -258,6 +267,15 @@ drawScatterplot = () ->
             instRow.toggleClass("selected")
         , 750)
 
+    click = (d, i) ->
+        ### On click, select the instance's table row using the oTable API. ###
+        inst = d3.select(d)[0][0]
+        instId = d['pk']
+        # NOTE: The selection returns an array of two nodes due to the fixed columns
+        # Therefore, must select index 1 (the unfixed <tr> node)
+        instRow = $("tr[data-id=#{instId}]")[1]
+        console.log instRow
+        oTT.fnSelect(instRow)
 
 
 Viz.reloadData = () ->

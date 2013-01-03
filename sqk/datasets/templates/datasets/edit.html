@@ -2,9 +2,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-<h1 class="center">Edit Dataset</h1>
-<div class="well">
-{% crispy form %}
-</div>
+    <h1 class="center">Edit Dataset</h1>
+    <div class="well">
+        <div class="center">
+            {% crispy form %}
+            
+        </div>
+    </div>
 </div>
 {% endblock content %}
