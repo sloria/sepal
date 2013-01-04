@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <title>Test coverage report: sqk.datasets.views</title>
+    <style type="text/css" media="screen">
+      a
+      {
+        color: #3d707a;
+      }
+      
+      a:hover, a:active
+      {
+        color: #bf7d18;
+      }
+    
+      body 
+      {
+        font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        font-size: 13px;
+      }
+      
+      .nav 
+      {
+        font-size: 12px;
+        margin-left: 50px;
+      }
+
+      .ignored
+      {
+        color: #707070;
+      }
+
+      .executed 
+      {
+        color: #3d9900;
+      }
+
+      .missed 
+      {
+        color: red;
+        font-weight: bold;
+      }
+
+      .excluded 
+      {
+        color: #6090f0;
+        font-weight: lighter;
+      }
+    
+      #content-header 
+      {
+        font-size: 12px;
+        padding: 18px 0 18px 50px;
+      }
+
+      #content-header h1 
+      {
+        font-size: 16px;
+        margin: 10px 0 0 0;
+        color: #909090;
+      }
+      
+      #module-name
+      {
+        color: #583707;
+      }
+    
+      #content-header p
+      {
+        font-size: 13px;
+        margin: 0;
+        color: #909090;
+      }
+
+      #content-header .normal 
+      {
+        color: #609030;
+      }
+
+      #content-header .warning 
+      {
+        color: #d0a000;
+      }
+
+      #content-header .critical 
+      {
+        color: red;
+      }
+      
+      #source-listing 
+      {
+        margin-bottom: 24px;
+      }
+
+      #source-listing ol 
+      {
+        padding: 0 0 0 50px;
+        width: 90%;
+        font-family: monospace;
+        list-style-position: outside;
+      }
+
+      #source-listing ol li 
+      {
+        line-height: 18px;
+        font-size: small;
+      }
+        
+      #source-listing ol code 
+      {
+        padding:  0 .001em 0 0; /* Firefox doesn't render empty li's properly */
+        font-size: medium;
+        white-space: pre;
+      }
+   </style>
+  </head>
+
+  <body>
+
+<div class="nav">
+  <a href="sqk.datasets.templatetags.dataset_tags.html">sqk.datasets.templatetags.dataset_tags</a> &lt;&lt;
+  <a href="../index.html">index</a>
+  &gt;&gt; <a href="sqk.datasets.wsgi.html">sqk.datasets.wsgi</a>
+</div>
+
+<div id="content-header">
+  <h1>
+    <span id="module-name">sqk.datasets.views</span>:
+    230 total statements,
+    <span class="critical">0.0% covered</span>
+  </h1>
+  <p>Generated: Thu 2013-01-03 19:11 CST</p>
+  <p>Source file: /Users/sloria1/projects/django_projects/sqk/sqk/datasets/views.py</p>
+  <p>
+    Stats:
+    <span class="executed">0 executed</span>,
+    <span class="missed">218 missed</span>,
+    <span class="excluded">12 excluded</span>,
+    <span class="ignored">217 ignored</span> 
+  </p> 
+</div>
+
+<div id="source-listing">
+  <ol>
+    <li class="excluded"><code>import os</code></li>
+<li class="excluded"><code>from django.views.generic import View, ListView, DetailView, FormView, UpdateView, DeleteView</code></li>
+<li class="excluded"><code>from django.views.generic.detail import SingleObjectMixin</code></li>
+<li class="excluded"><code>from django.core.urlresolvers import reverse, reverse_lazy</code></li>
+<li class="excluded"><code>from django.conf import settings</code></li>
+<li class="excluded"><code>from django.shortcuts import get_object_or_404</code></li>
+<li class="excluded"><code>from django.utils import simplejson</code></li>
+<li class="excluded"><code>from django.http import HttpResponse, HttpResponseRedirect</code></li>
+<li class="excluded"><code>from django.views.decorators.csrf import ensure_csrf_cookie</code></li>
+<li class="excluded"><code>from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm</code></li>
+<li class="excluded"><code>from sqk.datasets.models import *</code></li>
+<li class="excluded"><code>from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>############## Dataset views ##################</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class DatasetList(ListView):</code></li>
+<li class="missed"><code>    model = Dataset</code></li>
+<li class="missed"><code>    queryset = Dataset.objects.order_by('-created_at')</code></li>
+<li class="missed"><code>    context_object_name = 'all_datasets'</code></li>
+<li class="missed"><code>    template_name = 'datasets/index.html'</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class DatasetDisplay(DetailView):</code></li>
+<li class="missed"><code>    model = Dataset</code></li>
+<li class="missed"><code>    context_object_name = 'dataset'</code></li>
+<li class="missed"><code>    template_name = 'datasets/detail.html'</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_query_set(self):</code></li>
+<li class="missed"><code>        return Dataset.objects.filter(pk=self.kwargs['pk'])</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_context_data(self, **kwargs):</code></li>
+<li class="missed"><code>        dataset = self.get_object()</code></li>
+<li class="missed"><code>        context = dataset.get_context()</code></li>
+<li class="missed"><code>        context['upload_form'] = DatasourceForm()</code></li>
+<li class="missed"><code>        context.update(**kwargs)</code></li>
+<li class="missed"><code>        return super(DatasetDisplay, self).get_context_data(**context)</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def get_data(request, pk):</code></li>
+<li class="missed"><code>    dataset = Dataset.objects.get(pk=pk)</code></li>
+<li class="missed"><code>    dataset.get_data()</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        mimetype = 'text/plain'</code></li>
+<li class="missed"><code>        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:</code></li>
+<li class="missed"><code>            mimetype = 'application/json'</code></li>
+<li class="missed"><code>            return HttpResponse(dataset.get_json_data(), mimetype=mimetype)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code># class DatasetAddDatasource(FormView, SingleObjectMixin):</code></li>
+<li class="ignored"><code>#     '''View for adding data to a dataset.</code></li>
+<li class="ignored"><code>#     '''</code></li>
+<li class="ignored"><code>#     model = Dataset</code></li>
+<li class="ignored"><code>#     form_class = DatasourceForm</code></li>
+<li class="ignored"><code>#     template_name = 'datasets/detail.html'</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>#     def get_context_data(self, **kwargs):</code></li>
+<li class="ignored"><code>#         dataset = self.get_object()</code></li>
+<li class="ignored"><code>#         print dataset</code></li>
+<li class="ignored"><code>#         context = dataset.get_context()</code></li>
+<li class="ignored"><code>#         context['upload_form'] = self.get_form(DatasourceForm)</code></li>
+<li class="ignored"><code>#         context.update(**kwargs)</code></li>
+<li class="ignored"><code>#         return super(DatasetAddDatasource, self).get_context_data(**context)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>#     def get_success_url(self):</code></li>
+<li class="ignored"><code>#         return reverse('datasets:detail', kwargs={'pk': self.object.pk})</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>#     def form_valid(self, form):</code></li>
+<li class="ignored"><code>#         self.object = self.get_object()</code></li>
+<li class="ignored"><code>#         if form.cleaned_data['uploaded_file']:</code></li>
+<li class="ignored"><code>#             f = form.cleaned_data['uploaded_file']</code></li>
+<li class="ignored"><code>#             print 'f in form_valid is type %s' % f.content_type</code></li>
+<li class="ignored"><code>#             # If user uploaded an audio file</code></li>
+<li class="ignored"><code>#             if f.content_type == 'audio/wav':</code></li>
+<li class="ignored"><code>#                 # Create new Audio object</code></li>
+<li class="ignored"><code>#                 # This uploads the file to media/audio</code></li>
+<li class="ignored"><code>#                 audio_obj = Audio(audio_file=f)</code></li>
+<li class="ignored"><code>#                 audio_obj.save()</code></li>
+<li class="ignored"><code>#                 if audio_obj:</code></li>
+<li class="ignored"><code>#                     # Create new instance and associate it with the audio file</code></li>
+<li class="ignored"><code>#                     instance = Instance(dataset=self.object)</code></li>
+<li class="ignored"><code>#                     instance.audio = audio_obj</code></li>
+<li class="ignored"><code>#                     instance.save()</code></li>
+<li class="ignored"><code>#                     extract_features(self.object.pk, instance.pk,</code></li>
+<li class="ignored"><code>#                         os.path.join(settings.MEDIA_ROOT, 'audio', f.name))</code></li>
+<li class="ignored"><code>#             # If user uploaded a csv file</code></li>
+<li class="ignored"><code>#             elif f.content_type == 'text/csv':</code></li>
+<li class="ignored"><code>#                 # Save file</code></li>
+<li class="ignored"><code>#                 handle_uploaded_file(f)</code></li>
+<li class="ignored"><code>#                 # Parse data and save to database</code></li>
+<li class="ignored"><code>#                 read_datasource(self.object,</code></li>
+<li class="ignored"><code>#                     os.path.join(settings.MEDIA_ROOT, 'data_sources', f.name))</code></li>
+<li class="ignored"><code>#         return super(DatasetAddDatasource, self).form_valid(form)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def multiple_uploader(request, pk):</code></li>
+<li class="ignored"><code>    '''View for handling file uploads with the jQuery multiple file upload widget.</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>    NOTE: must be a POST request.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    d = Dataset.objects.get(pk=pk)</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    options = {</code></li>
+<li class="ignored"><code>    # the maximum file size</code></li>
+<li class="ignored"><code>    "maxfilesize": 2 * 2 ** 20, # 2 Mb</code></li>
+<li class="ignored"><code>    # the minimum file size (must be in bytes)</code></li>
+<li class="ignored"><code>    "minfilesize": 1 * 2 ** 10, # 1 Kb</code></li>
+<li class="ignored"><code>    # the file types which are going to be allowed for upload</code></li>
+<li class="ignored"><code>    #   must be a mimetype</code></li>
+<li class="ignored"><code>    "acceptedformats": (</code></li>
+<li class="ignored"><code>        "audio/wav", 'audio/x-wav', 'audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'</code></li>
+<li class="ignored"><code>        )</code></li>
+<li class="ignored"><code>    }</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    if request.POST:</code></li>
+<li class="missed"><code>        if request.FILES == None:</code></li>
+<li class="missed"><code>            raise Http404("No objects uploaded")</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>        f = request.FILES[u'files[]']</code></li>
+<li class="missed"><code>        filtered_files = Audio.objects.filter(</code></li>
+<li class="ignored"><code>                                        instance__dataset=d).values_list(</code></li>
+<li class="ignored"><code>                                                                'audio_file', flat=True)</code></li>
+<li class="ignored"><code>        # the paths of files associated with this dataet</code></li>
+<li class="missed"><code>        filtered_paths = [os.path.join(settings.MEDIA_ROOT, file_url) for file_url in filtered_files]</code></li>
+<li class="ignored"><code>        # the path where the file would be uploaded to</code></li>
+<li class="missed"><code>        file_path = os.path.join(settings.MEDIA_ROOT, 'audio', f.name)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>        # initialize the error</code></li>
+<li class="ignored"><code>        # If error occurs, this will have the string error message so</code></li>
+<li class="ignored"><code>        # uploader can display the appropriate message</code></li>
+<li class="missed"><code>        error = False</code></li>
+<li class="ignored"><code>        # check against options for errors</code></li>
+<li class="ignored"><code>        # file size</code></li>
+<li class="missed"><code>        if f.size &gt; options["maxfilesize"]:</code></li>
+<li class="missed"><code>            error = "maxFileSize"</code></li>
+<li class="missed"><code>        if f.size &lt; options["minfilesize"]:</code></li>
+<li class="missed"><code>            error = "minFileSize"</code></li>
+<li class="ignored"><code>        # allowed file type</code></li>
+<li class="missed"><code>        if f.content_type not in options["acceptedformats"]:</code></li>
+<li class="missed"><code>            error = "acceptFileTypes"</code></li>
+<li class="ignored"><code>        # prevent uploading of duplicate files</code></li>
+<li class="ignored"><code>        # FIXME: doesn't work if after a file is deleted</code></li>
+<li class="missed"><code>        if file_path in filtered_paths:</code></li>
+<li class="missed"><code>            error = 'fileAlreadyExists'</code></li>
+<li class="ignored"><code>        # don't allow filenames with a space because these get</code></li>
+<li class="ignored"><code>        # converted to underscores on upload and result in a FileNoteFound error</code></li>
+<li class="ignored"><code>        # TODO: this is a temporary fix</code></li>
+<li class="missed"><code>        if ' ' in f.name:</code></li>
+<li class="missed"><code>            error = 'invalidFileName'</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>        result = {'name': f.name,</code></li>
+<li class="ignored"><code>               'size': f.size,</code></li>
+<li class="ignored"><code>               }</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>        if error:</code></li>
+<li class="ignored"><code>            # append error message</code></li>
+<li class="missed"><code>            result["error"] = error</code></li>
+<li class="ignored"><code>            # generate json</code></li>
+<li class="missed"><code>            response_data = simplejson.dumps([result])</code></li>
+<li class="ignored"><code>            # return response to uploader with error</code></li>
+<li class="ignored"><code>            # so it can display error message</code></li>
+<li class="missed"><code>            return HttpResponse(response_data, mimetype='application/json')</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>        if f.content_type in ('audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'):</code></li>
+<li class="ignored"><code>            # Create new Audio object</code></li>
+<li class="ignored"><code>            # This uploads the file to media/audio</code></li>
+<li class="missed"><code>            audio_obj = Audio(audio_file=f)</code></li>
+<li class="missed"><code>            audio_obj.save()</code></li>
+<li class="missed"><code>            if audio_obj:</code></li>
+<li class="ignored"><code>                # Create new instance and associate it with the audio file</code></li>
+<li class="missed"><code>                instance = Instance(dataset=d)</code></li>
+<li class="missed"><code>                instance.audio = audio_obj</code></li>
+<li class="missed"><code>                instance.save()</code></li>
+<li class="missed"><code>                extract_features(d.pk, instance.pk,</code></li>
+<li class="ignored"><code>                    os.path.join(settings.MEDIA_ROOT, 'audio', f.name))</code></li>
+<li class="missed"><code>                result['url'] = audio_obj.audio_file.url</code></li>
+<li class="ignored"><code>                # data that is dynamically added as a table row after the upload is finished</code></li>
+<li class="missed"><code>                result['instance_data'] = instance.as_table_row()</code></li>
+<li class="missed"><code>                result['instance_id'] = instance.pk</code></li>
+<li class="ignored"><code>                # Label name obj. NOTE: assumes one label per dataset</code></li>
+<li class="missed"><code>                label_name = instance.labels().keys()[0]</code></li>
+<li class="missed"><code>                result['edit_label_url'] = reverse('datasets:update_instance_label',</code></li>
+<li class="ignored"><code>                                                    args=(instance.dataset.pk, instance.pk, label_name.pk))</code></li>
+<li class="missed"><code>        response_data = simplejson.dumps([result])</code></li>
+<li class="missed"><code>        mimetype = 'text/plain'</code></li>
+<li class="missed"><code>        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:</code></li>
+<li class="missed"><code>            mimetype = 'application/json'</code></li>
+<li class="missed"><code>        return HttpResponse(response_data, mimetype=mimetype)</code></li>
+<li class="ignored"><code>    else:</code></li>
+<li class="missed"><code>        return HttpResponse('Only POST accepted')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class DatasetDetail(View):</code></li>
+<li class="ignored"><code>    '''The base dataset detail view. Handles both GET and POST requests</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    def get(self, request, *args, **kwargs):</code></li>
+<li class="missed"><code>        view = ensure_csrf_cookie(DatasetDisplay.as_view())</code></li>
+<li class="missed"><code>        return view(request, *args, **kwargs)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>    # def post(self, request, *args, **kwargs):</code></li>
+<li class="ignored"><code>    #     view = ensure_csrf_cookie(DatasetAddDatasource.as_view())</code></li>
+<li class="ignored"><code>    #     return view(request, *args, **kwargs)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class DatasetCreate(FormView):</code></li>
+<li class="missed"><code>    form_class = DatasetForm</code></li>
+<li class="missed"><code>    template_name = 'datasets/create.html'</code></li>
+<li class="missed"><code>    success_url = reverse_lazy('datasets:index')</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def form_valid(self, form):</code></li>
+<li class="missed"><code>        form.save()</code></li>
+<li class="missed"><code>        return super(DatasetCreate, self).form_valid(form)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class DatasetEdit(UpdateView):</code></li>
+<li class="missed"><code>    model = Dataset</code></li>
+<li class="missed"><code>    form_class = DatasetEditForm</code></li>
+<li class="missed"><code>    context_object_name = 'dataset'</code></li>
+<li class="missed"><code>    template_name = 'datasets/edit.html'</code></li>
+<li class="missed"><code>    success_url = reverse_lazy('datasets:index')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def update_visualization(request, pk):</code></li>
+<li class="missed"><code>    d = Dataset.objects.get(pk=pk)</code></li>
+<li class="missed"><code>    d.get_data()</code></li>
+<li class="missed"><code>    mimetype = 'text/plain'</code></li>
+<li class="missed"><code>    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:</code></li>
+<li class="missed"><code>        mimetype = 'application/json'</code></li>
+<li class="missed"><code>    return HttpResponse(d.get_json_data(), mimetype=mimetype)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def delete_dataset(request, pk):</code></li>
+<li class="ignored"><code>    '''View for deleting a dataset.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    dataset = Dataset.objects.get(pk=pk)</code></li>
+<li class="missed"><code>    dataset.delete()</code></li>
+<li class="missed"><code>    return HttpResponseRedirect(reverse('datasets:index'))</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>################ Instance views ####################</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class InstanceDetail(DetailView):</code></li>
+<li class="missed"><code>    model = Instance</code></li>
+<li class="missed"><code>    context_object_name = 'instance'</code></li>
+<li class="missed"><code>    template_name = 'instances/detail.html'</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def render_to_response(self, context):</code></li>
+<li class="missed"><code>        instance = self.get_object()</code></li>
+<li class="ignored"><code>        # Assume an instance is ready when it has &gt;= 1 feature</code></li>
+<li class="missed"><code>        ready = len(instance.features.all()) &gt;= 1</code></li>
+<li class="missed"><code>        if self.kwargs['format'] == 'json':</code></li>
+<li class="missed"><code>            return http.HttpResponse(json.dumps({'ready': ready}),  # TODO</code></li>
+<li class="ignored"><code>                                     content_type='application/json',</code></li>
+<li class="ignored"><code>                                     **httpresponse_kwargs)</code></li>
+<li class="ignored"><code>        else:</code></li>
+<li class="missed"><code>            return super(InstanceDetail, self).render_to_response(context)</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_query_set(self):</code></li>
+<li class="missed"><code>        dataset = get_object_or_404(Dataset,</code></li>
+<li class="ignored"><code>            pk=self.kwargs['dataset_id'])</code></li>
+<li class="missed"><code>        return Instance.objects.filter(dataset=dataset)</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_context_data(self, **kwargs):</code></li>
+<li class="missed"><code>        context = super(InstanceDetail, self).get_context_data(**kwargs)</code></li>
+<li class="ignored"><code>        # context['instance'] =  get_object_or_404(Instance,</code></li>
+<li class="ignored"><code>        #     pk=self.kwargs['pk'])</code></li>
+<li class="missed"><code>        context['dataset'] = self.get_object().dataset</code></li>
+<li class="missed"><code>        return context</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def instance_ready(request, dataset_id, instance_id):</code></li>
+<li class="ignored"><code>    '''View for checking if an instance is ready</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    message = {"ready": ''}</code></li>
+<li class="missed"><code>    inst = get_object_or_404(Instance, pk=instance_id)</code></li>
+<li class="missed"><code>    message['ready'] = inst.as_dict()['ready']</code></li>
+<li class="missed"><code>    json = simplejson.dumps(message)</code></li>
+<li class="missed"><code>    return HttpResponse(json, mimetype='application/json')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class InstanceRow(DetailView):</code></li>
+<li class="missed"><code>    model = Instance</code></li>
+<li class="missed"><code>    template_name = 'instances/instance_row.html'</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_query_set(self):</code></li>
+<li class="missed"><code>        dataset = get_object_or_404(Dataset,</code></li>
+<li class="ignored"><code>            pk=self.kwargs['dataset_id'])</code></li>
+<li class="missed"><code>        return Instance.objects.filter(dataset=dataset)</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_context_data(self, **kwargs):</code></li>
+<li class="missed"><code>        instance = self.get_object()</code></li>
+<li class="missed"><code>        context = super(InstanceDetail, self).get_context_data(**kwargs)</code></li>
+<li class="missed"><code>        context['inst'] = instance.as_dict()</code></li>
+<li class="missed"><code>        return context</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>class SingleInstanceDelete(DeleteView):</code></li>
+<li class="ignored"><code>    ''' View for deleting a single instance.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    model = Instance</code></li>
+<li class="missed"><code>    template_name = 'instances/delete.html'</code></li>
+<li class="missed"><code>    context_object_name = 'object'</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    def get_success_url(self):</code></li>
+<li class="missed"><code>        return reverse_lazy('datasets:detail',</code></li>
+<li class="ignored"><code>            kwargs={'pk': self.kwargs['dataset_id']})</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def delete_instances(request, dataset_id):</code></li>
+<li class="ignored"><code>    '''View for deleting selected (multiple) instances.</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>    Must be a POST request.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="ignored"><code>    # Get the ids of the selected instances</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]</code></li>
+<li class="missed"><code>        for id in instance_ids:</code></li>
+<li class="missed"><code>            inst_obj = Instance.objects.get(pk=id)</code></li>
+<li class="missed"><code>            inst_obj.delete()</code></li>
+<li class="missed"><code>        dataset = Dataset.objects.get(pk=dataset_id)</code></li>
+<li class="ignored"><code>        # TODO: Shouldn't have to get all data from the DB again.</code></li>
+<li class="missed"><code>        dataset.get_data()</code></li>
+<li class="missed"><code>        json_data = dataset.get_json_data()</code></li>
+<li class="missed"><code>        return HttpResponse(json_data, mimetype='application/json')</code></li>
+<li class="ignored"><code>    else:</code></li>
+<li class="missed"><code>        return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>def update_instances_labels(request, dataset_id, label_name_id):</code></li>
+<li class="ignored"><code>    '''View for updating the label values for selected instances.</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>    Must be a POST request.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="ignored"><code>    # TODO: Make URL and UI for this</code></li>
+<li class="missed"><code>    new_label_value = request.POST['new_label'].lower()</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]</code></li>
+<li class="missed"><code>        for id in instance_ids:</code></li>
+<li class="ignored"><code>            # Get the instance</code></li>
+<li class="missed"><code>            inst = Instance.objects.get(pk=id)</code></li>
+<li class="ignored"><code>            # Get the label_name</code></li>
+<li class="missed"><code>            label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name</code></li>
+<li class="ignored"><code>            # Replace the old label value with the new one</code></li>
+<li class="missed"><code>            old_label_value_obj = inst.label_values.get(label_name=label_name_obj)</code></li>
+<li class="missed"><code>            inst.label_values.remove(old_label_value_obj)</code></li>
+<li class="missed"><code>            new_label_value_obj, created = LabelValue.objects.get_or_create(</code></li>
+<li class="ignored"><code>                                            value=new_label_value,</code></li>
+<li class="ignored"><code>                                            label_name=label_name_obj)</code></li>
+<li class="missed"><code>            inst.label_values.add(new_label_value_obj)</code></li>
+<li class="missed"><code>        dataset = Dataset.objects.get(pk=dataset_id)</code></li>
+<li class="missed"><code>        dataset.get_data()</code></li>
+<li class="missed"><code>        json_data = dataset.get_json_data()</code></li>
+<li class="missed"><code>        return HttpResponse(json_data, mimetype='application/json')</code></li>
+<li class="ignored"><code>    else:</code></li>
+<li class="missed"><code>        return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>###################### X-editable views ##################</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>@ensure_csrf_cookie</code></li>
+<li class="ignored"><code>def update_name(request, dataset_id):</code></li>
+<li class="ignored"><code>    '''View for updating the dataset name using X-editable.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    message = {"name": ''}</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="ignored"><code>        # Save new Dataset name</code></li>
+<li class="missed"><code>        dataset = get_object_or_404(Dataset, pk=dataset_id)</code></li>
+<li class="missed"><code>        dataset.name = request.POST['value']</code></li>
+<li class="missed"><code>        dataset.save()</code></li>
+<li class="missed"><code>        message['name'] = request.POST['value']</code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>    json = simplejson.dumps(message)</code></li>
+<li class="missed"><code>    return HttpResponse(json, mimetype='application/json')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>@ensure_csrf_cookie</code></li>
+<li class="ignored"><code>def update_description(request, dataset_id):</code></li>
+<li class="ignored"><code>    '''View for updating the dataset description using X-editable.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    message = {"description": ''}</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        description = request.POST['value']</code></li>
+<li class="ignored"><code>        # Save new Dataset name</code></li>
+<li class="missed"><code>        dataset = get_object_or_404(Dataset, pk=dataset_id)</code></li>
+<li class="missed"><code>        dataset.description = description</code></li>
+<li class="missed"><code>        dataset.save()</code></li>
+<li class="missed"><code>        message['description'] = description</code></li>
+<li class="missed"><code>    json = simplejson.dumps(message)</code></li>
+<li class="missed"><code>    return HttpResponse(json, mimetype='application/json')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>@ensure_csrf_cookie</code></li>
+<li class="ignored"><code>def update_species(request, dataset_id):</code></li>
+<li class="ignored"><code>    '''View for updating the dataset description using X-editable.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    message = {"species": ''}</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        species = request.POST['value']</code></li>
+<li class="ignored"><code>        # Save new Dataset name</code></li>
+<li class="missed"><code>        dataset = get_object_or_404(Dataset, pk=dataset_id)</code></li>
+<li class="missed"><code>        dataset.species = species</code></li>
+<li class="missed"><code>        dataset.save()</code></li>
+<li class="missed"><code>        message['species'] = species</code></li>
+<li class="missed"><code>    json = simplejson.dumps(message)</code></li>
+<li class="missed"><code>    return HttpResponse(json, mimetype='application/json')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>@ensure_csrf_cookie</code></li>
+<li class="ignored"><code>def update_instance_label(request, dataset_id, instance_id, label_name_id):</code></li>
+<li class="ignored"><code>    '''View for updating an instance label name using X-editable.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        new_label_value = request.POST['value'].lower()  # e.g. u'bonded'</code></li>
+<li class="missed"><code>        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)  # the label name</code></li>
+<li class="ignored"><code>        # Get the instance</code></li>
+<li class="missed"><code>        inst = get_object_or_404(Instance, pk=instance_id)</code></li>
+<li class="ignored"><code>        # Replace the old label value with the new one</code></li>
+<li class="missed"><code>        old_label_value_obj = inst.label_values.get(label_name=label_name_obj)</code></li>
+<li class="missed"><code>        inst.label_values.remove(old_label_value_obj)</code></li>
+<li class="missed"><code>        new_label_value_obj, created = LabelValue.objects.get_or_create(</code></li>
+<li class="ignored"><code>                                        value=new_label_value,</code></li>
+<li class="ignored"><code>                                        label_name=label_name_obj)</code></li>
+<li class="missed"><code>        inst.label_values.add(new_label_value_obj)</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code>        # Serialize dataset</code></li>
+<li class="missed"><code>        dataset = Dataset.objects.get(pk=dataset_id)</code></li>
+<li class="missed"><code>        dataset.get_data()</code></li>
+<li class="missed"><code>        json_data = dataset.get_json_data()</code></li>
+<li class="missed"><code>        return HttpResponse(json_data, mimetype='application/json')</code></li>
+<li class="ignored"><code>    else:</code></li>
+<li class="missed"><code>        return HttpResponse('must be an ajax request')</code></li>
+<li class="ignored"><code></code></li>
+<li class="ignored"><code></code></li>
+<li class="missed"><code>@ensure_csrf_cookie</code></li>
+<li class="ignored"><code>def update_label_name(request, dataset_id, label_name_id):</code></li>
+<li class="ignored"><code>    '''View for updating a label name using X-editable.</code></li>
+<li class="ignored"><code>    '''</code></li>
+<li class="missed"><code>    message = {"name": ''}</code></li>
+<li class="missed"><code>    if request.is_ajax():</code></li>
+<li class="missed"><code>        new_label_name = request.POST['value']</code></li>
+<li class="missed"><code>        label_name_obj = get_object_or_404(LabelName, pk=label_name_id)</code></li>
+<li class="missed"><code>        label_name_obj.name = new_label_name</code></li>
+<li class="missed"><code>        label_name_obj.save()</code></li>
+<li class="missed"><code>        message['name'] = new_label_name</code></li>
+<li class="missed"><code>    json = simplejson.dumps(message)</code></li>
+<li class="missed"><code>    return HttpResponse(json, mimetype='application/json')</code></li>
+  </ol>
+</div>
+
+<div class="nav">
+  <a href="sqk.datasets.templatetags.dataset_tags.html">sqk.datasets.templatetags.dataset_tags</a> &lt;&lt;
+  <a href="../index.html">index</a>
+  &gt;&gt; <a href="sqk.datasets.wsgi.html">sqk.datasets.wsgi</a>
+</div>
+
+  </body>
+</html>
+

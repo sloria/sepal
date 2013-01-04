@@ -7,16 +7,19 @@
 Fabric
 
 # Documentation
-Sphinx
+# Sphinx
 
 # Testing
 nose
 mock
+selenium
 django-nose
 -e git://github.com/jbalogh/test-utils.git#egg=test-utils
 coverage
-pep8
-pylint
+django-coverage
+factory_boy
+watchdog
 
 # Shell
-ipython
+# ipython
+

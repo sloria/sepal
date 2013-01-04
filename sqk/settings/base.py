@@ -36,7 +36,7 @@ SITE_ID = 1
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'sqk.urls'
 
-INSTALLED_APPS = [
+EXTERNAL_APPS = [
 
     # Django contrib apps
     'django.contrib.auth',
@@ -62,7 +62,9 @@ INSTALLED_APPS = [
 
     # Database migrations
     'south',
+]
 
+INTERNAL_APPS = [
     # Application base, containing global templates.
     'sqk.base',
 
@@ -70,7 +72,12 @@ INSTALLED_APPS = [
     'sqk.celerytest',
     'sqk.datasets',
     'sqk.coffeescript',
+    
+    # Tests
+    'sqk.fts',  # Functional tests
 ]
+
+INSTALLED_APPS = EXTERNAL_APPS + INTERNAL_APPS
 
 # Place bcrypt first in the list, so it will be the default password hashing
 # mechanism
@@ -92,7 +99,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False
 
 ## Tests
-TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
+# TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.example.com/media/"

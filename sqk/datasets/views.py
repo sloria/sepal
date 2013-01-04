@@ -217,6 +217,7 @@ class DatasetEdit(UpdateView):
     form_class = DatasetEditForm
     context_object_name = 'dataset'
     template_name = 'datasets/edit.html'
+    success_url = reverse_lazy('datasets:index')
 
 
 def update_visualization(request, pk):
