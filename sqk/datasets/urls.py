@@ -40,21 +40,6 @@ urlpatterns = patterns('',
         update_instances_labels,
         name='update_instances_labels'),
 
-    # ex: /datasets/3/instances/452/
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)\.?(?P<format>\w+)?$',
-        InstanceDetail.as_view(),
-        name='instance_detail'),
-
-    # ex: /datasets/3/instances/452/ready.json
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<instance_id>\d+)/ready.json$',
-        instance_ready,
-        name='instance_ready'),
-
-    # ex: /datasets/3/instances/452/row/
-    url(r'^(?P<dataset_id>\d+)/instances/(?P<pk>\d+)/row/$',
-        InstanceRow.as_view(),
-        name='instance_row'),
-
     # ex: /datasets/3/update_visualization
     url(r'^(?P<pk>\d+)/update_visualization$', update_visualization,
         name='update_visualization'),

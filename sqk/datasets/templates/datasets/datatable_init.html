@@ -35,7 +35,7 @@ function initializeTable() {
   oTable = $('#dataset-table').dataTable({
     "sDom": 'T<"clear">lfrtipS',
     "aaSorting": [
-      [1, 'asc']
+    [1, 'asc']
     ],
     "sScrollY": "287px",
     // affects the height of the table
@@ -72,13 +72,14 @@ function initializeTable() {
       "aTargets": [PLAY_BUTTON_COLUMN, LAST_COLUMN]
     },
     // Make the date column wider so that it doesn't create 2 rows
-    {
-      "sWidth": '30%',
-      "aTargets": [FILE_COLUMN]
-    }, {
-      "sWidth": '40%',
-      "aTargets": [DATE_COLUMN]
-    }, ],
+    // {
+    //   "sWidth": '30%',
+    //   "aTargets": [FILE_COLUMN]
+    // }, {
+    //   "sWidth": '40%',
+    //   "aTargets": [DATE_COLUMN]
+    // }, 
+    ],
     "oTableTools": {
       "sSwfPath": "{{ STATIC_URL }}datatables/extras/TableTools/media/swf/copy_csv_xls.swf",
       "sRowSelect": "multi",

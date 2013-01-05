@@ -2,7 +2,7 @@ import os
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from sqk.datasets.tests.factories import DatasetFactory
+from sqk.datasets.tests.factories import *
 from nose.tools import *
 from sqk.datasets.models import *
 from glob import glob
@@ -128,7 +128,7 @@ class TestAUser(WebTest):
         audio_file = file(valid_file_path).read()
         form['files[]'] = self.valid_file_name, audio_file
         # She submits the upload form
-        res = form.submit('None')
+        form.submit('None')
         # a new instance has been created in the database
         assert_equal(len(Instance.objects.all()), 1)
         instance = Instance.objects.latest()
@@ -136,3 +136,28 @@ class TestAUser(WebTest):
         assert_equal(instance.audio.audio_file.name, u"audio/{}".format(self.valid_file_name))
         # the instance all feature values
         assert_equal(len(instance.values.all()), len(Feature.objects.all()))
+
+    def _upload_a_valid_file(self, dataset):
+        detail = self.app.get(reverse('datasets:detail', 
+                                    args=(dataset.pk,))
+                                    )
+        form = detail.forms['upload-form']
+        # She uploads a wav file
+        valid_file_path = os.path.join(
+                            os.path.abspath(os.path.dirname(__file__)),
+                            self.valid_file_name
+                        ) 
+        audio_file = file(valid_file_path).read()
+        form['files[]'] = self.valid_file_name, audio_file
+        # She submits the upload form
+        form.submit('None')
+
+    def test_sees_feature_buttons_on_the_detail_page(self):
+        # A dataset is created
+        dataset = DatasetFactory()
+        # A file has been uploaded to it
+        self._upload_a_valid_file(dataset)
+        # Rosie goes to the detail page
+        detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
+        # She sees feature names
+        detail.mustcontain('Duration (s)', 'Sample rate', 'ZCR (Hz)')

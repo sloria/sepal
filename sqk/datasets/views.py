@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
 from sqk.datasets.models import *
-from sqk.datasets.tasks import read_datasource, handle_uploaded_file, extract_features
+from sqk.datasets.tasks import handle_uploaded_file, extract_features
 
 ############## Dataset views ##################
 
@@ -240,61 +240,6 @@ def delete_dataset(request, pk):
 ################ Instance views ####################
 
 
-class InstanceDetail(DetailView):
-    model = Instance
-    context_object_name = 'instance'
-    template_name = 'instances/detail.html'
-
-    def render_to_response(self, context):
-        instance = self.get_object()
-        # Assume an instance is ready when it has >= 1 feature
-        ready = len(instance.features.all()) >= 1
-        if self.kwargs['format'] == 'json':
-            return http.HttpResponse(json.dumps({'ready': ready}),  # TODO
-                                     content_type='application/json',
-                                     **httpresponse_kwargs)
-        else:
-            return super(InstanceDetail, self).render_to_response(context)
-
-    def get_query_set(self):
-        dataset = get_object_or_404(Dataset,
-            pk=self.kwargs['dataset_id'])
-        return Instance.objects.filter(dataset=dataset)
-
-    def get_context_data(self, **kwargs):
-        context = super(InstanceDetail, self).get_context_data(**kwargs)
-        # context['instance'] =  get_object_or_404(Instance,
-        #     pk=self.kwargs['pk'])
-        context['dataset'] = self.get_object().dataset
-        return context
-
-
-def instance_ready(request, dataset_id, instance_id):
-    '''View for checking if an instance is ready
-    '''
-    message = {"ready": ''}
-    inst = get_object_or_404(Instance, pk=instance_id)
-    message['ready'] = inst.as_dict()['ready']
-    json = simplejson.dumps(message)
-    return HttpResponse(json, mimetype='application/json')
-
-
-class InstanceRow(DetailView):
-    model = Instance
-    template_name = 'instances/instance_row.html'
-
-    def get_query_set(self):
-        dataset = get_object_or_404(Dataset,
-            pk=self.kwargs['dataset_id'])
-        return Instance.objects.filter(dataset=dataset)
-
-    def get_context_data(self, **kwargs):
-        instance = self.get_object()
-        context = super(InstanceDetail, self).get_context_data(**kwargs)
-        context['inst'] = instance.as_dict()
-        return context
-
-
 class SingleInstanceDelete(DeleteView):
     ''' View for deleting a single instance.
     '''
@@ -332,7 +277,6 @@ def update_instances_labels(request, dataset_id, label_name_id):
 
     Must be a POST request.
     '''
-    # TODO: Make URL and UI for this
     new_label_value = request.POST['new_label'].lower()
     if request.is_ajax():
         instance_ids = [int(instance_id) for instance_id in request.POST.getlist('selected[]')]

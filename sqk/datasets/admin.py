@@ -13,6 +13,7 @@ class LabelValueInline(admin.TabularInline):
     model = LabelValue
     extra = 3
 
+
 class FeatureInstanceInline(admin.TabularInline):
     model = Feature.instances.through
     extra = 1
@@ -21,14 +22,16 @@ class FeatureInstanceInline(admin.TabularInline):
 class DatasetInline(admin.TabularInline):
     model = Dataset
 
+
 class DatasetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'description', 'species',]}),
-        ('Date information',{'fields': ['created_at'], 'classes': ['collapse']})
+        (None, {'fields': ['name', 'description', 'species', ]}),
+        ('Date information', {'fields': ['created_at'], 'classes': ['collapse']})
     ]
     list_display = ('name', 'created_at', 'description', 'pk')
-    inlines = [InstanceInline,]
+    inlines = [InstanceInline, ]
     search_fields = ['name']
+
 
 class InstanceAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -37,31 +40,35 @@ class InstanceAdmin(admin.ModelAdmin):
     list_display = ('dataset', 'pk', 'audio')
     inlines = [FeatureInstanceInline, FeatureValueInline]
 
+
 class AudioAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['audio_file', 'slug',]}),
+        (None, {'fields': ['audio_file', 'slug', ]}),
     ]
     list_display = ('audio_file', 'slug',)
 
+
 class FeatureAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name',]})
+        (None, {'fields': ['name', 'display_name', 'unit']})
     ]
-    list_display = ('name','pk')
-    inlines = [FeatureInstanceInline,]
+    list_display = ('name', 'display_name', 'unit', 'pk')
+    # inlines = [FeatureInstanceInline,]
+
 
 class LabelNameAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name']})
     ]
-    list_display = ('name','pk')
+    list_display = ('name', 'pk')
     inlines = [LabelValueInline]
+
 
 class LabelValueAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['value', 'label_name']})
     ]
-    list_display = ('value','pk')
+    list_display = ('value', 'pk')
     inlines = []
 
 admin.site.register(Dataset, DatasetAdmin)

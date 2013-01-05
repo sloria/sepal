@@ -7,7 +7,8 @@ import wave
 import contextlib
 from celery import task
 
-from models import *
+from sqk.datasets.models import *
+from sqk.datasets.utils import filter_by_key, find_dict_by_item
 
 
 @task()
@@ -18,95 +19,84 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
         return destination
-
-
-@task()
-def read_datasource(dataset, source_path, feature_row=0):
-    '''Parse a datasource (csv) and saves data to the database.
-
-    IMPORTANT: As of now, this method is for demo purposes. It assumes
-    that the the independent variable is in the last row.
-    '''
-    with open(source_path, 'r') as s:
-        # TODO: file type handling
-        data = csv.reader(s)
-        features = []  # List of feature names
-        feature_obj_list = []  # List of feature objects
-        label_name = None
-        for i, row in enumerate(data):
-            # Parse header
-            if i == feature_row:
-                for j in range(len(row) - 1):
-                    features.append(row[j].lower())
-                    f = None
-                    # Create feature if it doesn't exist
-                    if Feature.objects.filter(name=row[j].lower()).count() == 0:
-                        f = Feature.objects.create(name=row[j].lower())
-                    else:
-                        f = Feature.objects.filter().get(
-                            name=row[j].lower())
-                    feature_obj_list.append(f)
-
-                label_name = LabelName.objects.create(
-                    name=row[-1])
-            # Parse data
-            else:
-                # Create instance and add it to dataset
-                inst = Instance.objects.create(
-                    dataset=dataset)
-                for feature in feature_obj_list:
-                    inst.features.add(feature)
-                inst.save()
-                for v, value_str in enumerate(row):
-                    # Process datum
-                    try:
-                        val = float(value_str)
-                    except ValueError:
-                        # Ignore non-numerical data
-                        # TODO: Eventually accept non-numeric data
-                        continue
-                    feature = None
-                    feature = inst.features.get(name=features[v])
-                    v = FeatureValue.objects.create(value=val,
-                            feature=feature,
-                            instance=inst)
-
-                print row[-1]
-                # Create label value and add it to the label
-                label_value_obj, created = LabelValue.objects.get_or_create(
-                                            value=row[-1].lower(),
-                                            label_name=label_name)
-                inst.label_values.add(label_value_obj)
-                inst.save()
-
+        
 
 @task()
 def extract_features(dataset_id, instance_id, audiofile_path):
     dataset = Dataset.objects.get(pk=dataset_id)
     inst = Instance.objects.get(pk=instance_id)
+    
     n_frames, sample_rate, duration = 0, 0, 0
+    # Calculate the sample rate and duration
     with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:
         n_frames = audiofile.getnframes()
         sample_rate = audiofile.getframerate()
         duration = n_frames / float(sample_rate)
 
     # Format - {'Display name': 'name: Definition'}
-    FEATURES = {'Spectral Shape Characteristics': 'sss: SpectralShapeStatistics',
-                'Temporal Shape Characteristics': 'tss: TemporalShapeStatistics',
-                'ZCR': 'zcr: ZCR',
-                'Energy': 'energy: Energy',
-                'Loudness': 'loudness: Loudness',
-                'Spectral rolloff': 'spectral_rolloff: SpectralRolloff',
-                'Perceptual sharpness': 'perceptual_sharpness: PerceptualSharpness',
-                'Perceptual spread': 'perceptual_spread: PerceptualSpread',
-                'Duration': None,
-                'Sample rate': None}
+
+    FEATURES = [
+                    {'display_name': 'Spectral Shape Characteristics',
+                    'yaafe_name':  'sss',
+                    'yaafe_definition': 'SpectralShapeStatistics',
+                    'subfeatures': ['Spectral centroid', 'Spectral spread', 'Spectral kurtosis', 'Spectral skewness'] 
+                    },
+
+                    {'display_name': 'Temporal Shape Characteristics',
+                    'yaafe_name':  'tss',
+                    'yaafe_definition': 'TemporalShapeStatistics',
+                    'subfeatures': ['Temporal centroid', 'Temporal spread', 'Temporal kurtosis', 'Temporal skewness'] 
+                    },
+
+                    {'display_name': 'ZCR',
+                    'yaafe_name':  'zcr',
+                    'yaafe_definition': 'ZCR',
+                    'unit': 'Hz'
+                    },
+
+                    {'display_name': 'Energy',
+                    'yaafe_name':  'energy',
+                    'yaafe_definition': 'Energy',
+                    },
+
+                    {'display_name': 'Loudness',
+                    'yaafe_name':  'loudness',
+                    'yaafe_definition': 'Loudness',
+                    },
+
+                    {'display_name': 'Spectral rolloff',
+                    'yaafe_name':  'spectral_rolloff',
+                    'yaafe_definition': 'SpectralRolloff',
+                    },
+
+                    {'display_name': 'Perceptual sharpness',
+                    'yaafe_name':  'perceptual_sharpness',
+                    'yaafe_definition': 'PerceptualSharpness',
+                    },
+
+                    {'display_name': 'Perceptual spread',
+                    'yaafe_name': 'perceptual_spread',
+                    'yaafe_definition': 'PerceptualSpread',
+                    },
+
+                    {'display_name': 'Duration',
+                    'unit': 's',
+                    },
+
+                    {'display_name': 'Sample rate',
+                    'unit': 'Hz',
+                    }
+                ]
 
     # Add features to extract
     feature_plan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)
-    for feature_definition in FEATURES.values():
-        if feature_definition:  # Exclude duration and sample rate
-            feature_plan.addFeature(feature_definition)
+
+    for feature in FEATURES:
+        if 'yaafe_definition' in feature:
+            # YAAFE feature plans take definitions of the form: 'zcr: ZCR'
+            full_definition = feature['yaafe_name'] + ': ' + feature['yaafe_definition']
+            # Add the feature to the feature plan to be extracted
+            feature_plan.addFeature(full_definition)
     
     # Configure an Engine
     engine = yf.Engine()
@@ -117,37 +107,47 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     afp.processFile(engine, audiofile_path)
     # outputs dict format - {'Spectral centroid': [[2.33], [4.34],...[2.55]]}
     outputs = {}
-    
+
     # Read and store output arrays to outputs dict
-    for display_name, definition in FEATURES.iteritems():
-        if definition:  # ex: 'loudness'
-            output_name = definition.split(':')[0].strip()
-            if output_name == 'sss':  # Store separate spec shape stats
-                spec_shape_stats = engine.readOutput(output_name)
-                outputs['Spectral centroid'] = spec_shape_stats[:, 0]
-                outputs['Spectral spread'] = spec_shape_stats[:, 1]
-                outputs['Spectral skewness'] = spec_shape_stats[:, 2]
-                outputs['Spectral kurtosis'] = spec_shape_stats[:, 3]
-            elif output_name == 'tss':
-                temp_shape_stats = engine.readOutput(output_name)
-                outputs['Temporal centroid'] = temp_shape_stats[:, 0]
-                outputs['Temporal spread'] = temp_shape_stats[:, 1]
-                outputs['Temporal skewness'] = temp_shape_stats[:, 2]
-                outputs['Temporal kurtosis'] = temp_shape_stats[:, 3]
-            else:  # 1 dimensional data (1 X T array)
+    for feature in FEATURES:
+        if 'yaafe_definition' in feature:  # Exclude duration and sample rate
+            output_name = feature['yaafe_name']
+            # If the feature has subfeatures, e.g. Spec shape stats
+            if 'subfeatures' in feature:
+                full_output = engine.readOutput(output_name)
+                for i, subfeature_display_name in enumerate(feature['subfeatures']):
+                    outputs[subfeature_display_name] = full_output[:, i]
+            # If the feature has only 1 dimension(1 X T array)
+            else:
+                display_name = feature['display_name']
                 a = engine.readOutput(output_name)  # 2D array
+                # Transpose data to make it a 1D array
                 outputs[display_name] = a.transpose()[0]
+
 
     # Create YAAFE feature objects
     feature_obj_list = []
     for display_name in outputs.keys():
-        f, created = Feature.objects.get_or_create(name=display_name.lower())
+        feature = find_dict_by_item(('display_name', display_name), FEATURES)
+        f, created = Feature.objects.get_or_create(
+                        name=display_name.lower(), 
+                        display_name=display_name
+                    )
+        if feature and ('unit' in feature):
+            f.unit = feature['unit']
+            f.save()
         feature_obj_list.append(f)
 
     # Create Sample rate and Duration objects
     rate_obj, created = Feature.objects.get_or_create(name='sample rate')
+    if not rate_obj.unit:
+        rate_obj.unit = 'Hz'
+        rate_obj.save()
     feature_obj_list.append(rate_obj)
     duration_obj, created = Feature.objects.get_or_create(name='duration')
+    if not duration_obj.unit:
+        duration_obj.unit = 's'
+        duration_obj.save()
     feature_obj_list.append(duration_obj)
 
     # Associate features with instance

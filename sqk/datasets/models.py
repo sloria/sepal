@@ -107,7 +107,7 @@ class Dataset(models.Model):
                 # Feature-value pairs are ordered
                 data_instance = OrderedDict()
                 for i, value in enumerate(inst['values']):
-                    feature = features[i].capitalize()
+                    feature = features[i]
                     # "feature": "value"
                     data_instance[feature] = value
                 # NOTE: Assumes only 1 label_value per dataset (takes the first one)
@@ -227,7 +227,7 @@ class Instance(models.Model):
         >> inst.sorted_features()
         [u'zcr', u'spectral spread',]
         '''
-        return self.features.values_list('name', flat=True)
+        return self.features.values_list('display_name', flat=True)
 
     def feature_objects(self):
         '''Returns a list of feature objects associated with this instance.
@@ -320,9 +320,18 @@ class Feature(models.Model):
         null=True,
         related_name='features')
     name = models.CharField(unique=True, max_length=100)
+    display_name = models.CharField(max_length=100, default="")
+    unit = models.CharField(null=True, max_length=20)
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
+
+    def save(self, *args, **kwargs):
+        '''Default display name to capitalized name upon 
+        saving the object'''
+        if not self.display_name:
+            self.display_name = self.name.capitalize()
+        super(Feature, self).save(*args, **kwargs)
 
     class Meta: 
         ordering = ['name']

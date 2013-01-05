@@ -211,15 +211,23 @@ def deploy():
 
 
 @task
-def test(integration=1, selenium=0):
+def test(integration=1, functional=1, selenium=0):
     """
-    Your central command for running tests. Call it like so:
-        fab test
-        fab test:selenium=0
+    Your central command for running tests.
+    NOTE: integration and functional tests are included by default.
+    Selenium tests are not.
+
+    Call it like so:
+        >> fab test
+
+        To include selenium tests, 
+        >> fab test:selenium=1 
     """
     command = './manage.py test -v 2 --settings=sqk.settings.test_settings'
     if int(integration) == 0:
         command += " --exclude='integration_tests' "
+    if int(functional) == 0:
+        command += " --exclude='functional_tests' "
     if int(selenium) == 0:
         command += " --exclude='selenium_tests' "
     local(command)

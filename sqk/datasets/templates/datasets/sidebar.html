@@ -21,11 +21,7 @@
     <li>Features:</li>
     {% for feature in feature_objects %}
     <li class="feature-select multicheck" value="{{ forloop.counter0 }}" ><a href="#">
-      {% if feature.name == 'zcr' %}
-      {{ feature.name|upper }}
-      {% else %}
-      {{ feature.name|capfirst }}
-      {% endif %}
+      {{ feature.display_name }}
       <span class="pull-right"></span></a>
     </li>
     {% endfor %}

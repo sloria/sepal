@@ -24,12 +24,12 @@
          });
           </script>
           {% endfor %}
-          {% for feature_name in feature_names %}
-          {% if feature_name == 'zcr' %}
-          <th>{{ feature_name|upper }}</th>
-          {% else %}
-          <th>{{ feature_name|capfirst }}</th>
-          {% endif %}
+          {% for feature in feature_objects %}
+          <th>{{ feature.display_name }} 
+              {% if feature.unit %}
+              ({{ feature.unit }})
+              {% endif %}
+          </th>
           {% endfor %}
           <th>File</th>
           <th>Date added</th>
