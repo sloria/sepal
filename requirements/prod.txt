@@ -31,7 +31,7 @@ django-crispy-forms
 South
 
 # Numerical processing
-# numpy
+numpy
 # matplotlib
 
 # Various tidbits

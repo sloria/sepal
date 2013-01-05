@@ -2,9 +2,10 @@
 from django.test import TestCase
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from nose.tools import assert_equal, assert_in, assert_true
+from nose.tools import *
 from sqk.datasets.models import *
 from sqk.datasets.tests.factories import *
+from django.db import IntegrityError
 
 
 class DatasetTestCase(TestCase):
@@ -53,4 +54,13 @@ class FeatureTestCase(TestCase):
 
         assert_equal(len(feature.instances.all()), 2)
 
+    def test_name_uniqueness(self):
+        FeatureFactory(name='spectral centroid')
+
+        with self.assertRaises(IntegrityError):
+            FeatureFactory(name='spectral centroid')
+        
+    def test_display_name_set(self):
+        feature_1 = FeatureFactory(name="spectral centroid")
+        assert_equal(feature_1.display_name, "Spectral centroid")
     # TODO: test display_name attribute

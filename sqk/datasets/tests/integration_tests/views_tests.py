@@ -21,20 +21,22 @@ class DatasetListViewTest(TestCase):
     def test_view(self):
         response = self.client.get(reverse(self.get_view_name()))
         self.assertEqual(response.status_code, 200)
-    
-    def test_datasets_page_has_names_and_species(self):
-        response = self.client.get(reverse(self.get_view_name()))
-        self.assertTemplateUsed(response, 'datasets/index.html')
 
-        # check the datasets appear on the page
-        assert_in(self.dataset_1.name, response.content)
-        assert_in(self.dataset_1.species, response.content)
-        assert_in(self.dataset_1.description, response.content)
-        assert_in(self.dataset_2.name, response.content)
-        assert_in(self.dataset_2.species, response.content)
-        assert_in(self.dataset_2.description, response.content)
+class UpdateVisualizationViewTest(TestCase):
+    def setUp(self):
+        self.dataset = DatasetFactory()
 
+    def get_view_name(self):
+        return 'datasets:update_visualization'
 
+    def get_view_kwargs(self):
+        """
+        Similar to get_view_name. If the url args change, only need
+        to change this return value
+        """
+        return {'pk': self.dataset.pk}
 
-# TODO: test all views
-
+    def test_view(self):
+        response = self.client.get(reverse(self.get_view_name(),
+                                kwargs=self.get_view_kwargs()))
+        assert_equal(response.status_code, 200)

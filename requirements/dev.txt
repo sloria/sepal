@@ -11,8 +11,10 @@ Fabric
 
 # Testing
 nose
-mock
+# mock
 selenium
+webtest
+django-webtest
 django-nose
 -e git://github.com/jbalogh/test-utils.git#egg=test-utils
 coverage

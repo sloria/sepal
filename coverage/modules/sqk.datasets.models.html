@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">sqk.datasets.models</span>:
     144 total statements,
-    <span class="critical">45.9% covered</span>
+    <span class="warning">68.9% covered</span>
   </h1>
-  <p>Generated: Thu 2013-01-03 19:11 CST</p>
+  <p>Generated: Fri 2013-01-04 19:26 CST</p>
   <p>Source file: /Users/sloria1/projects/django_projects/sqk/sqk/datasets/models.py</p>
   <p>
     Stats:
-    <span class="executed">56 executed</span>,
-    <span class="missed">66 missed</span>,
+    <span class="executed">84 executed</span>,
+    <span class="missed">38 missed</span>,
     <span class="excluded">22 excluded</span>,
     <span class="ignored">202 ignored</span> 
   </p> 
@@ -214,13 +214,13 @@
 <li class="ignored"><code>         {'pk': 1426, 'values': [10.34, 2.4], 'labels': {'marital': 'unbonded,}},</code></li>
 <li class="ignored"><code>         ]</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        if self.instances.exists():</code></li>
+<li class="executed"><code>        if self.instances.exists():</code></li>
 <li class="missed"><code>            instances = self.instances.prefetch_related('values',</code></li>
 <li class="ignored"><code>                                                        'label_values__label_name',</code></li>
 <li class="ignored"><code>                                                        'audio')</code></li>
 <li class="missed"><code>            for inst in instances:</code></li>
 <li class="missed"><code>                self.data.append(inst.as_dict())</code></li>
-<li class="missed"><code>        return self.data</code></li>
+<li class="executed"><code>        return self.data</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # TODO: wasteful to have both get_data and get_json_data. Rethink</code></li>
 <li class="executed"><code>    def get_json_data(self):</code></li>
@@ -245,8 +245,8 @@
 <li class="ignored"><code>            ]</code></li>
 <li class="ignored"><code>        }</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        data = {'instances': [], 'labels': []}</code></li>
-<li class="missed"><code>        if self.instances.exists():</code></li>
+<li class="executed"><code>        data = {'instances': [], 'labels': []}</code></li>
+<li class="executed"><code>        if self.instances.exists():</code></li>
 <li class="missed"><code>            features = list(self.feature_names())  # list of unicode strings</code></li>
 <li class="missed"><code>            for inst in self.data:</code></li>
 <li class="ignored"><code>                # Feature-value pairs are ordered</code></li>
@@ -265,14 +265,14 @@
 <li class="missed"><code>                        data['labels'].append(label_value)</code></li>
 <li class="missed"><code>                data_instance['pk'] = inst['pk']</code></li>
 <li class="missed"><code>                data['instances'].append(data_instance)</code></li>
-<li class="missed"><code>        return json.dumps(data)</code></li>
+<li class="executed"><code>        return json.dumps(data)</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def labels(self):</code></li>
 <li class="ignored"><code>        '''Return a list of the LabelName objects associated with this dataset through its</code></li>
 <li class="ignored"><code>        instances.</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        if self.instances.exists():</code></li>
-<li class="missed"><code>            return self.instances.all()[0].labels().keys()</code></li>
+<li class="executed"><code>        if self.instances.exists():</code></li>
+<li class="executed"><code>            return self.instances.all()[0].labels().keys()</code></li>
 <li class="ignored"><code>        else:</code></li>
 <li class="missed"><code>            return False</code></li>
 <li class="ignored"><code></code></li>
@@ -299,13 +299,13 @@
 <li class="ignored"><code>            'label_name': 'Marital status'</code></li>
 <li class="ignored"><code>        }</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        context = {</code></li>
+<li class="executed"><code>        context = {</code></li>
 <li class="ignored"><code>            'data': self.get_data(),</code></li>
 <li class="ignored"><code>            'dataset': self,</code></li>
 <li class="ignored"><code>            'is_empty': True,</code></li>
 <li class="ignored"><code>            # 'data_as_json': self.get_json_data()</code></li>
 <li class="ignored"><code>        }</code></li>
-<li class="missed"><code>        if self.instances.exists():</code></li>
+<li class="executed"><code>        if self.instances.exists():</code></li>
 <li class="missed"><code>            context['is_empty'] = False</code></li>
 <li class="ignored"><code>            # feature_objects is a list of &lt;Feature&gt; objects</code></li>
 <li class="missed"><code>            context['feature_objects'] = list(self.instances.latest().feature_objects())</code></li>
@@ -318,7 +318,7 @@
 <li class="missed"><code>            if self.labels():</code></li>
 <li class="missed"><code>                context['label_name_id'] = self.labels()[0].id</code></li>
 <li class="missed"><code>                context['label_name'] = self.labels()[0].name</code></li>
-<li class="missed"><code>        return context</code></li>
+<li class="executed"><code>        return context</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    class Meta:</code></li>
 <li class="executed"><code>        get_latest_by = "created_at"</code></li>
@@ -340,8 +340,8 @@
 <li class="executed"><code>    def save(self, *args, **kwargs):</code></li>
 <li class="ignored"><code>        '''Update slug to audio_file name upon saving the object.</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        self.slug = self.audio_file.name</code></li>
-<li class="missed"><code>        super(Audio, self).save(*args, **kwargs)</code></li>
+<li class="executed"><code>        self.slug = self.audio_file.name</code></li>
+<li class="executed"><code>        super(Audio, self).save(*args, **kwargs)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>class Instance(models.Model):</code></li>
@@ -387,7 +387,7 @@
 <li class="ignored"><code>        &gt;&gt; inst.values_as_list()</code></li>
 <li class="ignored"><code>        [0.0458984375, 71.7224358880516]</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        return [v.value for v in self.values.all()]</code></li>
+<li class="executed"><code>        return [v.value for v in self.values.all()]</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def labels(self):</code></li>
 <li class="ignored"><code>        '''Returns a dict with label names as keys and label values as values.</code></li>
@@ -396,11 +396,11 @@
 <li class="ignored"><code>        &gt;&gt; inst.labels()</code></li>
 <li class="ignored"><code>        {&lt;LabelName: Marital status&gt;: &lt;LabelValue: unbonded&gt;}</code></li>
 <li class="ignored"><code>        '''</code></li>
-<li class="missed"><code>        labels = {}</code></li>
-<li class="missed"><code>        for label_value in self.label_values.all():</code></li>
-<li class="missed"><code>            label_name = label_value.label_name</code></li>
-<li class="missed"><code>            labels[label_name] = label_value</code></li>
-<li class="missed"><code>        return labels</code></li>
+<li class="executed"><code>        labels = {}</code></li>
+<li class="executed"><code>        for label_value in self.label_values.all():</code></li>
+<li class="executed"><code>            label_name = label_value.label_name</code></li>
+<li class="executed"><code>            labels[label_name] = label_value</code></li>
+<li class="executed"><code>        return labels</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    def as_dict(self):</code></li>
 <li class="ignored"><code>        '''Returns a dict representation of the instance. The dict is of the form:</code></li>
@@ -427,27 +427,27 @@
 <li class="executed"><code>    def as_table_row(self):</code></li>
 <li class="ignored"><code>        '''Returns an array containing data to be used for dynamic adding of a</code></li>
 <li class="ignored"><code>        table row DOM element'''</code></li>
-<li class="missed"><code>        play_audio_button = '&lt;a href="%s" class="sm2_button"&gt;%s&lt;/a&gt;' % (self.audio.audio_file.url,</code></li>
+<li class="executed"><code>        play_audio_button = '&lt;a href="%s" class="sm2_button"&gt;%s&lt;/a&gt;' % (self.audio.audio_file.url,</code></li>
 <li class="ignored"><code>                                                                            self.pk)</code></li>
 <li class="ignored"><code>        # NOTE: assumes only 1 label per dataset</code></li>
-<li class="missed"><code>        label_value = self.labels().values()[0].value  # str representation of label value</code></li>
-<li class="missed"><code>        label_value_link = '''&lt;a href="#" class="instance-label"</code></li>
+<li class="executed"><code>        label_value = self.labels().values()[0].value  # str representation of label value</code></li>
+<li class="executed"><code>        label_value_link = '''&lt;a href="#" class="instance-label"</code></li>
 <li class="ignored"><code>                                data-id="%s"</code></li>
 <li class="ignored"><code>                                data-value="%s"&gt;</code></li>
 <li class="ignored"><code>                                %s&lt;/a&gt;''' % (self.pk, label_value, label_value)</code></li>
-<li class="missed"><code>        data = ['', play_audio_button,</code></li>
+<li class="executed"><code>        data = ['', play_audio_button,</code></li>
 <li class="ignored"><code>                label_value_link]</code></li>
 <li class="ignored"><code>        # feature values</code></li>
-<li class="missed"><code>        for v in self.values_as_list():</code></li>
-<li class="missed"><code>            data.append(round(v, 3))</code></li>
+<li class="executed"><code>        for v in self.values_as_list():</code></li>
+<li class="executed"><code>            data.append(round(v, 3))</code></li>
 <li class="ignored"><code>        # link to this instance's audio file</code></li>
-<li class="missed"><code>        file_link = '&lt;a href="%s"&gt;%s&lt;/a&gt;' % (self.audio.audio_file.url,</code></li>
+<li class="executed"><code>        file_link = '&lt;a href="%s"&gt;%s&lt;/a&gt;' % (self.audio.audio_file.url,</code></li>
 <li class="ignored"><code>                                            os.path.basename(self.audio.audio_file.name))</code></li>
-<li class="missed"><code>        delete_link = '''&lt;a href="%s"&gt;&lt;i class="icon-remove"&gt;&lt;/i&gt;&lt;/a&gt;''' % (reverse(</code></li>
+<li class="executed"><code>        delete_link = '''&lt;a href="%s"&gt;&lt;i class="icon-remove"&gt;&lt;/i&gt;&lt;/a&gt;''' % (reverse(</code></li>
 <li class="ignored"><code>                                                                        'datasets:single_instance_delete',</code></li>
 <li class="ignored"><code>                                                                        args=(self.dataset.pk, self.pk)))</code></li>
-<li class="missed"><code>        data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p'), delete_link]</code></li>
-<li class="missed"><code>        return data</code></li>
+<li class="executed"><code>        data += [file_link, self.created_at.strftime('%m/%d/%Y %I:%M %p'), delete_link]</code></li>
+<li class="executed"><code>        return data</code></li>
 <li class="ignored"><code></code></li>
 <li class="executed"><code>    class Meta:</code></li>
 <li class="executed"><code>        get_latest_by = 'created_at'</code></li>
@@ -464,7 +464,7 @@
 <li class="ignored"><code>        Instance,</code></li>
 <li class="ignored"><code>        null=True,</code></li>
 <li class="ignored"><code>        related_name='features')</code></li>
-<li class="executed"><code>    name = models.CharField(max_length=100)</code></li>
+<li class="executed"><code>    name = models.CharField(unique=True, max_length=100)</code></li>
 <li class="ignored"><code></code></li>
 <li class="excluded"><code>    def __unicode__(self):</code></li>
 <li class="excluded"><code>        return self.name</code></li>

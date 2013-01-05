@@ -69,12 +69,7 @@ INTERNAL_APPS = [
     'sqk.base',
 
     # Local apps, referenced via sqk.appname
-    'sqk.celerytest',
     'sqk.datasets',
-    'sqk.coffeescript',
-    
-    # Tests
-    'sqk.fts',  # Functional tests
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + INTERNAL_APPS

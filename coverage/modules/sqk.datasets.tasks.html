@@ -121,21 +121,21 @@
 <div class="nav">
   <a href="sqk.datasets.models.html">sqk.datasets.models</a> &lt;&lt;
   <a href="../index.html">index</a>
-  &gt;&gt; <a href="sqk.datasets.templatetags.dataset_tags.html">sqk.datasets.templatetags.dataset_tags</a>
+  &gt;&gt; <a href="sqk.datasets.views.html">sqk.datasets.views</a>
 </div>
 
 <div id="content-header">
   <h1>
     <span id="module-name">sqk.datasets.tasks</span>:
     110 total statements,
-    <span class="critical">0.0% covered</span>
+    <span class="warning">62.7% covered</span>
   </h1>
-  <p>Generated: Thu 2013-01-03 19:11 CST</p>
+  <p>Generated: Fri 2013-01-04 19:26 CST</p>
   <p>Source file: /Users/sloria1/projects/django_projects/sqk/sqk/datasets/tasks.py</p>
   <p>
     Stats:
-    <span class="executed">0 executed</span>,
-    <span class="missed">102 missed</span>,
+    <span class="executed">64 executed</span>,
+    <span class="missed">38 missed</span>,
     <span class="excluded">8 excluded</span>,
     <span class="ignored">90 ignored</span> 
   </p> 
@@ -155,7 +155,7 @@
 <li class="excluded"><code>from models import *</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>@task()</code></li>
+<li class="executed"><code>@task()</code></li>
 <li class="ignored"><code>def handle_uploaded_file(f):</code></li>
 <li class="ignored"><code>    '''Saves an uploaded data source to MEDIA_ROOT/data_sources</code></li>
 <li class="ignored"><code>    '''</code></li>
@@ -165,8 +165,8 @@
 <li class="missed"><code>        return destination</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>@task()</code></li>
-<li class="missed"><code>def read_datasource(dataset, source_path, feature_row=0):</code></li>
+<li class="executed"><code>@task()</code></li>
+<li class="executed"><code>def read_datasource(dataset, source_path, feature_row=0):</code></li>
 <li class="ignored"><code>    '''Parse a datasource (csv) and saves data to the database.</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    IMPORTANT: As of now, this method is for demo purposes. It assumes</code></li>
@@ -225,18 +225,18 @@
 <li class="missed"><code>                inst.save()</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>@task()</code></li>
+<li class="executed"><code>@task()</code></li>
 <li class="ignored"><code>def extract_features(dataset_id, instance_id, audiofile_path):</code></li>
-<li class="missed"><code>    dataset = Dataset.objects.get(pk=dataset_id)</code></li>
-<li class="missed"><code>    inst = Instance.objects.get(pk=instance_id)</code></li>
-<li class="missed"><code>    n_frames, sample_rate, duration = 0, 0, 0</code></li>
-<li class="missed"><code>    with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:</code></li>
-<li class="missed"><code>        n_frames = audiofile.getnframes()</code></li>
-<li class="missed"><code>        sample_rate = audiofile.getframerate()</code></li>
-<li class="missed"><code>        duration = n_frames / float(sample_rate)</code></li>
+<li class="executed"><code>    dataset = Dataset.objects.get(pk=dataset_id)</code></li>
+<li class="executed"><code>    inst = Instance.objects.get(pk=instance_id)</code></li>
+<li class="executed"><code>    n_frames, sample_rate, duration = 0, 0, 0</code></li>
+<li class="executed"><code>    with contextlib.closing(wave.open(audiofile_path, 'r')) as audiofile:</code></li>
+<li class="executed"><code>        n_frames = audiofile.getnframes()</code></li>
+<li class="executed"><code>        sample_rate = audiofile.getframerate()</code></li>
+<li class="executed"><code>        duration = n_frames / float(sample_rate)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Format - {'Display name': 'name: Definition'}</code></li>
-<li class="missed"><code>    FEATURES = {'Spectral Shape Characteristics': 'sss: SpectralShapeStatistics',</code></li>
+<li class="executed"><code>    FEATURES = {'Spectral Shape Characteristics': 'sss: SpectralShapeStatistics',</code></li>
 <li class="ignored"><code>                'Temporal Shape Characteristics': 'tss: TemporalShapeStatistics',</code></li>
 <li class="ignored"><code>                'ZCR': 'zcr: ZCR',</code></li>
 <li class="ignored"><code>                'Energy': 'energy: Energy',</code></li>
@@ -248,99 +248,99 @@
 <li class="ignored"><code>                'Sample rate': None}</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Add features to extract</code></li>
-<li class="missed"><code>    feature_plan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)</code></li>
-<li class="missed"><code>    for feature_definition in FEATURES.values():</code></li>
-<li class="missed"><code>        if feature_definition:  # Exclude duration and sample rate</code></li>
-<li class="missed"><code>            feature_plan.addFeature(feature_definition)</code></li>
+<li class="executed"><code>    feature_plan = yf.FeaturePlan(sample_rate=sample_rate, resample=False)</code></li>
+<li class="executed"><code>    for feature_definition in FEATURES.values():</code></li>
+<li class="executed"><code>        if feature_definition:  # Exclude duration and sample rate</code></li>
+<li class="executed"><code>            feature_plan.addFeature(feature_definition)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Configure an Engine</code></li>
-<li class="missed"><code>    engine = yf.Engine()</code></li>
-<li class="missed"><code>    engine.load(feature_plan.getDataFlow())</code></li>
+<li class="executed"><code>    engine = yf.Engine()</code></li>
+<li class="executed"><code>    engine.load(feature_plan.getDataFlow())</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Extract features</code></li>
-<li class="missed"><code>    afp = yf.AudioFileProcessor()</code></li>
-<li class="missed"><code>    afp.processFile(engine, audiofile_path)</code></li>
+<li class="executed"><code>    afp = yf.AudioFileProcessor()</code></li>
+<li class="executed"><code>    afp.processFile(engine, audiofile_path)</code></li>
 <li class="ignored"><code>    # outputs dict format - {'Spectral centroid': [[2.33], [4.34],...[2.55]]}</code></li>
-<li class="missed"><code>    outputs = {}</code></li>
+<li class="executed"><code>    outputs = {}</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Read and store output arrays to outputs dict</code></li>
-<li class="missed"><code>    for display_name, definition in FEATURES.iteritems():</code></li>
-<li class="missed"><code>        if definition:  # ex: 'loudness'</code></li>
-<li class="missed"><code>            output_name = definition.split(':')[0].strip()</code></li>
-<li class="missed"><code>            if output_name == 'sss':  # Store separate spec shape stats</code></li>
-<li class="missed"><code>                spec_shape_stats = engine.readOutput(output_name)</code></li>
-<li class="missed"><code>                outputs['Spectral centroid'] = spec_shape_stats[:, 0]</code></li>
-<li class="missed"><code>                outputs['Spectral spread'] = spec_shape_stats[:, 1]</code></li>
-<li class="missed"><code>                outputs['Spectral skewness'] = spec_shape_stats[:, 2]</code></li>
-<li class="missed"><code>                outputs['Spectral kurtosis'] = spec_shape_stats[:, 3]</code></li>
-<li class="missed"><code>            elif output_name == 'tss':</code></li>
-<li class="missed"><code>                temp_shape_stats = engine.readOutput(output_name)</code></li>
-<li class="missed"><code>                outputs['Temporal centroid'] = temp_shape_stats[:, 0]</code></li>
-<li class="missed"><code>                outputs['Temporal spread'] = temp_shape_stats[:, 1]</code></li>
-<li class="missed"><code>                outputs['Temporal skewness'] = temp_shape_stats[:, 2]</code></li>
-<li class="missed"><code>                outputs['Temporal kurtosis'] = temp_shape_stats[:, 3]</code></li>
+<li class="executed"><code>    for display_name, definition in FEATURES.iteritems():</code></li>
+<li class="executed"><code>        if definition:  # ex: 'loudness'</code></li>
+<li class="executed"><code>            output_name = definition.split(':')[0].strip()</code></li>
+<li class="executed"><code>            if output_name == 'sss':  # Store separate spec shape stats</code></li>
+<li class="executed"><code>                spec_shape_stats = engine.readOutput(output_name)</code></li>
+<li class="executed"><code>                outputs['Spectral centroid'] = spec_shape_stats[:, 0]</code></li>
+<li class="executed"><code>                outputs['Spectral spread'] = spec_shape_stats[:, 1]</code></li>
+<li class="executed"><code>                outputs['Spectral skewness'] = spec_shape_stats[:, 2]</code></li>
+<li class="executed"><code>                outputs['Spectral kurtosis'] = spec_shape_stats[:, 3]</code></li>
+<li class="executed"><code>            elif output_name == 'tss':</code></li>
+<li class="executed"><code>                temp_shape_stats = engine.readOutput(output_name)</code></li>
+<li class="executed"><code>                outputs['Temporal centroid'] = temp_shape_stats[:, 0]</code></li>
+<li class="executed"><code>                outputs['Temporal spread'] = temp_shape_stats[:, 1]</code></li>
+<li class="executed"><code>                outputs['Temporal skewness'] = temp_shape_stats[:, 2]</code></li>
+<li class="executed"><code>                outputs['Temporal kurtosis'] = temp_shape_stats[:, 3]</code></li>
 <li class="ignored"><code>            else:  # 1 dimensional data (1 X T array)</code></li>
-<li class="missed"><code>                a = engine.readOutput(output_name)  # 2D array</code></li>
-<li class="missed"><code>                outputs[display_name] = a.transpose()[0]</code></li>
+<li class="executed"><code>                a = engine.readOutput(output_name)  # 2D array</code></li>
+<li class="executed"><code>                outputs[display_name] = a.transpose()[0]</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Create YAAFE feature objects</code></li>
-<li class="missed"><code>    feature_obj_list = []</code></li>
-<li class="missed"><code>    for display_name in outputs.keys():</code></li>
-<li class="missed"><code>        f, created = Feature.objects.get_or_create(name=display_name.lower())</code></li>
-<li class="missed"><code>        feature_obj_list.append(f)</code></li>
+<li class="executed"><code>    feature_obj_list = []</code></li>
+<li class="executed"><code>    for display_name in outputs.keys():</code></li>
+<li class="executed"><code>        f, created = Feature.objects.get_or_create(name=display_name.lower())</code></li>
+<li class="executed"><code>        feature_obj_list.append(f)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Create Sample rate and Duration objects</code></li>
-<li class="missed"><code>    rate_obj, created = Feature.objects.get_or_create(name='sample rate')</code></li>
-<li class="missed"><code>    feature_obj_list.append(rate_obj)</code></li>
-<li class="missed"><code>    duration_obj, created = Feature.objects.get_or_create(name='duration')</code></li>
-<li class="missed"><code>    feature_obj_list.append(duration_obj)</code></li>
+<li class="executed"><code>    rate_obj, created = Feature.objects.get_or_create(name='sample rate')</code></li>
+<li class="executed"><code>    feature_obj_list.append(rate_obj)</code></li>
+<li class="executed"><code>    duration_obj, created = Feature.objects.get_or_create(name='duration')</code></li>
+<li class="executed"><code>    feature_obj_list.append(duration_obj)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Associate features with instance</code></li>
-<li class="missed"><code>    for feature in feature_obj_list:</code></li>
-<li class="missed"><code>        inst.features.add(feature)</code></li>
+<li class="executed"><code>    for feature in feature_obj_list:</code></li>
+<li class="executed"><code>        inst.features.add(feature)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # If dataset has labels</code></li>
-<li class="missed"><code>    if dataset.labels():</code></li>
+<li class="executed"><code>    if dataset.labels():</code></li>
 <li class="ignored"><code>        # NOTE: This assumes there's only one label name per dataset.</code></li>
 <li class="ignored"><code>        # Just indexes the first label name</code></li>
 <li class="missed"><code>        label_name = dataset.labels()[0]</code></li>
 <li class="ignored"><code>    else:</code></li>
 <li class="ignored"><code>        # attach a placeholder LabelName called 'variable'</code></li>
-<li class="missed"><code>        filtered = LabelName.objects.filter(name='variable')</code></li>
+<li class="executed"><code>        filtered = LabelName.objects.filter(name='variable')</code></li>
 <li class="ignored"><code>        # make sure that 'get' doesn't return an error if there are more than 1</code></li>
 <li class="ignored"><code>        # LabelName called 'variable'</code></li>
-<li class="missed"><code>        if len(filtered) &lt;= 1:</code></li>
-<li class="missed"><code>            label_name, c = LabelName.objects.get_or_create(name='variable')</code></li>
+<li class="executed"><code>        if len(filtered) &lt;= 1:</code></li>
+<li class="executed"><code>            label_name, c = LabelName.objects.get_or_create(name='variable')</code></li>
 <li class="ignored"><code>        else:</code></li>
 <li class="missed"><code>            label_name = filtered[0]</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Add a placeholder label value called "none" to instance</code></li>
 <li class="ignored"><code>    # This is necessary in order for plotting to work</code></li>
-<li class="missed"><code>    filtered = LabelValue.objects.filter(value="none", label_name=label_name)</code></li>
-<li class="missed"><code>    if len(filtered) &lt;= 1:</code></li>
-<li class="missed"><code>        no_label, c = LabelValue.objects.get_or_create(value="none",</code></li>
+<li class="executed"><code>    filtered = LabelValue.objects.filter(value="none", label_name=label_name)</code></li>
+<li class="executed"><code>    if len(filtered) &lt;= 1:</code></li>
+<li class="executed"><code>        no_label, c = LabelValue.objects.get_or_create(value="none",</code></li>
 <li class="ignored"><code>                                                    label_name=label_name)</code></li>
 <li class="ignored"><code>    else:</code></li>
 <li class="missed"><code>        no_label = filtered[0]</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    inst.label_values.add(no_label)</code></li>
-<li class="missed"><code>    inst.save()</code></li>
+<li class="executed"><code>    inst.label_values.add(no_label)</code></li>
+<li class="executed"><code>    inst.save()</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Save output data and associate it with inst</code></li>
-<li class="missed"><code>    for display_name, output in outputs.iteritems():</code></li>
-<li class="missed"><code>        if output.size &gt; 0:  # Avoid empty data</code></li>
-<li class="missed"><code>            for i in range(output[0].size):</code></li>
-<li class="missed"><code>                output_mean = output[i].mean()</code></li>
-<li class="missed"><code>                FeatureValue.objects.create(value=output_mean,</code></li>
+<li class="executed"><code>    for display_name, output in outputs.iteritems():</code></li>
+<li class="executed"><code>        if output.size &gt; 0:  # Avoid empty data</code></li>
+<li class="executed"><code>            for i in range(output[0].size):</code></li>
+<li class="executed"><code>                output_mean = output[i].mean()</code></li>
+<li class="executed"><code>                FeatureValue.objects.create(value=output_mean,</code></li>
 <li class="ignored"><code>                    feature=Feature.objects.get(name__iexact=display_name.lower()),</code></li>
 <li class="ignored"><code>                    instance=inst)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code>    # Save sample_rate and duration data</code></li>
-<li class="missed"><code>    FeatureValue.objects.create(value=sample_rate,</code></li>
+<li class="executed"><code>    FeatureValue.objects.create(value=sample_rate,</code></li>
 <li class="ignored"><code>        feature=Feature.objects.get(name='sample rate'),</code></li>
 <li class="ignored"><code>        instance=inst)</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    FeatureValue.objects.create(value=duration,</code></li>
+<li class="executed"><code>    FeatureValue.objects.create(value=duration,</code></li>
 <li class="ignored"><code>        feature=Feature.objects.get(name='duration'),</code></li>
 <li class="ignored"><code>        instance=inst)</code></li>
   </ol>
@@ -349,7 +349,7 @@
 <div class="nav">
   <a href="sqk.datasets.models.html">sqk.datasets.models</a> &lt;&lt;
   <a href="../index.html">index</a>
-  &gt;&gt; <a href="sqk.datasets.templatetags.dataset_tags.html">sqk.datasets.templatetags.dataset_tags</a>
+  &gt;&gt; <a href="sqk.datasets.views.html">sqk.datasets.views</a>
 </div>
 
   </body>

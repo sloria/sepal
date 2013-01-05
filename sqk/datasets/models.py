@@ -319,12 +319,12 @@ class Feature(models.Model):
         Instance,
         null=True,
         related_name='features')
-    name = models.CharField(max_length=100)
+    name = models.CharField(unique=True, max_length=100)
 
     def __unicode__(self):
         return self.name
 
-    class Meta:
+    class Meta: 
         ordering = ['name']
         
 

@@ -128,14 +128,14 @@
   <h1>
     <span id="module-name">sqk.datasets.forms</span>:
     56 total statements,
-    <span class="critical">0.0% covered</span>
+    <span class="warning">74.5% covered</span>
   </h1>
-  <p>Generated: Thu 2013-01-03 19:11 CST</p>
+  <p>Generated: Fri 2013-01-04 19:26 CST</p>
   <p>Source file: /Users/sloria1/projects/django_projects/sqk/sqk/datasets/forms.py</p>
   <p>
     Stats:
-    <span class="executed">0 executed</span>,
-    <span class="missed">51 missed</span>,
+    <span class="executed">38 executed</span>,
+    <span class="missed">13 missed</span>,
     <span class="excluded">5 excluded</span>,
     <span class="ignored">43 ignored</span> 
   </p> 
@@ -150,55 +150,55 @@
 <li class="excluded"><code>from sqk.datasets.models import *</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>class DatasetForm(forms.ModelForm):</code></li>
+<li class="executed"><code>class DatasetForm(forms.ModelForm):</code></li>
 <li class="ignored"><code>    '''Form for creating a new dataset.</code></li>
 <li class="ignored"><code>    '''</code></li>
-<li class="missed"><code>    description = forms.CharField(required=False,</code></li>
+<li class="executed"><code>    description = forms.CharField(required=False,</code></li>
 <li class="ignored"><code>        widget=forms.Textarea(attrs={'rows': 5}))</code></li>
-<li class="missed"><code>    species = forms.CharField(required=False,)</code></li>
+<li class="executed"><code>    species = forms.CharField(required=False,)</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    class Meta:</code></li>
-<li class="missed"><code>        model = Dataset</code></li>
-<li class="missed"><code>        fields = ('name', 'species', 'description')</code></li>
+<li class="executed"><code>    class Meta:</code></li>
+<li class="executed"><code>        model = Dataset</code></li>
+<li class="executed"><code>        fields = ('name', 'species', 'description')</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    def __init__(self, *args, **kwargs):</code></li>
-<li class="missed"><code>        self.helper = FormHelper()</code></li>
-<li class="missed"><code>        self.helper.form_id = 'datasetForm'</code></li>
-<li class="missed"><code>        self.helper.form_method = 'post'</code></li>
-<li class="missed"><code>        self.helper.add_input(Submit('submit', 'Submit'))</code></li>
-<li class="missed"><code>        super(DatasetForm, self).__init__(*args, **kwargs)</code></li>
+<li class="executed"><code>    def __init__(self, *args, **kwargs):</code></li>
+<li class="executed"><code>        self.helper = FormHelper()</code></li>
+<li class="executed"><code>        self.helper.form_id = 'datasetForm'</code></li>
+<li class="executed"><code>        self.helper.form_method = 'post'</code></li>
+<li class="executed"><code>        self.helper.add_input(Submit('submit', 'Submit'))</code></li>
+<li class="executed"><code>        super(DatasetForm, self).__init__(*args, **kwargs)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>class DatasetEditForm(forms.ModelForm):</code></li>
+<li class="executed"><code>class DatasetEditForm(forms.ModelForm):</code></li>
 <li class="ignored"><code>    '''Form for editing the title, species, and description</code></li>
 <li class="ignored"><code>    of a dataset.</code></li>
 <li class="ignored"><code>    '''</code></li>
-<li class="missed"><code>    description = forms.CharField(required=False,</code></li>
+<li class="executed"><code>    description = forms.CharField(required=False,</code></li>
 <li class="ignored"><code>        widget=forms.Textarea(attrs={'rows': 5}))</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    class Meta:</code></li>
-<li class="missed"><code>        model = Dataset</code></li>
-<li class="missed"><code>        fields = ('name', 'species', 'description')</code></li>
+<li class="executed"><code>    class Meta:</code></li>
+<li class="executed"><code>        model = Dataset</code></li>
+<li class="executed"><code>        fields = ('name', 'species', 'description')</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    def __init__(self, *args, **kwargs):</code></li>
-<li class="missed"><code>        self.helper = FormHelper()</code></li>
-<li class="missed"><code>        self.helper.form_id = 'datasetEditForm'</code></li>
-<li class="missed"><code>        self.helper.form_method = 'post'</code></li>
-<li class="missed"><code>        self.helper.add_input(Submit('submit', 'Submit'))</code></li>
-<li class="missed"><code>        super(DatasetEditForm, self).__init__(*args, **kwargs)</code></li>
+<li class="executed"><code>    def __init__(self, *args, **kwargs):</code></li>
+<li class="executed"><code>        self.helper = FormHelper()</code></li>
+<li class="executed"><code>        self.helper.form_id = 'datasetEditForm'</code></li>
+<li class="executed"><code>        self.helper.form_method = 'post'</code></li>
+<li class="executed"><code>        self.helper.add_input(Submit('submit', 'Submit'))</code></li>
+<li class="executed"><code>        super(DatasetEditForm, self).__init__(*args, **kwargs)</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>class DatasourceForm(forms.Form):</code></li>
+<li class="executed"><code>class DatasourceForm(forms.Form):</code></li>
 <li class="ignored"><code>    '''Form for uploading audio or csv files.</code></li>
 <li class="ignored"><code>    '''</code></li>
-<li class="missed"><code>    uploaded_file = forms.FileField(label='Audio file (.wav) or csv', required=True,)</code></li>
+<li class="executed"><code>    uploaded_file = forms.FileField(label='Audio file (.wav) or csv', required=True,)</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    def __init__(self, *args, **kwargs):</code></li>
-<li class="missed"><code>        self.helper = FormHelper()</code></li>
-<li class="missed"><code>        self.helper.form_id = 'addSourceForm'</code></li>
-<li class="missed"><code>        self.helper.form_class = 'form-inline'</code></li>
-<li class="missed"><code>        self.helper.form_method = 'post'</code></li>
-<li class="missed"><code>        self.helper.layout = Layout(</code></li>
+<li class="executed"><code>    def __init__(self, *args, **kwargs):</code></li>
+<li class="executed"><code>        self.helper = FormHelper()</code></li>
+<li class="executed"><code>        self.helper.form_id = 'addSourceForm'</code></li>
+<li class="executed"><code>        self.helper.form_class = 'form-inline'</code></li>
+<li class="executed"><code>        self.helper.form_method = 'post'</code></li>
+<li class="executed"><code>        self.helper.layout = Layout(</code></li>
 <li class="ignored"><code>            Fieldset(</code></li>
 <li class="ignored"><code>                'Extract audio features',</code></li>
 <li class="ignored"><code>                Div(</code></li>
@@ -212,9 +212,9 @@
 <li class="ignored"><code>                Submit('submit', 'Submit')</code></li>
 <li class="ignored"><code>            )</code></li>
 <li class="ignored"><code>        )</code></li>
-<li class="missed"><code>        super(DatasourceForm, self).__init__(*args, **kwargs)</code></li>
+<li class="executed"><code>        super(DatasourceForm, self).__init__(*args, **kwargs)</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    def clean_uploaded_file(self):</code></li>
+<li class="executed"><code>    def clean_uploaded_file(self):</code></li>
 <li class="missed"><code>        ufile = self.cleaned_data.get('uploaded_file', True)</code></li>
 <li class="missed"><code>        if ufile:</code></li>
 <li class="ignored"><code>            # Check file size</code></li>
@@ -227,16 +227,16 @@
 <li class="missed"><code>            raise forms.ValidationError("Could not read uploaded file")</code></li>
 <li class="ignored"><code></code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>class LabelNameForm(forms.Form):</code></li>
+<li class="executed"><code>class LabelNameForm(forms.Form):</code></li>
 <li class="ignored"><code>    '''Form for creating a new independent variable for a</code></li>
 <li class="ignored"><code>    dataset.</code></li>
 <li class="ignored"><code>    '''</code></li>
-<li class="missed"><code>    name = forms.CharField(required=False,)</code></li>
-<li class="missed"><code>    value1 = forms.CharField(required=True,)</code></li>
-<li class="missed"><code>    value2 = forms.CharField(required=True,)</code></li>
+<li class="executed"><code>    name = forms.CharField(required=False,)</code></li>
+<li class="executed"><code>    value1 = forms.CharField(required=True,)</code></li>
+<li class="executed"><code>    value2 = forms.CharField(required=True,)</code></li>
 <li class="ignored"><code>    # value3 = forms.CharField(required=False,)</code></li>
 <li class="ignored"><code></code></li>
-<li class="missed"><code>    def __init__(self, *args, **kwargs):</code></li>
+<li class="executed"><code>    def __init__(self, *args, **kwargs):</code></li>
 <li class="missed"><code>        self.helper = FormHelper()</code></li>
 <li class="missed"><code>        self.helper.form_id = 'labelNameForm'</code></li>
 <li class="missed"><code>        self.helper.form_method = 'post'</code></li>

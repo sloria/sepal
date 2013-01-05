@@ -1,6 +1,5 @@
 import os
 from django.views.generic import View, ListView, DetailView, FormView, UpdateView, DeleteView
-from django.views.generic.detail import SingleObjectMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -36,12 +35,13 @@ class DatasetDisplay(DetailView):
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
 
+
 def get_data(request, pk):
     dataset = Dataset.objects.get(pk=pk)
     dataset.get_data()
     if request.is_ajax():
         mimetype = 'text/plain'
-        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+        if request.is_ajax():
             mimetype = 'application/json'
             return HttpResponse(dataset.get_json_data(), mimetype=mimetype)
 
@@ -183,7 +183,7 @@ def multiple_uploader(request, pk):
                                                     args=(instance.dataset.pk, instance.pk, label_name.pk))
         response_data = simplejson.dumps([result])
         mimetype = 'text/plain'
-        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+        if request.is_ajax():
             mimetype = 'application/json'
         return HttpResponse(response_data, mimetype=mimetype)
     else:
@@ -221,10 +221,11 @@ class DatasetEdit(UpdateView):
 
 
 def update_visualization(request, pk):
+    
     d = Dataset.objects.get(pk=pk)
     d.get_data()
     mimetype = 'text/plain'
-    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+    if request.is_ajax():
         mimetype = 'application/json'
     return HttpResponse(d.get_json_data(), mimetype=mimetype)
 

@@ -210,29 +210,16 @@ def deploy():
     webserver_start()
 
 
-########## Tasks from tdd-with-django-project: 
 @task
-def rebuild():
-    """
-    Deletes the database and recreates the database and bootstrap fixtures.
-
-    """
-    local('python2.7 manage.py reset_db --router=default --noinput')
-    local('python2.7 manage.py syncdb --all --noinput')
-    local('python2.7 manage.py migrate --fake')
-    loaddata()
-
-@task
-def test(integration=1, functional=0):
+def test(integration=1, selenium=0):
     """
     Your central command for running tests. Call it like so:
-
         fab test
-        fab test:integration=0
+        fab test:selenium=0
     """
     command = './manage.py test -v 2 --settings=sqk.settings.test_settings'
     if int(integration) == 0:
-        command += " --exclude='integration_tests' --exclude='jasmine_tests'"
-    if int(functional) == 0:
-        command += " --exclude='fts'"
+        command += " --exclude='integration_tests' "
+    if int(selenium) == 0:
+        command += " --exclude='selenium_tests' "
     local(command)
