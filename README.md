@@ -13,15 +13,18 @@
 - Install prerequisites
 - cd to sqk directory
 - Edit compiled.txt to choose your database adapter.
-- if windows: install all the exe's in requirements/win64/*
-- $ pip install -r requirements/dev.txt
-- $ cp sqk/settings/local-dist.py sqk/settings/local.py (local.py shouldn't be added
+- If windows: install all the exe's in requirements/win64/*
+- `$ pip install -r requirements/dev.txt`
+- `$ cp sqk/settings/local-dist.py sqk/settings/local.py` (so that local.py won't be added
   to your source control)
 - Edit local.py with your local database settings.
-- $ ./manage.py syncdb
-- $ ./manage.py schemamigration --initial datasets
-- $ ./manage.py migrate datasets
-- $ ./manage.py runserver
+- `$ ./manage.py syncdb`
+- `$ ./manage.py schemamigration --initial datasets`
+- `$ ./manage.py migrate datasets`
+- `$ ./manage.py runserver`
+
+## Running tests ##
+- Run tests using `$ ./manage.py fab test`
 
 
 License
