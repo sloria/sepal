@@ -24,7 +24,7 @@
 - `$ ./manage.py runserver`
 
 ## Running tests ##
-- Run tests using `$ ./manage.py fab test`
+- Run tests using `$ fab test`
 
 
 License
