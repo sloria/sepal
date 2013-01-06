@@ -171,8 +171,8 @@ p, div, button {
 
 
 /* Editable links should be black */
-#dataset_name, #dataset_description, #dataset_species{
-  color: #000000;
+.editable-empty{
+  color: black;
 }
 
 .species{
@@ -184,16 +184,19 @@ p, div, button {
 .table tbody tr.selected td,
 .table tbody tr.selected th {
   background-color: #ffff66;
+  color: black;
 }
 
 .table tbody tr.selected:hover td,
 .table tbody tr.selected:hover th {
   background-color: #ffff66 !important;
+  color: black;
 }
 
 .table-striped tbody tr.selected:nth-child(odd) td,
 .table-striped tbody tr.selected:nth-child(odd) th {
   background-color: #ffff66;
+  color: black;
 }
 
 /* footer */

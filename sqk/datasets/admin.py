@@ -13,12 +13,6 @@ class LabelValueInline(admin.TabularInline):
     model = LabelValue
     extra = 3
 
-
-class FeatureInstanceInline(admin.TabularInline):
-    model = Feature.instances.through
-    extra = 1
-
-
 class DatasetInline(admin.TabularInline):
     model = Dataset
 
@@ -38,7 +32,7 @@ class InstanceAdmin(admin.ModelAdmin):
         (None, {'fields': ['dataset', 'audio']}),
     ]
     list_display = ('dataset', 'pk', 'audio')
-    inlines = [FeatureInstanceInline, FeatureValueInline]
+    inlines = [FeatureValueInline]
 
 
 class AudioAdmin(admin.ModelAdmin):

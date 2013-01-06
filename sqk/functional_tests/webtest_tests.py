@@ -91,12 +91,8 @@ class TestAUser(WebTest):
         res.mustcontain('This is my first dataset', 'rat')
 
     def test_cannot_upload_an_invalid_filetype(self):
-        # A dataset is created
-        dataset = DatasetFactory()
-        # Rosie goes to the dataset's detail page
-        detail = self.app.get(reverse('datasets:detail', 
-                                    args=(dataset.pk,))
-                                    )
+        # Rosie goes to the detail page of a dataset
+        detail = self._get_detail_response()
 
         form = detail.forms['upload-form']
         # She tries to upload a text file
@@ -112,13 +108,29 @@ class TestAUser(WebTest):
         assert_in('error', res)
         assert_in('acceptFileTypes', res)
 
-    def test_can_upload_a_wav_file(self):
+    def test_cannot_upload_the_same_file_twice(self):
         # A dataset is created
         dataset = DatasetFactory()
-        # Rosie goes to the dataset's detail page
-        detail = self.app.get(reverse('datasets:detail', 
-                                    args=(dataset.pk,))
-                                    )
+        # Rosie uploads a file
+        self._upload_a_valid_file(dataset)
+        # Rosie tries to upload the same file
+        res = self._upload_a_valid_file(dataset)
+        # There's an error message
+        assert_in('error', res)
+        assert_in('fileAlreadyExists', res)
+
+    def test_cannot_upload_a_very_small_file(self):
+        detail = self._get_detail_response()
+        form = detail.forms['upload-form']
+        # Rosie tries to upload a very small file
+        form['files[]'] = 'small-file.wav', 'This file is too small'
+        res = form.submit('None')
+        # But there's an error
+        assert_in('error', res)
+        assert_in('minFileSize', res)
+
+    def test_can_upload_a_wav_file(self):
+        detail = self._get_detail_response()
         form = detail.forms['upload-form']
         # She uploads a wav file
         valid_file_path = os.path.join(
@@ -137,6 +149,17 @@ class TestAUser(WebTest):
         # the instance all feature values
         assert_equal(len(instance.values.all()), len(Feature.objects.all()))
 
+
+    def test_sees_feature_buttons_on_the_detail_page(self):
+        # A dataset is created
+        dataset = DatasetFactory()
+        # A file has been uploaded to it
+        self._upload_a_valid_file(dataset)
+        # Rosie goes to the detail page
+        detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
+        # She sees feature names
+        detail.mustcontain('Duration (s)', 'Sample rate', 'ZCR (Hz)')
+    
     def _upload_a_valid_file(self, dataset):
         detail = self.app.get(reverse('datasets:detail', 
                                     args=(dataset.pk,))
@@ -150,14 +173,13 @@ class TestAUser(WebTest):
         audio_file = file(valid_file_path).read()
         form['files[]'] = self.valid_file_name, audio_file
         # She submits the upload form
-        form.submit('None')
+        res = form.submit('None')
+        return res
 
-    def test_sees_feature_buttons_on_the_detail_page(self):
+    def _get_detail_response(self):
         # A dataset is created
         dataset = DatasetFactory()
-        # A file has been uploaded to it
-        self._upload_a_valid_file(dataset)
-        # Rosie goes to the detail page
-        detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
-        # She sees feature names
-        detail.mustcontain('Duration (s)', 'Sample rate', 'ZCR (Hz)')
+        # Rosie goes to the dataset's detail page
+        return self.app.get(reverse('datasets:detail', 
+                                    args=(dataset.pk,))
+                                    )

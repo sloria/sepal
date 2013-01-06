@@ -16,9 +16,9 @@ Visualization
 
   Y_DIM = {};
 
-  X_DIM_INDEX = false;
+  X_DIM_INDEX = null;
 
-  Y_DIM_INDEX = false;
+  Y_DIM_INDEX = null;
 
   /* Constants
   */
@@ -90,6 +90,7 @@ Visualization
       self = this;
       val = $(self).val();
       if ($(self).hasClass('checked')) {
+        console.log(val);
         return addToSelectedDimensions(val);
       } else {
         return removeFromSelectedDimensions(val);
@@ -106,12 +107,12 @@ Visualization
 
     var click, domainRangeObj, dots, legend, mouseover, tooltip;
     domainRangeObj = getMinAndMaxRangeForFeatures(Viz.dataset.instances);
-    X_DIM = X_DIM_INDEX ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {
+    X_DIM = X_DIM_INDEX !== null ? domainRangeObj.features[parseInt(X_DIM_INDEX)] : {
       "minVal": 0,
       "maxVal": Viz.dataset.instances.length - 1,
       "name": "dummy"
     };
-    Y_DIM = Y_DIM_INDEX ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {
+    Y_DIM = Y_DIM_INDEX !== null ? domainRangeObj.features[parseInt(Y_DIM_INDEX)] : {
       "minVal": 0,
       "maxVal": Viz.dataset.instances.length - 1,
       "name": "dummy"
@@ -173,14 +174,14 @@ Visualization
     svg.select('.x.axis').transition().duration(1000).call(xAxis);
     svg.select('.y.axis').transition().duration(1000).call(yAxis);
     svg.select('.x.axis .label').transition().duration(1000).text(function() {
-      if (X_DIM_INDEX) {
+      if (X_DIM_INDEX !== null) {
         return X_DIM.name;
       } else {
         return "Select X";
       }
     });
     svg.select('.y.axis .label').transition().duration(1000).text(function() {
-      if (Y_DIM_INDEX) {
+      if (Y_DIM_INDEX !== null) {
         return Y_DIM.name;
       } else {
         return "Select Y";

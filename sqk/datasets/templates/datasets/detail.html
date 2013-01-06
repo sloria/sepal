@@ -25,7 +25,7 @@
       </div><!-- end btn-toolbar -->
       
       <h2 class="page-title">
-        <a href="#" id="dataset_name">{{ dataset.name }}</a>
+        <a href="#" id="dataset-name">{{ dataset.name }}</a>
       </h2>
 
 
@@ -37,11 +37,11 @@
               <tbody>
                 <tr>
                   <th width="20">Description</th>
-                  <td><a href="#" id="dataset_description">{{ dataset.description }}</a></td>
+                  <td><a href="#" id="dataset-description">{{ dataset.description }}</a></td>
                 </tr>
                 <tr>
                   <th width="20">Species</th>
-                  <td class="species"><a href="#" id="dataset_species">{{ dataset.species }}</a></td>
+                  <td class="species"><a href="#" id="dataset-species">{{ dataset.species }}</a></td>
                 </tr>
               </tbody>
             </table>
@@ -82,12 +82,17 @@
 
 {% block scripts %}
 
-{# create a JS Dataset object so that the Django context variables can be accessed from external JS files #}
+{# create a global JS Dataset object so that the Django context variables can be accessed from external JS files #}
 <script>
 var Dataset = {
   'id': {{ dataset.pk }},
-  'updateVisualizationUrl': "{% url 'datasets:update_visualization' dataset.pk %}"
+  'updateVisualizationUrl': "{% url 'datasets:load_data' dataset.pk %}",
 }
+{% if is_empty %}
+  Dataset.isEmpty = true;
+{% else %}
+  Dataset.isEmpty = false;
+{% endif %}
 </script>
 {# Include visualization script #}
 <script src='{{ STATIC_URL }}js/vis.js'></script>

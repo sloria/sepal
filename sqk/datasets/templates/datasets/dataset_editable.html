@@ -1,23 +1,27 @@
 {% load url from future %}
 <script>
-  $('#dataset_name').editable({
+  $('#dataset-name').editable({
    type: 'text',
    pk: {{ dataset.pk }},
    url: '{% url 'datasets:update_name' dataset.pk %}',
-   title: 'Edit dataset name'
+   title: 'Edit dataset name',
+   name: 'dataset-editable-name'
   });
 
-  $('#dataset_description').editable({
+  $('#dataset-description').editable({
    type: 'textarea',
    pk: {{ dataset.pk }},
    url: '{% url 'datasets:update_description' dataset.pk %}',
-   title: 'Edit dataset description'
+   title: 'Edit dataset description',
+    name: 'dataset-editable-description'
   });
 
-  $('#dataset_species').editable({
+  $('#dataset-species').editable({
    type: 'text',
    pk: {{ dataset.pk }},
    url: '{% url 'datasets:update_species' dataset.pk %}',
-   title: 'Edit dataset species'
+   title: 'Edit dataset species',
+    name: 'dataset-editable-species'
+
   });
 </script>

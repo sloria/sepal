@@ -4,6 +4,7 @@
  */
 
 $(function() {
+    var wasEmpty;
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload().bind('fileuploaddone', function(e, data) {
         // If the upload is successful
@@ -18,7 +19,7 @@ $(function() {
             $(newRow).addClass('success');
             // Attach the data-id attribute
             $(newRow).data('id', instanceId);
-            
+
             // Make label name editable
             $(".instance-label[data-id=" + instanceId.toString() + "]").editable({
                 type: 'text',

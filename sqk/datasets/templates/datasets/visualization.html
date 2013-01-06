@@ -310,7 +310,7 @@ function removeFromSelectedDimensions(dimension) {
 Viz.reloadData = function() {
   var datasetId = {{ dataset.pk }};
   $.ajax({
-    url: "{% url 'datasets:update_visualization' dataset.pk %}",
+    url: "{% url 'datasets:load_data' dataset.pk %}",
     type: "POST",
     data: {
       "pk": datasetId

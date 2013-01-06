@@ -1,14 +1,16 @@
-""" Unit tests for the datasets models """
+""" Unit tests for the datasets app"""
 import os
+from collections import OrderedDict
 from django.test import TestCase
-from django.utils import timezone
+from django.utils import timezone, simplejson
 from django.core.urlresolvers import reverse
 from nose.tools import *
-from sqk.datasets.models import *
-from sqk.datasets.tests.factories import *
 from django.db import IntegrityError
 from sqk.datasets.utils import filter_by_key, find_dict_by_item
 from sqk.datasets.tasks import extract_features
+
+from sqk.datasets.models import *
+from sqk.datasets.tests.factories import *
 
 
 class DatasetTest(TestCase):
@@ -39,23 +41,81 @@ class DatasetTest(TestCase):
         assert_equal(only_dataset.species, "P. californicus")
         assert_equal(only_dataset.created_at, dataset.created_at)
 
+    def test_get_json_data(self):
+        # Dataset is created
+        dataset = Dataset.objects.create(name='P. californicus USVs')
+        # It has instances 
+        inst1 = Instance.objects.create(dataset=dataset)
+        inst2 = Instance.objects.create(dataset=dataset)
+        # The instance has a duration
+        duration = Feature.objects.create(name='duration')
+        duration_val1 = FeatureValue.objects.create(feature=duration,
+                                            instance=inst1, 
+                                            value=12.34)
+        duration_val2 = FeatureValue.objects.create(feature=duration,
+                                    instance=inst2, 
+                                    value=56.78)
+        # And ZCR
+        zcr = Feature.objects.create(name='zcr', display_name='ZCR')
+        zcr_val1 = FeatureValue.objects.create(feature=zcr, 
+                                            instance=inst1,
+                                            value=567.890)
+        zcr_val2 = FeatureValue.objects.create(feature=zcr, 
+                                            instance=inst2,
+                                            value=123.456)
+
+        # instance has a label and value
+        marital = LabelName.objects.create(name='Marital status')
+        bonded = LabelValue.objects.create(label_name=marital, value='bonded')
+        bonded.instances.add(inst1)
+        inst1.label_values.add(bonded)
+        unbonded = LabelValue.objects.create(label_name=marital, value='unbonded')
+        unbonded.instances.add(inst2)
+        inst2.label_values.add(unbonded)
+
+
+        dataset_dict = {
+                            "instances": [
+                                OrderedDict([
+                                  ("Duration", duration_val1.value),
+                                  ("ZCR", zcr_val1.value),
+                                  ("label", bonded.value.upper()),
+                                  ("pk", inst1.pk)
+                                ]),
+                                OrderedDict([
+                                  ("Duration", duration_val2.value),
+                                  ("ZCR", zcr_val2.value),
+                                  ("label", unbonded.value.upper()),
+                                  ("pk", inst2.pk)
+                                ])
+                            ],
+                            "labels": [
+                                bonded.value.upper(),
+                                unbonded.value.upper()
+                            ]
+                        }
+        json = simplejson.dumps(dataset_dict)
+        assert_equal(dataset.get_json_data(), json)
+
+
+class InstanceTest(TestCase):
+    def setUp(self):
+        self.instance = InstanceFactory()
+
+    def test_feature_names(self):
+        # Create 2 features with values
+        feature1 = Feature.objects.create(name='zcr', display_name='ZCR')
+        feature2 = Feature.objects.create(name='duration')
+        value1 = FeatureValueFactory(feature=feature1, instance=self.instance)
+        value2 = FeatureValueFactory(feature=feature2, instance=self.instance)
+        # feature_names() should return a list of display names
+        assert_equal(self.instance.feature_names(), ['Duration', 'ZCR'])
+
 
 class FeatureTest(TestCase):
     def test_model(self):
         feature = FeatureFactory()
         assert_true(feature.pk)
-
-    def test_adding_instances(self):
-        feature = FeatureFactory()
-        instance_1 = InstanceFactory()
-        feature.instances.add(instance_1)
-
-        assert_equal(len(feature.instances.all()), 1)    
-
-        instance_2 = InstanceFactory()
-        feature.instances.add(instance_2)
-
-        assert_equal(len(feature.instances.all()), 2)
 
     def test_name_uniqueness(self):
         FeatureFactory(name='spectral centroid')
@@ -75,7 +135,7 @@ class FeatureTest(TestCase):
         assert_equal(feature.display_name, "ZCR")
 
     def test_can_set_unit(self):
-        feature = FeatureFactory(name="zcr")
+        feature = FeatureFactory(name="zcr", unit=None)
         assert_false(feature.unit)
         feature.unit = "Hz"
         feature.save()
@@ -150,3 +210,17 @@ class TasksTest(TestCase):
         assert_equal('s', duration.unit)
         assert_equal('Hz', sample_rate.unit)
         assert_equal("Hz", zcr.unit)
+
+class FullDatasetFixtureTest(TestCase):
+    def setUp(self):
+        self.data = FullDatasetFixture()
+
+    def test_dataset_has_instances(self):
+        assert_equal(len(self.data.dataset.instances.all()), 3)
+
+    def test_dataset_has_features(self):
+        assert_equal(len(self.data.dataset.feature_names()), 3)
+
+    def test_instances_have_values(self):
+        assert_equal(self.data.instance1.label_values.all()[0].value, 'bonded')
+        assert_equal(self.data.instance2.label_values.all()[0].value, 'unbonded')

@@ -151,8 +151,8 @@ def extract_features(dataset_id, instance_id, audiofile_path):
     feature_obj_list.append(duration_obj)
 
     # Associate features with instance
-    for feature in feature_obj_list:
-        inst.features.add(feature)
+    # for feature in feature_obj_list:
+    #     inst.features.add(feature)
 
     # If dataset has labels
     if dataset.labels():

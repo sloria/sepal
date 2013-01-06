@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse
 from django.utils import simplejson as json
 
 
-
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
 
@@ -22,6 +21,10 @@ class LabelName(models.Model):
 
 class LabelValue(models.Model):
     '''A value for a label type, e.g. Bachelor
+
+    Relationships:
+    LabelName - many-to-one (belongs to)
+    Instance - many-to-many
     '''
     label_name = models.ForeignKey(LabelName, related_name='label_values', null=True)
     value = models.CharField(max_length=100, default='none')
@@ -46,17 +49,8 @@ class Dataset(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_cname(self):
-        return 'dataset'
-
     def get_absolute_url(self):
         return reverse('datasets:detail', kwargs={'pk': self.pk})
-
-    def last_instance(self):
-        return self.instances.reverse()[0]
-
-    def sorted_instances(self):
-        return self.instances.order_by('pk')
 
     def get_data(self):
         '''Returns the data as a list of dicts with instance attributes as
@@ -101,11 +95,14 @@ class Dataset(models.Model):
         }
         '''
         data = {'instances': [], 'labels': []}
+        # If the data hasn't been saved to self.data, load the data
+        if not self.data:  
+            self.get_data()
         if self.instances.exists():
             features = list(self.feature_names())  # list of unicode strings
             for inst in self.data:
                 # Feature-value pairs are ordered
-                data_instance = OrderedDict()
+                data_instance = OrderedDict({})
                 for i, value in enumerate(inst['values']):
                     feature = features[i]
                     # "feature": "value"
@@ -203,7 +200,7 @@ class Instance(models.Model):
     '''A data instance (table row).
 
     Relationships:
-    dataset : many-to-one
+    dataset : many-to-one (belongs to)
     label_values : many-to-many
     audio : one-to-one
     '''
@@ -224,15 +221,15 @@ class Instance(models.Model):
         with this instance, ordered by feature pk.
 
         Example:
-        >> inst.sorted_features()
+        >> inst.feature_names()
         [u'zcr', u'spectral spread',]
         '''
-        return self.features.values_list('display_name', flat=True)
+        return [v.feature.display_name for v in self.values.all()]
 
     def feature_objects(self):
         '''Returns a list of feature objects associated with this instance.
         '''
-        return self.features.all()
+        return [v.feature for v in self.values.all()]
 
     def values_as_list(self):
         '''Returns a list of the values (floats) associated with this
@@ -313,12 +310,8 @@ class Feature(models.Model):
     '''A feature name, e.g. 'Loudness'.
 
     Relationships:
-    instances : many-to-many
+    Instances: one-to-many (has many)
     '''
-    instances = models.ManyToManyField(
-        Instance,
-        null=True,
-        related_name='features')
     name = models.CharField(unique=True, max_length=100)
     display_name = models.CharField(max_length=100, default="")
     unit = models.CharField(null=True, max_length=20)

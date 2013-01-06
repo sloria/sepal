@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
-from sqk.datasets.forms import DatasetForm, DatasetEditForm, DatasourceForm
+from sqk.datasets.forms import DatasetForm, DatasetEditForm
 from sqk.datasets.models import *
 from sqk.datasets.tasks import handle_uploaded_file, extract_features
 
@@ -25,27 +25,21 @@ class DatasetDisplay(DetailView):
     context_object_name = 'dataset'
     template_name = 'datasets/detail.html'
 
-    def get_query_set(self):
-        return Dataset.objects.filter(pk=self.kwargs['pk'])
-
     def get_context_data(self, **kwargs):
         dataset = self.get_object()
         context = dataset.get_context()
-        context['upload_form'] = DatasourceForm()
         context.update(**kwargs)
         return super(DatasetDisplay, self).get_context_data(**context)
+        
 
-
-def get_data(request, pk):
-    dataset = Dataset.objects.get(pk=pk)
-    dataset.get_data()
+def load_data(request, pk):
+    
+    d = Dataset.objects.get(pk=pk)
+    # d.get_data()
+    mimetype = 'text/plain'
     if request.is_ajax():
-        mimetype = 'text/plain'
-        if request.is_ajax():
-            mimetype = 'application/json'
-            return HttpResponse(dataset.get_json_data(), mimetype=mimetype)
-
-
+        mimetype = 'application/json'
+    return HttpResponse(d.get_json_data(), mimetype=mimetype)
 
 # class DatasetAddDatasource(FormView, SingleObjectMixin):
 #     '''View for adding data to a dataset.
@@ -102,9 +96,9 @@ def multiple_uploader(request, pk):
     
     options = {
     # the maximum file size
-    "maxfilesize": 2 * 2 ** 20, # 2 Mb
+    "maxfilesize": 2 * 2 ** 20,  # 2 Mb
     # the minimum file size (must be in bytes)
-    "minfilesize": 1 * 2 ** 10, # 1 Kb
+    "minfilesize": 1 * 2 ** 10,  # 1 Kb
     # the file types which are going to be allowed for upload
     #   must be a mimetype
     "acceptedformats": (
@@ -139,12 +133,12 @@ def multiple_uploader(request, pk):
         if f.content_type not in options["acceptedformats"]:
             error = "acceptFileTypes"
         # prevent uploading of duplicate files
-        # FIXME: doesn't work if after a file is deleted
+        # FIXME: this validatio doesn't work after a file is deleted
         if file_path in filtered_paths:
             error = 'fileAlreadyExists'
-        # don't allow filenames with a space because these get
-        # converted to underscores on upload and result in a FileNoteFound error
-        # TODO: this is a temporary fix
+        # FIXME: can't upload files with a space in filename
+        # because spaces get converted to underscores on upload and result in a FileNotFound error
+        # NOTE: this is a temporary fix
         if ' ' in f.name:
             error = 'invalidFileName'
 
@@ -220,16 +214,6 @@ class DatasetEdit(UpdateView):
     success_url = reverse_lazy('datasets:index')
 
 
-def update_visualization(request, pk):
-    
-    d = Dataset.objects.get(pk=pk)
-    d.get_data()
-    mimetype = 'text/plain'
-    if request.is_ajax():
-        mimetype = 'application/json'
-    return HttpResponse(d.get_json_data(), mimetype=mimetype)
-
-
 def delete_dataset(request, pk):
     '''View for deleting a dataset.
     '''
@@ -252,7 +236,7 @@ class SingleInstanceDelete(DeleteView):
             kwargs={'pk': self.kwargs['dataset_id']})
 
 
-def delete_instances(request, dataset_id):
+def delete_instances(request, pk):
     '''View for deleting selected (multiple) instances.
 
     Must be a POST request.
@@ -263,13 +247,11 @@ def delete_instances(request, dataset_id):
         for id in instance_ids:
             inst_obj = Instance.objects.get(pk=id)
             inst_obj.delete()
-        dataset = Dataset.objects.get(pk=dataset_id)
-        # TODO: Shouldn't have to get all data from the DB again.
-        dataset.get_data()
+        dataset = Dataset.objects.get(pk=pk)
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
     else:
-        return HttpResponseRedirect(reverse('datasets:detail', args=(dataset_id,)))
+        return HttpResponseRedirect(reverse('datasets:detail', args=(pk,)))
 
 
 def update_instances_labels(request, dataset_id, label_name_id):
@@ -293,7 +275,6 @@ def update_instances_labels(request, dataset_id, label_name_id):
                                             label_name=label_name_obj)
             inst.label_values.add(new_label_value_obj)
         dataset = Dataset.objects.get(pk=dataset_id)
-        dataset.get_data()
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
     else:
@@ -353,7 +334,7 @@ def update_species(request, dataset_id):
 
 @ensure_csrf_cookie
 def update_instance_label(request, dataset_id, instance_id, label_name_id):
-    '''View for updating an instance label name using X-editable.
+    '''View for updating an instance label value using X-editable.
     '''
     if request.is_ajax():
         new_label_value = request.POST['value'].lower()  # e.g. u'bonded'
@@ -370,7 +351,6 @@ def update_instance_label(request, dataset_id, instance_id, label_name_id):
 
         # Serialize dataset
         dataset = Dataset.objects.get(pk=dataset_id)
-        dataset.get_data()
         json_data = dataset.get_json_data()
         return HttpResponse(json_data, mimetype='application/json')
     else:

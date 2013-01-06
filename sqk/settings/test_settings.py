@@ -23,8 +23,9 @@ COVERAGE_MODULE_EXCLUDES = [
     'sqk.celerytest',
     'sqk.datasets.templatetags',
     'sqk.base.templatetags',
-    'sqk.fts',
+    'sqk.datasets.wsgi'
 ]
+NOSE_ARGS = ['--verbosity=2']
 
 COVERAGE_MODULE_EXCLUDES += EXTERNAL_APPS
 COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(__file__, '../../../coverage')

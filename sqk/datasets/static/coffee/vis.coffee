@@ -18,8 +18,8 @@ Y_DIM = {}
 # The index of the dimensions a user selects are stored in these
 # Where the first dimension selection is the x-axis
 # These are used to index into list of attribute names to set up X_DIM & Y_DIM
-X_DIM_INDEX = false
-Y_DIM_INDEX = false
+X_DIM_INDEX = null
+Y_DIM_INDEX = null
 
 ### Constants ###
 LABEL_PROP_NAME = "label" # The name of the instance object property that is the label key
@@ -103,6 +103,7 @@ jQuery ->
         self = this
         val = $(self).val() # The index value of the selected dimension
         if $(self).hasClass('checked') 
+            console.log val
             addToSelectedDimensions(val)
         else
             removeFromSelectedDimensions(val)
@@ -120,13 +121,13 @@ drawScatterplot = () ->
     # This gets the min & max values for each feature across all instances
     domainRangeObj = getMinAndMaxRangeForFeatures(Viz.dataset.instances)
 
-    X_DIM = if X_DIM_INDEX then domainRangeObj.features[parseInt(X_DIM_INDEX)] else {
+    X_DIM = if (X_DIM_INDEX isnt null) then domainRangeObj.features[parseInt(X_DIM_INDEX)] else {
         "minVal": 0,
         "maxVal": Viz.dataset.instances.length - 1,
         "name": "dummy"
     }
 
-    Y_DIM = if Y_DIM_INDEX then domainRangeObj.features[parseInt(Y_DIM_INDEX)] else {
+    Y_DIM = if (Y_DIM_INDEX isnt null) then domainRangeObj.features[parseInt(Y_DIM_INDEX)] else {
         "minVal": 0,
         "maxVal": Viz.dataset.instances.length - 1,
         "name": "dummy"
@@ -230,10 +231,10 @@ drawScatterplot = () ->
     # Update axes labels
     svg.select('.x.axis .label')
         .transition().duration(1000)
-        .text( () -> return if X_DIM_INDEX then X_DIM.name else "Select X" )
+        .text( () -> return if X_DIM_INDEX isnt null then X_DIM.name else "Select X" )
     svg.select('.y.axis .label')
         .transition().duration(1000)
-        .text( () -> return if Y_DIM_INDEX then Y_DIM.name else "Select Y" )
+        .text( () -> return if Y_DIM_INDEX isnt null then Y_DIM.name else "Select Y" )
 
     mouseover = (d,i) ->
         ###
