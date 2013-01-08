@@ -1,5 +1,5 @@
 import factory
-from random import random
+import random
 from sqk.datasets.models import *
 
 
@@ -29,7 +29,7 @@ class FeatureValueFactory(factory.Factory):
 
     feature = factory.SubFactory(FeatureFactory)
     instance = factory.SubFactory(InstanceFactory)
-    value = random()
+    value = random.random()
 
 
 class LabelNameFactory(factory.Factory):
@@ -45,49 +45,54 @@ class LabelValueFactory(factory.Factory):
     value = "bonded" 
 
 
-class FullDatasetFixture(object):
-    def __init__(self):
+class FullDatasetGenerator(object):
+    """Class for quickly creating datasets filled with
+    instances, features, values, label names, and label values
+    for use in testing.
+
+    Example
+    #######
+    To create a dataset with 20 instances, each with 5 values and associated 
+    features
+    >> G = FullDatasetGenerator(n_instances=20)
+    >> G.generate_values(n_values=5)
+    >> dataset = G.dataset 
+    >> assert_true(dataset.pk)
+    True
+
+    Each of the values will be a random float.
+
+    To add labels such that half the instances will be labeled 'mutant' and half 
+    will be labeled 'wild-type':
+    >> G.generate_labels(label_name="Genotype", label_set=['mutant', 'wild-type'])
+    """
+
+    def __init__(self, n_instances=3):
         self.dataset = DatasetFactory()
-        # Create some instances
-        self.instance1 = InstanceFactory(dataset=self.dataset)
-        self.instance2 = InstanceFactory(dataset=self.dataset)
-        self.instance3 = InstanceFactory(dataset=self.dataset)
-        # Create some features
-        self.feature_1 = FeatureFactory(name='duration')
-        self.feature_2 = FeatureFactory(name='zcr', display_name='ZCR')
-        self.feature_3 = FeatureFactory(name='spectral centroid')
-        # Create some values
-        self.instance1.values.add(FeatureValueFactory(feature=self.feature_1, value=101))
-        self.instance1.values.add(FeatureValueFactory(feature=self.feature_2, value=102))
-        self.instance1.values.add(FeatureValueFactory(feature=self.feature_3, value=103))
+        for i in range(n_instances):
+            InstanceFactory(dataset=self.dataset)
 
-        self.instance2.values.add(FeatureValueFactory(feature=self.feature_1, value=51.2))
-        self.instance2.values.add(FeatureValueFactory(feature=self.feature_2, value=52.3))
-        self.instance2.values.add(FeatureValueFactory(feature=self.feature_3, value=53.4))
+    def generate_values(self, n_values=5):
+        features = []
+        for j in range(n_values):
+            f = FeatureFactory()
+            features.append(f)
 
-        self.instance3.values.add(FeatureValueFactory(feature=self.feature_1, value=0.12))
-        self.instance3.values.add(FeatureValueFactory(feature=self.feature_2, value=0.34))
-        self.instance3.values.add(FeatureValueFactory(feature=self.feature_3, value=0.56))
+        for i, inst in enumerate(self.dataset.instances.all()):
+            for j in range(n_values):
+                val = random.random()
+                FeatureValue.objects.create(value=val, 
+                                            feature=features[j], 
+                                            instance=inst)
 
-        # Create some labels and label values
-        ln = LabelNameFactory(name='Marital status')
-        lv1 = LabelValueFactory(label_name=ln, value='bonded')
-        lv2 = LabelValueFactory(label_name=ln, value='unbonded')
-        # Associate label values with instances - one label value each
+    def generate_labels(self, label_name='Marital status', label_set=['bonded', 'unbonded']):
+        # Create the label names
+        label_name_obj = LabelNameFactory(name=label_name)
+        for label in label_set:
+            LabelValueFactory(label_name=label_name_obj, value=label)
 
-        # Instance 1 is 'bonded'
-        self.instance1.label_values.add(lv1)
-        self.instance1.save()
-        lv1.instances.add(self.instance1)
-        lv1.save()
-        # Instance 2 is 'unbonded'
-        self.instance2.label_values.add(lv2)
-        self.instance2.save()
-        lv2.instances.add(self.instance2)
-        lv2.save()
-        # Instance 3 is 'bonded'
-        self.instance3.label_values.add(lv1)
-        self.instance3.save()
-        lv1.instances.add(self.instance1)
-        lv1.save()
-
+        # Label each instance, cycling through each label in the label set
+        for i, inst in enumerate(self.dataset.instances.all()):
+            label_value = LabelValue.objects.get(value=label_set[i % len(label_set)])
+            inst.label_values.add(label_value)
+            label_value.instances.add(inst)

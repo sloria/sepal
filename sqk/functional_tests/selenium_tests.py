@@ -1,3 +1,5 @@
+'''Functional tests using Selenium'''
+
 from django.test import LiveServerTestCase
 from django.core.urlresolvers import reverse
 from selenium import webdriver
@@ -9,10 +11,18 @@ from sqk.datasets.models import *
 from nose.tools import *
 import time
 
+#  The web driver to use. Can be either 'Firefox' or 'Chrome'
+#  NOTE: selenium ships with the Firefox driver only.
+#  The Chrome driver is located in sqk/bin.
+#  In order to use the Chrome driver, make sure that 
+#    sqk/bin is in your system path.
 BROWSER = 'Firefox'
 
 
 class DatasetCrudTest(LiveServerTestCase):
+    '''This is essentially an extension of the Dataset CRUD 
+    tests in sqk/sqk/functional_tests/webtests_tests.py
+    '''
 
     def setUp(self):
         if BROWSER == 'Chrome':
@@ -24,84 +34,10 @@ class DatasetCrudTest(LiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
-
-    # def test_dataset_create(self):
-    #     b = self.browser
-    #     root = self.live_server_url
-    #     # Rosie opens her browser and goes to home page
-    #     b.get(root)
-
-    #     # She sees the title of the page is the brand and tagline
-    #     page_title = b.find_element_by_css_selector('head title')
-    #     assert_equal(u'sepal | Mine your audio', page_title.text)
-
-    #     # She sees the page header with the brand name
-    #     header = b.find_element_by_class_name('header')
-    #     assert_in('sepal', header.text)
-
-    #     # TODO: test login here
-
-    #     # She clicks on the Datasets link
-    #     b.find_element_by_link_text('Datasets').click()
-    #     assert_in("Create", body_text(b))
-    #     assert_in('No datasets', body_text(b))
-
-    #     # She clicks on the create dataset button
-    #     b.find_element_by_link_text('Create Dataset').click()
-    #     assert_in('New Dataset', body_text(b))
-    #     # She fills in the species field but NOT the name field
-    #     species_field = b.find_element_by_name('species')
-    #     species_field.send_keys('P. californiucus')
-
-    #     # She clicks submit
-    #     click_submit(b)
-    #     # Oops, she sees an error
-    #     assert_in('This field is required', body_text(b))
-
-    #     # She fills in a name
-    #     name_field = b.find_element_by_name('name')
-    #     name_field.send_keys('Differences between bonded and unbonded P. Cal USVs')
-
-    #     # then clicks submit again
-    #     click_submit(b)
-
-    #     # She is now on the datasets page
-    #     page_title = b.find_element_by_css_selector(".page-title")
-    #     assert_in('Datasets', page_title.text)
-
-    #     # her newly created dataset is in a table
-    #     dataset_rows = b.find_elements_by_css_selector("table tbody tr")
-    #     assert_in("Differences between bonded", dataset_rows[0].text)
-    #     assert_equal(len(dataset_rows), 1)
-
-    # def test_dataset_edit(self):
-    #     # A dataset is created
-    #     dataset = DatasetFactory.build()
-    #     dataset.description = ''
-    #     dataset.save()
-    #     b = self.browser
-    #     # go right to the edit page
-    #     edit_url = self.live_server_url + '/datasets/{}/edit/'.format(dataset.pk)
-    #     # Rosie opens her browser and goes straight to the edit page
-    #     b.get(edit_url)
-
-    #     # she's now at the edit form
-    #     assert_in('Edit Dataset', body_text(b))
-
-    #     # she adds a description to the dataset
-    #     desc_field = b.find_element_by_css_selector('#id_description')
-    #     desc_field.send_keys("This is my first dataset.")
-    #     # she clicks submit
-    #     click_submit(b)
-
-    #     # back to the datasets page.
-    #     page_title = b.find_element_by_css_selector(".page-title")
-    #     assert_in('Datasets', page_title.text)
-    #     # the table row now displays her new description
-    #     dataset_rows = b.find_elements_by_css_selector("table tbody tr")
-    #     assert_in('This is my first dataset.', dataset_rows[0].text)
     
     def test_dataset_delete(self):
+        '''Tests deleting a dataset from the datasets index page.
+        '''
         # A dataset is created
         dataset = DatasetFactory()
         b = self.browser
@@ -153,6 +89,8 @@ class XEditableTest(LiveServerTestCase):
         self.browser.quit()
 
     def test_can_edit_dataset_properties(self):
+        '''Tests the X-editable fields for a dataset's properties (name, description, species)
+        '''
         b = self.browser
         # Rosie goes to the dataset's detail page
         b.get(self.live_server_url + reverse('datasets:detail', args=(self.dataset.pk,)))
@@ -221,6 +159,8 @@ class XEditableTest(LiveServerTestCase):
 
 
 class VisualizationTest(LiveServerTestCase):
+    '''Tests for insteractions with the visualization panel.
+    '''
 
     def setUp(self):
         if BROWSER == 'Chrome':
@@ -229,10 +169,28 @@ class VisualizationTest(LiveServerTestCase):
             self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
         # Create a dataset
-        self.data = FullDatasetFixture()
-        self.data.dataset.name = 'Visualization test'
-        self.data.dataset.description = 'This tests the viz UI'
-        self.data.dataset.save()
+        G = FullDatasetGenerator(n_instances=3)
+        self.dataset = G.dataset
+        # Create some features
+        self.feature_1 = FeatureFactory(name='duration')
+        self.feature_2 = FeatureFactory(name='zcr', display_name='ZCR')
+        self.feature_3 = FeatureFactory(name='spectral centroid')
+
+        # Create some values
+        self.dataset.instances.all()[0].values.add(FeatureValueFactory(feature=self.feature_1, value=101))
+        self.dataset.instances.all()[0].values.add(FeatureValueFactory(feature=self.feature_2, value=102))
+        self.dataset.instances.all()[0].values.add(FeatureValueFactory(feature=self.feature_3, value=103))
+
+        self.dataset.instances.all()[1].values.add(FeatureValueFactory(feature=self.feature_1, value=51.2))
+        self.dataset.instances.all()[1].values.add(FeatureValueFactory(feature=self.feature_2, value=52.3))
+        self.dataset.instances.all()[1].values.add(FeatureValueFactory(feature=self.feature_3, value=53.4))
+
+        self.dataset.instances.all()[2].values.add(FeatureValueFactory(feature=self.feature_1, value=0.12))
+        self.dataset.instances.all()[2].values.add(FeatureValueFactory(feature=self.feature_2, value=0.34))
+        self.dataset.instances.all()[2].values.add(FeatureValueFactory(feature=self.feature_3, value=0.56))
+
+        # Create some labels and label values
+        G.generate_labels()
         self.plot_height = 360
 
     def tearDown(self):
@@ -244,9 +202,12 @@ class VisualizationTest(LiveServerTestCase):
         return (cx, cy)
 
     def test_clicking_feature_names_moves_dots(self):
+        '''Test that clicking feature names in the sidebar causes 
+        the plot points to move.
+        '''
         b = self.driver
         # Rosie goes to the dataset's detail page
-        b.get(self.live_server_url + reverse('datasets:detail', args=(self.data.dataset.pk,)))
+        b.get(self.live_server_url + reverse('datasets:detail', args=(self.dataset.pk,)))
         # She sees the feature names in the sidebar
         sidebar = b.find_element_by_css_selector("div.sidebar-nav")
         assert_in('Duration', sidebar.text)
@@ -254,7 +215,7 @@ class VisualizationTest(LiveServerTestCase):
         assert_in('Spectral centroid', sidebar.text)
         # She sees a figure with 2 dots
         dots = b.find_elements_by_css_selector("circle.dot")
-        assert_equal(len(dots), len(self.data.dataset.instances.all()))
+        assert_equal(len(dots), len(self.dataset.instances.all()))
 
         # get the coordinates of the dots
         dot1 = b.find_element_by_css_selector('circle.dot[data-id="1"]')
@@ -334,10 +295,20 @@ def assert_roughly_equal(a, b):
 
 
 def body_text(browser):
+    '''Shortcut for accessing the text within the <body>
+    of the DOM.
+
+    Example
+    #######
+    >> assert_in('Some text', body_text(self.driver))
+    True
+    '''
     return browser.find_element_by_tag_name('body').text
 
 
 def click_submit(browser):
+    '''Shortcut for clicking the submit button on a webpage.
+    '''
     return browser.find_element_by_css_selector('input.btn[value="Submit"]').click()
 
 

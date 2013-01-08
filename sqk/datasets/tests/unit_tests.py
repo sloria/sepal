@@ -211,16 +211,36 @@ class TasksTest(TestCase):
         assert_equal('Hz', sample_rate.unit)
         assert_equal("Hz", zcr.unit)
 
-class FullDatasetFixtureTest(TestCase):
+
+class FullDatasetGeneratorTest(TestCase):
     def setUp(self):
-        self.data = FullDatasetFixture()
+        self.G = FullDatasetGenerator(n_instances=5)
 
-    def test_dataset_has_instances(self):
-        assert_equal(len(self.data.dataset.instances.all()), 3)
+    def test_generate_instances(self):
+        assert_equal(len(self.G.dataset.instances.all()), 5)
 
-    def test_dataset_has_features(self):
-        assert_equal(len(self.data.dataset.feature_names()), 3)
+    def test_generate_values(self):
+        self.G.generate_values(3)
+        # An instance in the dataset has 3 values
+        assert_equal(len(self.G.dataset.instances.latest().values_as_list()), 3)
+        # The dataset has 3 features
+        assert_equal(len(self.G.dataset.feature_names()), 3)
 
-    def test_instances_have_values(self):
-        assert_equal(self.data.instance1.label_values.all()[0].value, 'bonded')
-        assert_equal(self.data.instance2.label_values.all()[0].value, 'unbonded')
+        # The values of each instance should be different from each other
+        instances = self.G.dataset.instances.all()
+        assert_not_equal(instances[0].values.all()[0], instances[1].values.all()[0])
+        # The values within an instance should be different from each other
+        assert_not_equal(instances[0].values.all()[0], instances[0].values.all()[1])
+
+    def test_generate_labels(self):
+        self.G.generate_labels('Marital', ['bonded', 'unbonded', 'none'])
+        assert_equal(len(self.G.dataset.labels()), 1)
+        instances = self.G.dataset.instances.all()
+        # The first instance is bonded
+        assert_equal(instances[0].label_values.all()[0].value, u'bonded')
+        # The seconded isntance is unbonded
+        assert_equal(instances[1].label_values.all()[0].value, u'unbonded')
+        # The third instance has label 'none'
+        assert_equal(instances[2].label_values.all()[0].value, u'none')
+        # The fourth instance is bonded (the cycle starts again)
+        assert_equal(instances[3].label_values.all()[0].value, u'bonded')
