@@ -39,6 +39,7 @@ selectedDimensions = []
 margin = {top: 30, right: 50, bottom: 60, left: 70}
 width = CHART_WIDTH - margin.left - margin.right
 height = CHART_HEIGHT - margin.top - margin.bottom
+# Create an svg
 svg = d3.select("div#chart")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -99,14 +100,14 @@ jQuery ->
     )
 
     # Add click handler for selecting features
-    $('li.feature-select.multicheck').on('click', () ->
-        self = this
-        val = $(self).val() # The index value of the selected dimension
-        if $(self).hasClass('checked') 
-            console.log val
-            addToSelectedDimensions(val)
-        else
-            removeFromSelectedDimensions(val)
+    $('li.feature-select').on('click', () ->
+        $this = $(this)
+        featureIndex = $this.val() # The index value of the selected dimension
+        # Add to selected dimensions if te feature is selected
+        if $this.hasClass('checked') 
+            addToSelectedDimensions(featureIndex)
+        else  # Remove dimension if deselected
+            removeFromSelectedDimensions(featureIndex)
     )
 
 
@@ -310,11 +311,10 @@ getMinAndMaxRangeForFeatures = (instances) ->
         "domainMax": instances.length,
         features: []
 
-    # First get property names
-    propNames = []
-    for prop, value of instances[0]
-        if prop not in [LABEL_PROP_NAME, ID_PROP_NAME, 'x', 'y'] and instances[0].hasOwnProperty(prop)
-            propNames.push(prop)
+    # First get property (feature) names
+    propNames = (prop for prop of instances[0] \
+                    when prop not in [LABEL_PROP_NAME, ID_PROP_NAME, 'x', 'y'] \
+                    and prop of instances[0])
 
     # Now go through each instance and find the max and min values for each feature
     for prop in propNames
@@ -322,20 +322,20 @@ getMinAndMaxRangeForFeatures = (instances) ->
         max = Number.MIN_VALUE
         for inst in instances
             floatVal = parseFloat(inst[prop])
-            min = if (floatVal < min) then floatVal else min
-            max = if (floatVal > max) then floatVal else max
+            min = if floatVal < min then floatVal else min
+            max = if floatVal > max then floatVal else max
         # the min and max values for this feature have been found
-        returnObj.features.push({
+        returnObj.features.push
             "name": prop,
             "minVal": min,
             "maxVal": max
-        })
+        
     return returnObj
 
 addToSelectedDimensions = (dimension) ->
     ###
     A user has selected a dimension checkbox on the data table
-    This updates the global able which keeps track of what's
+    This updates the global varable which keeps track of what's
     been checked and passes that to the viz
     ###
     selectedDimensions.push(dimension)
@@ -345,29 +345,23 @@ addToSelectedDimensions = (dimension) ->
         index = selectedDimensions.splice(0, 1)
         # Uncheck the select button
         $("li.feature-select.multicheck[value=#{ index[0] }]").removeClass('checked')
-        $("li.feature-select.multicheck[value=#{ index[0] }]").find("span").removeClass("icon-ok")
-    X_DIM_INDEX = selectedDimensions[0]
-    Y_DIM_INDEX = selectedDimensions[1]
+            .find("span").removeClass("icon-ok")
+    [X_DIM_INDEX, Y_DIM_INDEX] = selectedDimensions
     drawScatterplot()
 
 removeFromSelectedDimensions = (dimension) ->
     ###
     A user has de-selected a dimension checkbox on the data table
-    This updates the global variable (selectedDimesnsion) which keeps track of what's
+    This updates the global variable (selectedDimension) which keeps track of what's
     been checked and passes that to the viz
     ###
     removeIndex = selectedDimensions.indexOf(dimension)
     selectedDimensions.splice(removeIndex, 1)
     if(selectedDimensions.length < 2) 
         # There's no longer 2 dimensions selected, 
-        # reset the x & y dimensino pointers to be null
+        # reset the x & y dimension pointers to be null
         X_DIM_INDEX = null
         Y_DIM_INDEX = null
     else
-        # TODO: this code is replicated, re-think this
-        X_DIM_INDEX = selectedDimensions[0]
-        Y_DIM_INDEX = selectedDimensions[1]
+        [X_DIM_INDEX, Y_DIM_INDEX] = selectedDimensions
     drawScatterplot()
-
-
-

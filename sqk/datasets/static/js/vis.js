@@ -85,15 +85,14 @@ Visualization
       Viz.dataset = data;
       return drawScatterplot();
     });
-    return $('li.feature-select.multicheck').on('click', function() {
-      var self, val;
-      self = this;
-      val = $(self).val();
-      if ($(self).hasClass('checked')) {
-        console.log(val);
-        return addToSelectedDimensions(val);
+    return $('li.feature-select').on('click', function() {
+      var $this, featureIndex;
+      $this = $(this);
+      featureIndex = $this.val();
+      if ($this.hasClass('checked')) {
+        return addToSelectedDimensions(featureIndex);
       } else {
-        return removeFromSelectedDimensions(val);
+        return removeFromSelectedDimensions(featureIndex);
       }
     });
   });
@@ -255,20 +254,22 @@ Visualization
            }
     */
 
-    var floatVal, inst, max, min, prop, propNames, returnObj, value, _i, _j, _len, _len1, _ref;
+    var floatVal, inst, max, min, prop, propNames, returnObj, _i, _j, _len, _len1;
     returnObj = {
       "domainMin": 0,
       "domainMax": instances.length,
       features: []
     };
-    propNames = [];
-    _ref = instances[0];
-    for (prop in _ref) {
-      value = _ref[prop];
-      if ((prop !== LABEL_PROP_NAME && prop !== ID_PROP_NAME && prop !== 'x' && prop !== 'y') && instances[0].hasOwnProperty(prop)) {
-        propNames.push(prop);
+    propNames = (function() {
+      var _results;
+      _results = [];
+      for (prop in instances[0]) {
+        if ((prop !== LABEL_PROP_NAME && prop !== ID_PROP_NAME && prop !== 'x' && prop !== 'y') && prop in instances[0]) {
+          _results.push(prop);
+        }
       }
-    }
+      return _results;
+    })();
     for (_i = 0, _len = propNames.length; _i < _len; _i++) {
       prop = propNames[_i];
       min = Number.MAX_VALUE;
@@ -291,7 +292,7 @@ Visualization
   addToSelectedDimensions = function(dimension) {
     /*
         A user has selected a dimension checkbox on the data table
-        This updates the global able which keeps track of what's
+        This updates the global varable which keeps track of what's
         been checked and passes that to the viz
     */
 
@@ -299,18 +300,16 @@ Visualization
     selectedDimensions.push(dimension);
     if (selectedDimensions.length > 2) {
       index = selectedDimensions.splice(0, 1);
-      $("li.feature-select.multicheck[value=" + index[0] + "]").removeClass('checked');
-      $("li.feature-select.multicheck[value=" + index[0] + "]").find("span").removeClass("icon-ok");
+      $("li.feature-select.multicheck[value=" + index[0] + "]").removeClass('checked').find("span").removeClass("icon-ok");
     }
-    X_DIM_INDEX = selectedDimensions[0];
-    Y_DIM_INDEX = selectedDimensions[1];
+    X_DIM_INDEX = selectedDimensions[0], Y_DIM_INDEX = selectedDimensions[1];
     return drawScatterplot();
   };
 
   removeFromSelectedDimensions = function(dimension) {
     /*
         A user has de-selected a dimension checkbox on the data table
-        This updates the global variable (selectedDimesnsion) which keeps track of what's
+        This updates the global variable (selectedDimension) which keeps track of what's
         been checked and passes that to the viz
     */
 
@@ -321,8 +320,7 @@ Visualization
       X_DIM_INDEX = null;
       Y_DIM_INDEX = null;
     } else {
-      X_DIM_INDEX = selectedDimensions[0];
-      Y_DIM_INDEX = selectedDimensions[1];
+      X_DIM_INDEX = selectedDimensions[0], Y_DIM_INDEX = selectedDimensions[1];
     }
     return drawScatterplot();
   };

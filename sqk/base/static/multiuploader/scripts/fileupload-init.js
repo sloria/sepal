@@ -4,21 +4,21 @@
  */
 
 $(function() {
-    var wasEmpty;
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload().bind('fileuploaddone', function(e, data) {
         // If the upload is successful
         if(!data.result[0]['error']) {
-            var instanceData = data.result[0]['instance_data'];
-            var instanceId = String(data.result[0]['instance_id']);
-            var editUrl = encodeURI(data.result[0]["edit_label_url"]);
-            var added = oTable.fnAddData(instanceData);
-            var oSettings = oTable.fnSettings();
+            var instanceData = data.result[0]['instance_data'],
+                instanceId = String(data.result[0]['instance_id']),
+                editUrl = encodeURI(data.result[0]["edit_label_url"]),
+                added = oTable.fnAddData(instanceData),
+                oSettings = oTable.fnSettings();
+
             // Get the added row and add the 'success' class
-            var newRow = oSettings.aoData[added[0]].nTr;
-            $(newRow).addClass('success');
-            // Attach the data-id attribute
-            $(newRow).data('id', instanceId);
+            var $newRow = $(oSettings.aoData[added[0]].nTr);
+            $newRow.addClass('success');
+            console.log(instanceId);
+            $newRow.data('id', instanceId);  // FIXME: Attach the data-id attribute
 
             // Make label name editable
             $(".instance-label[data-id=" + instanceId.toString() + "]").editable({
@@ -34,7 +34,7 @@ $(function() {
             });
         }
     }).bind('fileuploadstop', function(e) {
-        console.log('finished');
+        console.log('Finished upload');
         Viz.reloadData();
     });
 

@@ -17,11 +17,13 @@
 <script type="text/javascript" src="{{ STATIC_URL }}datatables/media/js/dataTables.bootstrap.js"></script>
 
 <script>
+(function() {
 
 /* GLOBAL CONSTANTS */
-var oTable;
-var oTT;
-var oFC;
+window.oTable;
+window.oTT;
+window.oFC;
+
 var INITIAL_DISPLAY_LENGTH = 10;
 // index of the date created column
 var DATE_COLUMN = {{feature_names|length }} + {{label_names|length }} + 3;
@@ -135,7 +137,7 @@ function initializeTable() {
 }
 
 /* Initialize the table */
-$(document).ready(function() {
+$(function() {
   initializeTable();
   oTT = TableTools.fnGetInstance('dataset-table');
   // Fix left columns
@@ -198,9 +200,11 @@ function updateSelectedLabels(new_label) {
       oTT.fnSelectNone();
       // Change each of the label texts to the new label
       $.each(selected, function(index, value) {
-        $(value).find('td .instance-label').text(new_label);
-        $(value).removeClass('active');
-        $(value).addClass('success');
+        $(value).find('td .instance-label')
+          .text(new_label)
+            .end()
+          .removeClass('active')
+          .addClass('success');
       });
       // Update plot
       Viz.reloadData();
@@ -211,11 +215,12 @@ function updateSelectedLabels(new_label) {
 }   
 {% endif %}
 
-function getSelectedIds(selected) /* Returns an array of ids for the selected instances. */
-{
+function getSelectedIds(selected) { 
+  /* Returns an array of ids for the selected instances. */
   return $.map(selected, function(element) {
     return $(element).data('id');
   });
 }
 
+})();
 </script>
