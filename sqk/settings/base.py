@@ -53,9 +53,9 @@ EXTERNAL_APPS = [
 
     # Third-party apps, patches, fixes
     'djcelery',
-    'django_nose',
+    #::'django_nose',
     'debug_toolbar',
-    'django_extensions',
+    #'django_extensions',
     #'debug_toolbar_user_panel',
     #'memcache_toolbar',
     'crispy_forms',
