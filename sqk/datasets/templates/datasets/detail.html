@@ -93,6 +93,13 @@ var Dataset = {
 {% else %}
   Dataset.isEmpty = false;
 {% endif %}
+
+$('.instance-label').on('hidden', function(e, reason){
+  if(reason === 'save' || reason === 'cancel') {
+    // auto-open next editable label
+    $(this).closest('tr').next().find('.editable').editable('show');
+  }
+});
 </script>
 {# Include visualization script #}
 <script src='{{ STATIC_URL }}js/vis.js'></script>
