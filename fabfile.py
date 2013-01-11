@@ -107,7 +107,7 @@ def webserver_stop():
     """
     Stop the webserver that is running the Django instance
     """
-    run("service apache2 stop")
+    run("stop sepal")
 
 
 @task
@@ -115,7 +115,7 @@ def webserver_start():
     """
     Starts the webserver that is running the Django instance
     """
-    run("service apache2 start")
+    run("start sepal")
 
 
 @task
