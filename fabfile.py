@@ -14,12 +14,13 @@ from fabric.operations import _prefix_commands, _prefix_env_vars
 #from fabric.context_managers import cd, lcd, settings, hide
 
 # CHANGEME
-env.hosts = ['user@sqk.example.com']
-env.code_dir = '/srv/www/sqk'
-env.project_dir = '/srv/www/sqk/sqk'
-env.static_root = '/srv/www/sqk/static/'
-env.virtualenv = '/srv/www/sqk/.virtualenv'
-env.code_repo = 'git@github.com:user/sqk.git'
+env.hosts = ['root@198.61.238.140']
+env.code_dir = '/root/sepal'
+env.project_dir = '/root/sepal/sqk'
+env.static_root = '/root/sepal/static/'
+# There isn't one setup on production
+env.virtualenv = '/root/sepal/.virtualenv'
+env.code_repo = 'git@github.com:sloria/sqk.git'
 env.django_settings_module = 'sqk.settings'
 
 # Python version
