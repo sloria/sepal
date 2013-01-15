@@ -29,7 +29,7 @@ CHART_HEIGHT = 450
 PT_RADIUS = 4  # The radius of each data point
 X_AXIS_LABEL_OFFSET = 35 # More postive moves X-axis label lower
 Y_AXIS_LABEL_OFFSET = -60  # More negative moves Y-axis label to the left
-X_TICKS = 8  # Number of ticks on the x axis
+X_TICKS = 5  # Number of ticks on the x axis
 Y_TICKS = 8  # Number of ticks on the y axis
 TOOLTIP_SIZE = "12px" # The font size of tooltips
 

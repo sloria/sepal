@@ -84,7 +84,33 @@ def extract_features(dataset_id, instance_id, audiofile_path):
 
                     {'display_name': 'Sample rate',
                     'unit': 'Hz',
-                    }
+                    },
+
+                    {'display_name': 'Spectral decrease',
+                    'yaafe_name': 'spectral_decrease',
+                    'yaafe_definition': 'SpectralDecrease',
+                    },
+
+                    {'display_name': "Spectral flatness",
+                    'yaafe_name': 'spectral_flatness',
+                    'yaafe_definition': 'SpectralFlatness',
+                    },
+
+                    # {'display_name': "Spectral flux",
+                    # 'yaafe_name': 'spectral_flux',
+                    # 'yaafe_definition': 'SpectralFlux',
+                    # },
+
+                    {'display_name': "Spectral slope",
+                    'yaafe_name': 'spectral_slope',
+                    'yaafe_definition': 'SpectralSlope',
+                    },
+
+                    # {'display_name': "Spectral variation",
+                    # 'yaafe_name': 'spectral_variation',
+                    # 'yaafe_definition': 'SpectralVariation',
+                    # }
+
                 ]
 
     # Add features to extract

@@ -38,7 +38,7 @@ Visualization
 
   Y_AXIS_LABEL_OFFSET = -60;
 
-  X_TICKS = 8;
+  X_TICKS = 5;
 
   Y_TICKS = 8;
 

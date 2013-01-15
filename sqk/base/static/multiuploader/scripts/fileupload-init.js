@@ -17,7 +17,6 @@ $(function() {
             // Get the added row and add the 'success' class
             var $newRow = $(oSettings.aoData[added[0]].nTr);
             $newRow.addClass('success');
-            console.log(instanceId);
             $newRow.data('id', instanceId);  // FIXME: Attach the data-id attribute
 
             // Make label name editable
