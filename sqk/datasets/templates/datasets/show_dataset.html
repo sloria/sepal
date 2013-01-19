@@ -25,11 +25,7 @@
           </script>
           {% endfor %}
           {% for feature in feature_objects %}
-          <th>{{ feature.display_name }} 
-              {% if feature.unit %}
-              ({{ feature.unit }})
-              {% endif %}
-          </th>
+          <th>{{ feature.display_name }}</th>
           {% endfor %}
           <th>File</th>
           <th>Date added</th>

@@ -158,7 +158,7 @@ class TestAUser(WebTest):
         # Rosie goes to the detail page
         detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
         # She sees feature names
-        detail.mustcontain('Duration (s)', 'Sample rate', 'ZCR (Hz)')
+        detail.mustcontain('Duration', 'Sample rate', 'ZCR')
     
     def _upload_a_valid_file(self, dataset):
         detail = self.app.get(reverse('datasets:detail', 
