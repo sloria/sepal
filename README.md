@@ -1,5 +1,5 @@
 
-# sepal web #
+# Sepal #
 
 ## Prerequisites ##
 
@@ -12,16 +12,16 @@
 
 - Install prerequisites
 - cd to sepal directory
-- Edit compiled.txt to choose your database adapter.
+- Optional: Edit compiled.txt to choose your database adapter. Skip this to use sqlite
 - If windows: install all the exe's in requirements/win64/*
 - `$ pip install -r requirements/dev.txt`
 - `$ cp sepal/settings/local-dist.py sepal/settings/local.py` (so that local.py won't be added
   to your source control)
 - Edit local.py with your local database settings.
-- `$ ./manage.py syncdb`
-- `$ ./manage.py schemamigration --initial datasets`
-- `$ ./manage.py migrate datasets`
-- `$ ./manage.py runserver`
+- `$ python manage.py syncdb`
+- `$ python manage.py schemamigration --initial datasets`
+- `$ python manage.py migrate datasets`
+- `$ python manage.py runserver`
 
 ## Running tests ##
 - Run tests using `$ fab test`
