@@ -26,6 +26,11 @@
           <input class="span2" type="password" name="password" placeholder="Password" />
           <button type="submit" class="btn">Sign in</button>
         </form>
+        {% if form.errors %}
+          <ul class="nav pull-right error">
+            <li><a>Your username and password didn't match!</a></li>
+          </ul>
+        {% endif %}
         {% endif %}
       </div><!--/.nav-collapse -->
   </div>
