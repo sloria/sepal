@@ -1,5 +1,5 @@
 
-# Sqk web #
+# sepal web #
 
 ## Prerequisites ##
 
@@ -11,11 +11,11 @@
 ## Installation ##
 
 - Install prerequisites
-- cd to sqk directory
+- cd to sepal directory
 - Edit compiled.txt to choose your database adapter.
 - If windows: install all the exe's in requirements/win64/*
 - `$ pip install -r requirements/dev.txt`
-- `$ cp sqk/settings/local-dist.py sqk/settings/local.py` (so that local.py won't be added
+- `$ cp sepal/settings/local-dist.py sepal/settings/local.py` (so that local.py won't be added
   to your source control)
 - Edit local.py with your local database settings.
 - `$ ./manage.py syncdb`

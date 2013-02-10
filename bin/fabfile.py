@@ -5,11 +5,11 @@ import os
 import string
 
 
-env.hosts = ['sqk.example.com']
-env.code_dir = '/srv/www/sqk'
-env.virtualenv = '/srv/www/sqk/.virtualenv'
-env.code_repo = 'git@github.com:user/sqk.git'
-env.django_settings_module = 'sqk.settings'
+env.hosts = ['sepal.example.com']
+env.code_dir = '/srv/www/sepal'
+env.virtualenv = '/srv/www/sepal/.virtualenv'
+env.code_repo = 'git@github.com:user/sepal.git'
+env.django_settings_module = 'sepal.settings'
 
 
 def run_tests():
@@ -59,7 +59,7 @@ def version():
 def restart():
     """ Restart the wsgi process """
     with cd(env.code_dir):
-        run("touch %s/sqk/wsgi.py" % env.code_dir)
+        run("touch %s/sepal/wsgi.py" % env.code_dir)
 
 
 def ve_run(cmd):

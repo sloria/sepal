@@ -1,4 +1,4 @@
-from sqk.datasets.models import Dataset
+from sepal.datasets.models import Dataset
 import numpy as np
 
 def scatterplot(dataset, features):

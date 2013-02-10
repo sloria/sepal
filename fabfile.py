@@ -1,5 +1,5 @@
 """
-Starter fabfile for deploying the sqk project.
+Starter fabfile for deploying the sepal project.
 
 Change all the things marked CHANGEME. Other things can be left at their
 defaults if you are happy with the default layout.
@@ -16,12 +16,12 @@ from fabric.operations import _prefix_commands, _prefix_env_vars
 # CHANGEME
 env.hosts = ['root@198.61.238.140']
 env.code_dir = '/root/sepal'
-env.project_dir = '/root/sepal/sqk'
+env.project_dir = '/root/sepal/sepal'
 env.static_root = '/root/sepal/static/'
 # There isn't one setup on production
 env.virtualenv = '/root/sepal/.virtualenv'
-env.code_repo = 'git@github.com:sloria/sqk.git'
-env.django_settings_module = 'sqk.settings'
+env.code_repo = 'git@github.com:sloria/sepal.git'
+env.django_settings_module = 'sepal.settings'
 
 # Python version
 PYTHON_BIN = "python2.7"
@@ -136,7 +136,7 @@ def webserver_restart():
 def restart():
     """ Restart the wsgi process """
     with cd(env.code_dir):
-        run("touch %s/sqk/wsgi.py" % env.code_dir)
+        run("touch %s/sepal/wsgi.py" % env.code_dir)
 
 
 def build_static():
@@ -228,7 +228,7 @@ def test(unit=1, integration=1, functional=1, selenium=0, all=0):
         To run all tests,
         >> fab test:all=1
     """
-    command = './manage.py test -v 2 --settings=sqk.settings.test_settings'
+    command = './manage.py test -v 2 --settings=sepal.settings.test_settings'
     if all == 0:
         if int(unit) == 0:
             command += " --exclude='unit_tests' "
@@ -237,7 +237,7 @@ def test(unit=1, integration=1, functional=1, selenium=0, all=0):
         if int(functional) == 0:
             command += " --exclude='functional_tests' "
         if int(selenium) == 1:
-            command = './manage.py test -v 2 --settings=sqk.settings.test_settings sqk/functional_tests/selenium_tests.py'
+            command = './manage.py test -v 2 --settings=sepal.settings.test_settings sepal/functional_tests/selenium_tests.py'
         else:
             command += " --exclude='selenium_tests' "
     local(command)
