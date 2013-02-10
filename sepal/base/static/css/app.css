@@ -35,6 +35,11 @@ hr {
   color: #000000;
 }
 
+/* docs */
+.subsection {
+  color: #999999;
+}
+
 /* widget */
 .m-widget {
 border: 1px solid #E5E5E5;

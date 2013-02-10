@@ -8,3 +8,8 @@ def home(request):
     """ Default view for the root """
     return render_to_response('base/home.html',
         context_instance=RequestContext(request))
+
+def documentation(request):
+    """View for the documentation"""
+    return render_to_response('base/documentation.html',
+        context_instance=RequestContext(request))
