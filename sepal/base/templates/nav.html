@@ -12,9 +12,26 @@
           <li><a href="{% url home %}">Home</a></li>
           <li><a href="{% url datasets:index %}">Datasets</a></li>
         </ul>
+        {% if user.is_authenticated %}
+        <form class="navbar-form pull-right" action="/user/logout" method="get">
+          <button type="submit" class="btn">Logout</button>
+        </form>
         <ul class="nav pull-right">
-          <li><a href="#" class="btn-medium">Sign in</a></li>
+          <li><a>Welcome {{ user.username }}!</a></li>
         </ul>
+        {% else %}
+        <form class="navbar-form pull-right" action="/user/login/" method="post">
+          {% csrf_token %}
+          <input class="span2" type="text" name="username" placeholder="Email" />
+          <input class="span2" type="password" name="password" placeholder="Password" />
+          <button type="submit" class="btn">Sign in</button>
+        </form>
+        {% if form.errors %}
+          <ul class="nav pull-right error">
+            <li><a>Your username and password didn't match!</a></li>
+          </ul>
+        {% endif %}
+        {% endif %}
       </div><!--/.nav-collapse -->
   </div>
 </div>
