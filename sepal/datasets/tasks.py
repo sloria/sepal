@@ -1,7 +1,7 @@
 import os
 from django.conf import settings
 
-#import yaafelib as yf
+import yaafelib as yf
 import wave
 import contextlib
 from celery import task
