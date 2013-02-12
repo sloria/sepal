@@ -104,3 +104,9 @@ INTERNAL_IPS = ('127.0.0.1')
 SERVER_EMAIL = "webmaster@example.com"
 DEFAULT_FROM_EMAIL = "webmaster@example.com"
 SYSTEM_EMAIL_PREFIX = "[sepal]"
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sepalproject@gmail.com'
+EMAIL_HOST_PASSWORD = ''
