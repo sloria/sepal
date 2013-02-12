@@ -217,3 +217,9 @@ FILE_UPLOAD_PERMISSIONS = 0664
 
 # The WSGI Application to use for runserver
 WSGI_APPLICATION = 'sepal.wsgi.application'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sepalproject@gmail.com'
+EMAIL_HOST_PASSWORD = ''
