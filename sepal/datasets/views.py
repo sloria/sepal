@@ -4,21 +4,35 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from sepal.datasets.forms import DatasetForm, DatasetEditForm
 from sepal.datasets.models import *
 from sepal.datasets.tasks import handle_uploaded_file, extract_features
 from django.contrib.auth.decorators import login_required
 
+
+class LoggedInMixin(object):
+    """ A mixin requiring a user to be logged in. """
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            raise Http404
+        return super(LoggedInMixin, self).dispatch(request, *args, **kwargs)
+
 ############## Dataset views ##################
 
 
-class DatasetList(ListView):
+class DatasetList(LoggedInMixin, ListView):
     model = Dataset
     queryset = Dataset.objects.order_by('-created_at')
     context_object_name = 'all_datasets'
     template_name = 'datasets/index.html'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Dataset.objects.filter(user=self.request.user)
+        else:
+            return None
 
 
 class DatasetDisplay(DetailView):
@@ -203,6 +217,7 @@ class DatasetCreate(FormView):
     success_url = reverse_lazy('datasets:index')
 
     def form_valid(self, form):
+        form.instance.user = self.request.user
         form.save()
         return super(DatasetCreate, self).form_valid(form)
 
