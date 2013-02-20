@@ -2,8 +2,7 @@
 
 from django.conf.urls.defaults import url, patterns
 
-
-
 urlpatterns = patterns('sepal.base.views',
     url(r'^$', 'home', name='home'),
+    url(r'^documentation/$', 'documentation', name='documentation')
 )

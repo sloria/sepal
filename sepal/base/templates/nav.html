@@ -11,6 +11,7 @@
         <ul class="nav">
           <li><a href="{% url home %}">Home</a></li>
           <li><a href="{% url datasets:index %}">Datasets</a></li>
+          <li><a href="{% url documentation %}">Documentation</a></li>
         </ul>
         {% if user.is_authenticated %}
         <form class="navbar-form pull-right" action="/user/logout" method="get">

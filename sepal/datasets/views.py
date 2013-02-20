@@ -9,6 +9,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from sepal.datasets.forms import DatasetForm, DatasetEditForm
 from sepal.datasets.models import *
 from sepal.datasets.tasks import handle_uploaded_file, extract_features
+from django.contrib.auth.decorators import login_required
 
 ############## Dataset views ##################
 

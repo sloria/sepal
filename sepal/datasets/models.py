@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.utils import simplejson as json
-
+from django.contrib.auth.models import User
 
 class LabelName(models.Model):
     '''The name of label (called Variables in the templates), e.g. Marital Status
@@ -37,6 +37,7 @@ class LabelValue(models.Model):
 
 
 class Dataset(models.Model):
+    user = models.ForeignKey(User)
     name = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=500, null=True, blank=True)
     species = models.CharField(max_length=75, null=True, blank=True)

@@ -159,6 +159,12 @@ class TestAUser(WebTest):
         detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
         # She sees feature names
         detail.mustcontain('Duration', 'Sample rate', 'ZCR')
+
+    def test_can_get_help(self):
+        res = self.app.get('/')
+        res = res.click('Documentation')
+        assert_in('Documentation', res)
+
     
     def _upload_a_valid_file(self, dataset):
         detail = self.app.get(reverse('datasets:detail', 
@@ -183,3 +189,4 @@ class TestAUser(WebTest):
         return self.app.get(reverse('datasets:detail', 
                                     args=(dataset.pk,))
                                     )
+

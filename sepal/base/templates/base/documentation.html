@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+  <div class="row-fluid m-fluid">
+    {# Sidebar #}
+    <div class="span3">
+      <div class="m-widget affix">
+       <div class="nav-header m-widget-header" data-toggle="collapse" data-target="#dashboard-menu"><i class="icon-book"></i> Sections</div>
+       <ul class="nav nav-list bs-docs-sidenav">
+        <li><a href="#datasets"><i class="icon-chevron-right"></i> Creating a dataset</a></li>
+
+        <li><a href="#uploading"><i class="icon-chevron-right"></i> Uploading/Extracting</a></li>
+        <li><a href="#variables"><i class="icon-chevron-right"></i> Variables</a></li>
+        <li><a href="#visualization"><i class="icon-chevron-right"></i> Visualization</a></li>
+        <li><a href="#playing"><i class="icon-chevron-right"></i> Playing audio</a></li>
+      </ul>
+    </div><!-- end m-widget -->
+  </div><!-- end span -->
+
+  <div class="span9">
+    {# Information block #}
+    <div class="row-fluid m-fluid">
+      <div class="m-widget span12">
+        <div id="docs" class="m-widget-body">
+          <div class="page-header">
+            <h1>Documentation</h1>
+          </div>
+
+          {# Datasets #}
+          <section id="datasets">
+            <h2>Creating a dataset</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa voluptates vitae architecto fugiat vel corporis enim! Dolorum aperiam non vel voluptates perspiciatis itaque repellendus omnis sed odio beatae nisi soluta.</p>
+          </section>
+
+          {# Uploading #}
+          <section id="uploading">
+            <h2>Uploading/Extracting</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa voluptates vitae architecto fugiat vel corporis enim! Dolorum aperiam non vel voluptates perspiciatis itaque repellendus omnis sed odio beatae nisi soluta.</p>
+          </section>
+
+          {# Variables #}
+          <section id="variables">
+            <h2>Variables</h2>
+            <h3 class="subsection">Adding/editing a variable</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed dolor laudantium rerum odit ducimus assumenda itaque facilis hic aperiam quia labore ipsam aliquam natus minima sunt earum magni qui facere.</p>
+
+            <h3 class="subsection">Labeling instances</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum vero delectus reprehenderit minima ipsam voluptatem ut odio rem molestias qui saepe sed quaerat sapiente dolorum dolore optio mollitia debitis eaque?</p>
+          </section>
+
+          <section id="visualization">
+            <h2>Visualization</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus error magnam sint hic iste cupiditate ullam eius. Maxime labore odio quae libero distinctio eaque reiciendis illo quam vero sit. Iusto.</p>
+          </section>
+
+          {# Playing audio #}
+          <section id="playing">
+            <h2>Playing audio</h2>
+            <p>To play back audio, click the blue play button icon next to the instance's table row.</p>
+          </section>
+
+
+        </div>
+      </div>
+    </div><!-- end Information row-fluid-->
+  </div>
+</div>
+</div><!-- end container -->
+{% endblock content %}
