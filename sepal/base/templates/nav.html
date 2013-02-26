@@ -23,7 +23,7 @@
           <li><a>Welcome {{ user.username }}!</a></li>
         </ul>
         {% else %}
-        <form class="navbar-form pull-right" action="/user/login/" method="post">
+        <form id="loginForm" class="navbar-form pull-right" action="/user/login/" method="post">
           {% csrf_token %}
           <input class="span2" type="text" name="username" placeholder="Email" />
           <input class="span2" type="password" name="password" placeholder="Password" />

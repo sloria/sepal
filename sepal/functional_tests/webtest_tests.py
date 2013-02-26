@@ -1,18 +1,32 @@
 import os
+from glob import glob
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from sepal.datasets.tests.factories import *
 from nose.tools import *
+
+from sepal.base.tests.factories import UserFactory
+from sepal.datasets.tests.factories import *
 from sepal.datasets.models import *
-from glob import glob
 
 
 class TestAUser(WebTest):
 
     def setUp(self):
+        self.user = UserFactory()
         self.valid_file_name = 'test-valid-file-0821x1.wav'
         self.invalid_file_name = 'test-invalid-txt-file.txt'
+        self._login()
+
+    def _login(self):
+        # Rosie logs in
+        res = self.app.get('/')
+        form = res.forms['loginForm']
+        form['username'] = self.user.username
+        form['password'] = self.user.password
+        res = form.submit()
+        return res
+
 
     def tearDown(self):
         try:
@@ -27,8 +41,9 @@ class TestAUser(WebTest):
 
     def test_can_see_the_index(self):
         # Rosie goes to the homepage
-        root = self.app.get('/')
+        root = self.app.get('/' , user=self.user)
 
+        print self.user.is_authenticated()
         # She clicks on the Datasets link
         res = root.click('Datasets')
 
@@ -36,20 +51,22 @@ class TestAUser(WebTest):
         assert_in('No datasets', res)
 
         # After a dataset is created
-        dataset = DatasetFactory()
+        dataset = DatasetFactory(user=self.user)
         # and clicking the Datasets link again
         res = res.click('Datasets')
         # She sees the new dataset
+        print res
         res.mustcontain(dataset.name, dataset.species,
                         dataset.description)
 
     def test_can_create_a_dataset(self):
         # Rosie goes to the datasets index page
-        index = self.app.get(reverse('datasets:index'))
+        index = self.app.get(reverse('datasets:index'),
+                                user=self.user)
         # She clicks the create link
         res = index.click('Create Dataset')
 
-        form = res.form
+        form = res.forms['datasetForm']
         # She fills in the species field but NOT the name field
         form['species'] = 'P. californicus'
         res = form.submit('submit')
@@ -69,11 +86,12 @@ class TestAUser(WebTest):
 
     def test_can_edit_a_dataset(self):
         # a dataset without a description is created
-        dataset = DatasetFactory(description=None)
+        dataset = DatasetFactory(description=None, user=self.user)
         # Rosie goes to the dataset edit page
-        edit = self.app.get(reverse('datasets:edit', args=(dataset.pk,)))
+        edit = self.app.get(reverse('datasets:edit', args=(dataset.pk,)), 
+                            user=self.user)
         assert_in('Edit Dataset', edit)
-        form = edit.form
+        form = edit.forms['datasetEditForm']
         # She enters a description
         form['description'] = 'This is my first dataset'
         # She also edits the species
@@ -159,11 +177,6 @@ class TestAUser(WebTest):
         detail = self.app.get(reverse('datasets:detail', args=(dataset.pk,)))
         # She sees feature names
         detail.mustcontain('Duration', 'Sample rate', 'ZCR')
-
-    def test_can_get_help(self):
-        res = self.app.get('/')
-        res = res.click('Documentation')
-        assert_in('Documentation', res)
 
     
     def _upload_a_valid_file(self, dataset):

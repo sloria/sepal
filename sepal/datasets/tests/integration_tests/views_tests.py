@@ -3,13 +3,17 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from nose.tools import *
 
+from sepal.base.tests.factories import UserFactory
 from sepal.datasets.tests.factories import *
 
 
 class DatasetListViewTest(TestCase):
     def setUp(self):
-        self.dataset_1 = DatasetFactory()
-        self.dataset_2 = DatasetFactory()
+        self.user = UserFactory()
+        self.dataset_1 = DatasetFactory(user=self.user)
+        self.dataset_2 = DatasetFactory(user=self.user)
+        self.client.login(username=self.user.username,
+                            password='abc')
 
     def get_view_name(self):
         """
@@ -19,7 +23,12 @@ class DatasetListViewTest(TestCase):
         return 'datasets:index'
 
     def test_view(self):
+        print self.user.username
+        print self.user.email
+        print self.user.password
+        print self.user.is_authenticated()
         response = self.client.get(reverse(self.get_view_name()))
+        print response
         self.assertEqual(response.status_code, 200)
 
 

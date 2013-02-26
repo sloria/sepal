@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from sepal.datasets.utils import filter_by_key, find_dict_by_item
 from sepal.datasets.tasks import extract_features
 
+from sepal.base.tests.factories import UserFactory
 from sepal.datasets.models import *
 from sepal.datasets.tests.factories import *
 
@@ -22,6 +23,7 @@ class DatasetTest(TestCase):
 
     def test_creating_and_saving_a_dataset(self):
         dataset = Dataset()
+        dataset.user = UserFactory()
         dataset.name = "New dataset"
         dataset.species = "P. californicus"
         dataset.description = "This is a test dataset."
@@ -43,7 +45,8 @@ class DatasetTest(TestCase):
 
     def test_get_json_data(self):
         # Dataset is created
-        dataset = Dataset.objects.create(name='P. californicus USVs')
+        dataset = Dataset.objects.create(name='P. californicus USVs',
+                                            user=UserFactory())
         # It has instances 
         inst1 = Instance.objects.create(dataset=dataset)
         inst2 = Instance.objects.create(dataset=dataset)

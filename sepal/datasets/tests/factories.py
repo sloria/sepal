@@ -1,5 +1,6 @@
 import factory
 import random
+from sepal.base.tests.factories import UserFactory
 from sepal.datasets.models import *
 
 
@@ -9,6 +10,7 @@ class DatasetFactory(factory.Factory):
     name = factory.Sequence(lambda n: "Test dataset {0}".format(n))
     description = "This is a dataset"
     species = "P. californicus"
+    user = factory.SubFactory(UserFactory)
 
 
 class InstanceFactory(factory.Factory):
