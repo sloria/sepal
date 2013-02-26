@@ -19,7 +19,7 @@ env.code_dir = '/root/sepal'
 env.project_dir = '/root/sepal/sepal'
 env.static_root = '/root/sepal/static/'
 # There isn't one setup on production
-env.virtualenv = '/root/sepal/.virtualenv'
+env.virtualenv = '/root/Envs/sepal'
 env.code_repo = 'git@github.com:sloria/sepal.git'
 env.django_settings_module = 'sepal.settings'
 
