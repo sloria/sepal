@@ -68,6 +68,7 @@ INTERNAL_APPS = [
 
     # Local apps, referenced via sepal.appname
     'sepal.datasets',
+    'sepal.signup',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + INTERNAL_APPS

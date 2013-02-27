@@ -8,12 +8,14 @@
         <div class="span12">
           <h1 class="brand"><i class="icon-leaf"></i> sepal</h1>
           <h2 class="tagline">Sound Feature Extraction and Pattern Analysis Library</h2>
+          {% if not user.is_authenticated %}
           <p><a id="signup" class="btn btn-yellow btn-large">Request invite »</a></p>
           <form id="signupform" class="navbar-form" style="display:none" action="/signup/" method="post">
             {% csrf_token %}
             <input type="text" class="span2" name="email" placeholder="Email" />
             <button type="submit" class="btn" style="margin-top:5px">Submit</button>
           </form>
+          {% endif %}
         </div>
       </div>
     </div>

@@ -39,11 +39,20 @@ class TestAUser(WebTest):
         except:
             pass
 
+    def test_cant_see_request_button_if_logged_in(self):
+        # No one is logged in
+        root = self.app.get('/')
+        # There should be a request invite button
+        assert_in('Request invite', root)
+        # Rosie logs in
+        root = self.app.get('/' , user=self.user)
+        # The request invite button shouldn't be there
+        assert_not_in('Request invite', root)
+
     def test_can_see_the_index(self):
         # Rosie goes to the homepage
         root = self.app.get('/' , user=self.user)
 
-        print self.user.is_authenticated()
         # She clicks on the Datasets link
         res = root.click('Datasets')
 

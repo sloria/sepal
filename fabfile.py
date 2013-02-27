@@ -13,12 +13,10 @@ from fabric.operations import _prefix_commands, _prefix_env_vars
 #from fabric.decorators import runs_once
 #from fabric.context_managers import cd, lcd, settings, hide
 
-# CHANGEME
 env.hosts = ['root@198.61.238.140']
 env.code_dir = '/root/sepal'
 env.project_dir = '/root/sepal/sepal'
 env.static_root = '/root/sepal/static/'
-# There isn't one setup on production
 env.virtualenv = '/root/Envs/sepal'
 env.code_repo = 'git@github.com:sloria/sepal.git'
 env.django_settings_module = 'sepal.settings'
@@ -29,7 +27,6 @@ PYTHON_PREFIX = ""  # e.g. /usr/local  Use "" for automatic
 PYTHON_FULL_PATH = "%s/bin/%s" % (PYTHON_PREFIX, PYTHON_BIN) if PYTHON_PREFIX else PYTHON_BIN
 
 # Set to true if you can restart your webserver (via wsgi.py), false to stop/start your webserver
-# CHANGEME
 DJANGO_SERVER_RESTART = False
 
 
@@ -82,13 +79,6 @@ def push_sources():
     local('git push origin master')
     with cd(env.code_dir):
         run('git pull origin master')
-
-
-@task
-def run_tests():
-    """ Runs the Django test suite as is.  """
-    local("./manage.py test")
-
 
 @task
 def version():
