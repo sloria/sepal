@@ -122,6 +122,10 @@ def webserver_restart():
             webserver_stop()
         webserver_start()
 
+@task
+def restart_worker():
+    '''Restart the celery worker daemon.'''
+    run('/etc/init.d/celeryd status')
 
 def restart():
     """ Restart the wsgi process """
@@ -198,6 +202,7 @@ def deploy():
     install_dependencies()
     update_database()
     build_static()
+    restart_worker()
     webserver_start()
 
 
