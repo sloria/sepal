@@ -21,22 +21,14 @@
   <meta name="viewport" content="width=device-width">
 
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap-custom/css/bootstrap.css">
-  {# <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.css"> #}
-  <link rel="stylesheet" href="{{ STATIC_URL }}font-awesome/css/font-awesome.css">
-  {# Datasets app styling #}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/datasets.css">
-  {# Fileupload UI styling #}
-  <link rel="stylesheet" href="{{ STATIC_URL  }}multiuploader/css/jquery.fileupload-ui.css">
-  {# X-editable styling #}
-  <link href="{{ STATIC_URL }}bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+
   {# Base app styling #}
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
 
   {# Fonts #}
   <link href='http://fonts.googleapis.com/css?family=Droid+Serif|Droid+Sans' rel='stylesheet' type='text/css'>
 
-  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  {# Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline #}
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.8.3.min.js"><\/script>')</script>
 
@@ -44,18 +36,13 @@
   <script src=" {{ STATIC_URL }}jquery-cookie-master/jquery.cookie.js"></script>
 
   {# Include X-editable #}
-  <script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.js"></script>
+  <script src="{{ STATIC_URL }}bootstrap-editable/js/bootstrap-editable-inline.min.js"></script>
 
   {# App-specific scripts #}
   <script src="{{ STATIC_URL }}js/script.js"></script>
 
   {% block static %}{% endblock %}
 
-
-  <!-- All JavaScript at the bottom, except this Modernizr build.
-       Modernizr enables HTML5 elements & feature detects for optimal performance.
-       Create your own custom Modernizr build: www.modernizr.com/download/ -->
-       {# <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3-respond-1.1.0.min.js"></script> #}
    </head>
    <body class="{% block body_class %}{% endblock %}">
       {# {% block body %} #}
