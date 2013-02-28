@@ -8,9 +8,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from sepal.datasets.forms import DatasetForm, DatasetEditForm
 from sepal.datasets.models import *
-from sepal.datasets.tasks import handle_uploaded_file, extract_features
+from sepal.datasets.tasks import extract_features
 from django.contrib.auth.decorators import login_required
-
 
 class LoggedInMixin(object):
     """ A mixin requiring a user to be logged in. """
