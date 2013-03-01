@@ -35,6 +35,14 @@ hr {
   color: #000000;
 }
 
+.tagline {
+  font-weight: normal;
+}
+
+.logo-colored {
+  /*color: #339933;*/
+}
+
 /* docs */
 .subsection {
   color: #999999;
@@ -165,9 +173,6 @@ h1, h2, h3, h4, h5, h6, .brand {
   font-size: 110%;
 }
 
-.tagline{
-  font-family: Arial, sans-serif;
-}
 
 p, div, button {
     font-family: Arial, sans-serif;
@@ -266,7 +271,7 @@ border-color: #252525;
 }
 
 .header h1 {
-font-size: 54px;
+font-size: 4.75em;
 line-height: 81px;
 }
 
