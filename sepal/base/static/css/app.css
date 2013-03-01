@@ -222,11 +222,6 @@ footer a {
   color: #999999;
 }  
 
-footer small { 
-  float: left; 
-  margin-left: 25px;
-}
-
 footer p {
   float: right;
   margin-right: 25px;
@@ -237,9 +232,9 @@ footer ul {
     list-style: none;
 }
 
-footer ul li {
+footer .company {
   float: left;
-  margin-left: 10px;
+  margin-left: 25px;
 }
 
 /* Navigation */
