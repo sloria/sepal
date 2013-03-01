@@ -23,7 +23,7 @@ def signup(request):
                 Thank you for your interest in Sepal!')
             else:
                 # Don't allow multiple requests from the same email
-                messages.info(request, 'An account already exists or an \
+                messages.warning(request, 'An account already exists or an \
                     invite request has already been submitted from this e-mail. \
                     If you are receiving this message in error, please contact \
                     sepalproject@gmail.com.')
