@@ -20,7 +20,7 @@
           <button type="submit" class="btn">Logout</button>
         </form>
         <ul class="nav pull-right">
-          <li><a>Welcome {{ user.username }}!</a></li>
+          <li><a>Logged in as {{ user.username }}</a></li>
         </ul>
         {% else %}
         <form id="loginForm" class="navbar-form pull-right" action="/user/login/" method="post">

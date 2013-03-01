@@ -224,6 +224,12 @@ footer a {
 
 footer small { 
   float: left; 
+  margin-left: 25px;
+}
+
+footer p {
+  float: right;
+  margin-right: 25px;
 }
 
 footer ul {
