@@ -13,7 +13,7 @@
   More info: h5bp.com/i/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>{% block page_title %}{{ _("sepal | Audio feature extraction and analysis made easy") }}{% endblock %}</title>
+  <title>{% block page_title %}{{ _("sepal | Audio feature extraction and analysis made simple") }}{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
 
@@ -87,6 +87,8 @@
   <!-- scripts concatenated and minified via build script -->
   <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/plugins.js"></script>
+
+  {# Google analytics snippet #}
   <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-38106995-2']);
@@ -99,6 +101,11 @@
   })();
   </script>
   {% block scripts %}{% endblock scripts %}
+
+  {# Wishbox for feedback #}
+  {% if user.is_authenticated %}
+    {% include "wishbox.html" %}
+  {% endif %}
   <!-- end scripts -->
 
   {# {% endblock %} #}
