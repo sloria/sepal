@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from sepal.datasets.utils import filter_by_key, find_dict_by_item
 from sepal.datasets.tasks import extract_features
 
-from sepal.base.tests.factories import UserFactory
+from sepal.user.tests.factories import UserFactory
 from sepal.datasets.models import *
 from sepal.datasets.tests.factories import *
 

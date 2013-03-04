@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from nose.tools import *
 
-from sepal.base.tests.factories import UserFactory
+from sepal.user.tests.factories import UserFactory
 from sepal.datasets.tests.factories import *
 
 

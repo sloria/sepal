@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from nose.tools import *
 
-from sepal.base.tests.factories import UserFactory
+from sepal.user.tests.factories import UserFactory
 from sepal.datasets.tests.factories import *
 from sepal.datasets.models import *
 
@@ -16,16 +16,7 @@ class TestAUser(WebTest):
         self.user = UserFactory()
         self.valid_file_name = 'test-valid-file-0821x1.wav'
         self.invalid_file_name = 'test-invalid-txt-file.txt'
-        self._login()
 
-    def _login(self):
-        # Rosie logs in
-        res = self.app.get('/')
-        form = res.forms['loginForm']
-        form['username'] = self.user.username
-        form['password'] = self.user.password
-        res = form.submit()
-        return res
 
 
     def tearDown(self):
@@ -38,6 +29,15 @@ class TestAUser(WebTest):
                 os.remove(f)
         except:
             pass
+
+    def test_can_login(self):
+        # Rosie logs in
+        res = self.app.get('/')
+        form = res.forms['loginForm']
+        form['username'] = self.user.username
+        form['password'] = self.user.password
+        res = form.submit()
+        assert_equal(res.status_code, 200)
 
     def test_cant_see_request_button_if_logged_in(self):
         # No one is logged in

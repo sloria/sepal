@@ -1,6 +1,6 @@
 import factory
 import random
-from sepal.base.tests.factories import UserFactory
+from sepal.user.tests.factories import UserFactory
 from sepal.datasets.models import *
 
 
