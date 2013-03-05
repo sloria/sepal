@@ -69,6 +69,7 @@ INTERNAL_APPS = [
     # Local apps, referenced via sepal.appname
     'sepal.datasets',
     'sepal.signup',
+    'sepal.user',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + INTERNAL_APPS
@@ -122,7 +123,9 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+LOGIN_URL= '/'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL= '/user/logout/'
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.

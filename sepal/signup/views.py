@@ -27,6 +27,7 @@ def signup(request):
                     invite request has already been submitted from this e-mail. \
                     If you are receiving this message in error, please contact \
                     sepalproject@gmail.com.')
+
     return HttpResponseRedirect('/')
 
 def user_exists(username):
