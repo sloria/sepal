@@ -14,5 +14,8 @@ def signup(request):
             user = User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['email'], '')
             user.is_active = False;
             user.save()
-            send_mail('New Signup Invite Request by '+user.email, 'A new user requested beta signup for sepal. Go here to set them a password and then send them an email.\n http://sepalbio.com/admin/auth/user/'+str(user.id)+'/', EMAIL_HOST_USER, [EMAIL_HOST_USER], fail_silently=False)
+            opts = {
+            	'user': user
+            }   
+            form.save(**opts)         
     return HttpResponseRedirect('/')
