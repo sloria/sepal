@@ -288,6 +288,12 @@ line-height: 81px;
   color: #F8F8F8;
 }
 
+.header form .help-block {
+  font-size: 13px;
+  color: #cccccc;
+  margin-top: 10px;
+}
+
 
 /* Flatstrap buttons */
 .input-append,

@@ -1,4 +1,5 @@
 import os
+import unittest
 from glob import glob
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
@@ -17,8 +18,6 @@ class TestAUser(WebTest):
         self.valid_file_name = 'test-valid-file-0821x1.wav'
         self.invalid_file_name = 'test-invalid-txt-file.txt'
 
-
-
     def tearDown(self):
         try:
             # Delete all the files uploaded in the tests
@@ -30,14 +29,32 @@ class TestAUser(WebTest):
         except:
             pass
 
-    def test_can_login(self):
+    def test_can_login_and_logout(self):
         # Rosie logs in
         res = self.app.get('/')
         form = res.forms['loginForm']
         form['username'] = self.user.username
-        form['password'] = self.user.password
+        form['password'] = 'abc'
+        res = form.submit().follow()
+        assert_equal(res.status_code, 200)
+        # logs out
+        form = res.forms['logoutForm']
         res = form.submit()
         assert_equal(res.status_code, 200)
+
+    def test_can_change_password(self):
+        # goes to homepage
+        res = self.app.get('/', user=self.user)
+        assert_in('Manage account', res)
+        # Clicks Change password
+        res = res.click('Change password')
+        # Fills out form
+        form = res.forms['passwordChangeForm']
+        form['old_password'] = 'abc'
+        form['new_password1'] = 'def'
+        form['new_password2'] = 'def'
+        res = form.submit().follow()
+        assert_in('Password change successful', res)
 
     def test_cant_see_request_button_if_logged_in(self):
         # No one is logged in
@@ -64,7 +81,6 @@ class TestAUser(WebTest):
         # and clicking the Datasets link again
         res = res.click('Datasets')
         # She sees the new dataset
-        print res
         res.mustcontain(dataset.name, dataset.species,
                         dataset.description)
 

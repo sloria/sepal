@@ -35,7 +35,6 @@ urlpatterns = patterns('',
         SingleInstanceDelete.as_view(),
         name='single_instance_delete'),
 
-
     # ex: /datasets/3/update_instances_labels/
     url(r'^(?P<dataset_id>\d+)/update_instances_labels/(?P<label_name_id>\d+)$',
         update_instances_labels,
