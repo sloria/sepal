@@ -123,7 +123,7 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-LOGIN_URL= '/'
+LOGIN_URL= '/user/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL= '/user/logout/'
 

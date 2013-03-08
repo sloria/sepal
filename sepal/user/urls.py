@@ -6,7 +6,7 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'base/home.html'}, name='login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'user/login_form.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'base/home.html'}, name='logout'),
     url(r'^password_change/$', 'django.contrib.auth.views.password_change', {'template_name': 'user/password_change_form.html', 'post_change_redirect': '/user/password_change/done/'}, name='password_change'),
     url(r'^password_change/done/$', 'django.contrib.auth.views.password_change_done', {'template_name': 'user/password_change_done.html'}, name='password_change_done'),

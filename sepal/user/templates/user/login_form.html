@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% load url from future %}
+
+{% block page_title %}sepal | {% trans 'Log In' %}{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/user.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form class="form-password" action="" method="post">
+    {% csrf_token %}
+    <h2 class="form-password-heading">{% trans 'Log In' %}</h2>
+    {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
+    <p class="errornote">
+    {% blocktrans count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+    {% endif %}
+
+    {% if form.non_field_errors or form.this_is_the_login_form.errors %}
+    {% for error in form.non_field_errors|add:form.this_is_the_login_form.errors %}
+    <p class="errornote">
+        {{ error }}
+    </p>
+    {% endfor %}
+    {% endif %}
+    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
+    <input class="input-block-level" type="text" name="username" placeholder="Email" />
+    {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
+    <input class="input-block-level" type="password" name="password" placeholder="Password" />
+    <button class="btn btn-large btn-primary" type="submit">{% trans 'Log In' %}</button>
+    <a class="btn btn-link input-block-level" href="/user/password_reset">{% trans 'Forgotten your password?' %}</a>
+  </form>
+
+</div> 
+{% endblock %}
