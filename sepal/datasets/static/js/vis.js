@@ -6,7 +6,7 @@ Visualization
 
 
 (function() {
-  var CHART_HEIGHT, CHART_WIDTH, ID_PROP_NAME, LABEL_PROP_NAME, PT_RADIUS, TOOLTIP_SIZE, X_AXIS_LABEL_OFFSET, X_DIM, X_DIM_INDEX, X_TICKS, Y_AXIS_LABEL_OFFSET, Y_DIM, Y_DIM_INDEX, Y_TICKS, addToSelectedDimensions, color, drawScatterplot, getMinAndMaxRangeForFeatures, height, margin, removeFromSelectedDimensions, selectedDimensions, svg, width, xAxis, xScale, yAxis, yScale;
+  var CHART_HEIGHT, CHART_WIDTH, ID_PROP_NAME, LABEL_PROP_NAME, PT_RADIUS, TOOLTIP_SIZE, X_AXIS_LABEL_OFFSET, X_DIM, X_DIM_INDEX, X_TICKS, Y_AXIS_LABEL_OFFSET, Y_DIM, Y_DIM_INDEX, Y_TICKS, addToSelectedDimensions, color, drawScatterplot, getMinAndMaxRangeForFeatures, height, margin, prevChartHeight, prevChartWidth, removeFromSelectedDimensions, selectedDimensions, svg, width, xAxis, xScale, yAxis, yScale;
 
   window.Viz = {};
 
@@ -57,7 +57,7 @@ Visualization
 
   height = CHART_HEIGHT - margin.top - margin.bottom;
 
-  svg = d3.select("div#chart").append("svg").attr("width", width + margin.left + margin.right).attr("height", width + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+  svg = d3.select("div#chart").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
   xScale = d3.scale.linear().rangeRound([0, width - 50]);
 
@@ -96,6 +96,10 @@ Visualization
       }
     });
   });
+
+  prevChartWidth = 0;
+
+  prevChartHeight = 0;
 
   drawScatterplot = function() {
     /*

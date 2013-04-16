@@ -115,8 +115,6 @@ class XEditableTest(LiveServerTestCase):
         dataset = Dataset.objects.latest()
         assert_equal(dataset.name, 'This is now')
 
-        # Tests below don't work yet
-
         # Rosie clicks on the old description
         description = b.find_element_by_link_text('Out with the old')
         description.click()

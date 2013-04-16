@@ -21,7 +21,7 @@ class Command(BaseCommand):
         target_path = 'sepal/%s/static/js' % (app_name)
         src_path = 'sepal/%s/static/coffee/*.coffee' % (app_name)
         if options['watch']:
-            print "Watching .coffee files in %s and compiling them to %s" % (app_name + '/static/coffee', src_path)
+            print "Watching .coffee files in %s and compiling them to %s" % (app_name + '/static/coffee', target_path)
             command = "coffee -o %s -cw %s" % (target_path, src_path)
         else:
             print "Compiling .coffee files in %s to .js files in %s" % (app_name + '/static/coffee', target_path)

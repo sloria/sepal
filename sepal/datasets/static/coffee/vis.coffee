@@ -43,9 +43,17 @@ height = CHART_HEIGHT - margin.top - margin.bottom
 svg = d3.select("div#chart")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", width + margin.top + margin.bottom)
+        .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(#{margin.left}, #{margin.top})")
+
+# aspect = CHART_WIDTH / CHART_HEIGHT
+# chart = $("div#chart")
+# $(window).on("resize", () -> 
+#     target_width = chart.parent().width()
+#     chart.attr("width", target_width)
+#     chart.attr("height", target_width / aspect)
+# )
 
 xScale = d3.scale.linear()
             .rangeRound([0, width - 50])
@@ -111,7 +119,8 @@ jQuery ->
     )
 
 
-
+prevChartWidth = 0 
+prevChartHeight = 0
 drawScatterplot = () ->
     ###
     The main method that draws the scatterPlot and handles updates (enters, transitions,
