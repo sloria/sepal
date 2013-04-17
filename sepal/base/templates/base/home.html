@@ -1,54 +1,61 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block page_class %}home-page{% endblock %}
 
 {% block header %}
-    <div class="row">
-    <div class="header">
-      <div class="container">
-        <div class="span12">
-          <h1 class="brand"><i class="logo logo-colored icon-leaf"></i> sepal</h1>
-          <h2 class="tagline">Audio feature extraction and analysis made simple</h2>
-          {% if not user.is_authenticated %}
-          <p><a id="signup" class="btn btn-yellow btn-large">Request invite »</a></p>
-          <form id="signupform" class="navbar-form" style="display:none" action="/signup/" method="post">
-            {% csrf_token %}
-            <input type="text" class="span2" name="email" placeholder="Email" />
-            <button type="submit" class="btn" style="margin-top:5px">Submit</button>
+<div class="row">
+  <div class="header">
+    <div class="container">
+      <div class="span6">
+        <h1 class="brand"><i class="logo logo-colored icon-leaf"></i> sepal</h1>
+        <h2 class="tagline">Audio feature extraction and analysis made simple</h2>
+        {% if not user.is_authenticated %}
+        <p><a id="signup" class="btn btn-yellow btn-large">Request invite »</a></p>
+        <form id="signupform" class="navbar-form" style="display:none" action="/signup/" method="post">
+          {% csrf_token %}
+          <input type="text" class="span2" name="email" placeholder="Email" />
+          <button type="submit" class="btn" style="margin-top:5px">Submit</button>
           <span class='help-block'>We won't send spam. We will only notify you when your account is ready.</span>
-          </form>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
+        </form>
+        {% endif %}
+      </div><!-- end span -->
+      <div class="span5 video-container">
+        <video class="video-active" autoplay width='513x' height='390px' loop>
+          <source src="{{ STATIC_URL }}mov/demo.m4v" type="video/x-m4v"></source>
+          <img src="{{ STATIC_URL }}mov/demo.jpg" alt="Interactive visualization of audio features">
+        </video>
+      </div><!-- end span video-container -->
+    </div><!-- end container -->
+  </div><!-- end header -->
+</div><!-- end row -->
 {% endblock header %}
 
 {% block content %}
 
-    <div class="container">
-    <div class="row">
-      <div class="span4">
-        <h2>Designed for research</h2>
-        <p> Sepal is designed for use in a variety of research applications, including bioacoustics, Music Information Retrieval, and statistical learning. </p>
-        {# <p><a class="btn" href="#">Learn more »</a></p> #}
-      </div><!-- end span4 -->
+<div class="container">
+  <div class="row">
+    <div class="span4">
+      <h2>Designed for research</h2>
+      <p> Sepal is designed for use in a variety of research applications, including bioacoustics, Music Information Retrieval, and statistical learning. </p>
+      {# <p><a class="btn" href="#">Learn more »</a></p> #}
+    </div><!-- end span4 -->
 
-      <div class="span4">
-        <h2>Explore your audio</h2>
-        <p>Extract spectral, perceptual, temporal, and harmonic features with the click of a button. Explore your data quickly with interactive visualizations. </p>
-        {# <p><a class="btn" href="#">Learn more »</a></p> #}
-      </div><!-- end span4 -->
+    <div class="span4">
+      <h2>Explore your audio</h2>
+      <p>Extract spectral, perceptual, temporal, and harmonic features with the click of a button. Explore your data quickly with interactive visualizations. </p>
+      {# <p><a class="btn" href="#">Learn more »</a></p> #}
+    </div><!-- end span4 -->
 
-      <div class="span4">
-        <h2>No installation necessary</h2>
-        <p>Sepal is completely web-based, so you can use it and access your data from anywhere without having to install any additional software.</p>
-        {# <p><a class="btn" href="#">Learn more »</a></p> #}
-      </div><!-- end span4 -->
+    <div class="span4">
+      <h2>No installation necessary</h2>
+      <p>Sepal is completely web-based, so you can use it and access your data from anywhere without having to install any additional software.</p>
+      {# <p><a class="btn" href="#">Learn more »</a></p> #}
+    </div><!-- end span4 -->
 
-    </div><!-- end row -->
-  </div> <!-- end container -->
+  </div><!-- end row -->
+</div> <!-- end container -->
 
-    <hr>
+<hr>
 {% endblock %}
 
 
