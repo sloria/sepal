@@ -58,10 +58,13 @@
   
   <div class="{% block content_class %}container-fluid{% endblock content_class %}">
 
+    {% comment %}
     <div id="main">
       <div class="alert alert-info">
         <strong>IMPORTANT:</strong> Sepal is currently in its early stages and is for evaluation only. Make sure your audio is backed up in a safe place.
       </div>
+      
+    {% endcomment %}
 
       {% if messages %}
           {% for message in messages %}

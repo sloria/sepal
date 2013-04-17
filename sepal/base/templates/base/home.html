@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load url from future %}
 {% block page_class %}home-page{% endblock %}
 
 {% block header %}
@@ -17,7 +18,13 @@
           <button type="submit" class="btn" style="margin-top:5px">Submit</button>
           <span class='help-block'>We won't send spam. We will only notify you when your account is ready.</span>
         </form>
+        {% else %}
+        <p>
+          <a href="{% url 'datasets:index' %}" id="id_newdataset" class="btn btn-lightblue btn-large">Your datasets »</a>
+          <a href="{% url 'datasets:create' %}" id="id_newdataset" class="btn btn-yellow btn-large">Create a dataset »</a>
+        </p>
         {% endif %}
+
       </div><!-- end span -->
       <div class="span5 video-container">
         <video class="video-active" autoplay width='513x' height='390px' loop>
